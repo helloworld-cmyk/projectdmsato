@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f6f7f3" />
+    <title>MatchUp — Ghép đội, đặt sân trong một chạm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200" rel="stylesheet" />
+    <style>
+      :root {
+        --ink: #18251f;
+        --muted: #68756d;
+        --line: #e7ebe6;
+        --paper: #f7f8f4;
+        --card: #ffffff;
+        --lime: #ccf645;
+        --green: #1e7049;
+        --deep-green: #17583a;
+        --orange: #ff7d38;
+        --yellow: #fff1af;
+        --shadow: 0 16px 40px rgba(24, 37, 31, .08);
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        min-width: 320px;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: "DM Sans", sans-serif;
+      }
+      button, input { font: inherit; }
+      button { cursor: pointer; }
+      .material-symbols-rounded {
+        font-variation-settings: "FILL" 1, "wght" 550, "GRAD" 0, "opsz" 24;
+        line-height: 1;
+        vertical-align: middle;
+      }
+      .shell { width: min(1380px, calc(100% - 48px)); margin: 0 auto; }
+
+      .topbar {
+        height: 38px;
+        background: #18392a;
+        color: #cfe0d5;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .topbar .shell { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+      .topbar__location, .topbar__links, .topbar__links a { display: flex; align-items: center; gap: 7px; }
+      .topbar__links { gap: 19px; }
+      .topbar a { color: inherit; text-decoration: none; }
+      .topbar .material-symbols-rounded { font-size: 16px; }
+
+      header {
+        height: 80px;
+        background: rgba(255,255,255,.93);
+        border-bottom: 1px solid var(--line);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(14px);
+      }
+      .nav { height: 100%; display: flex; align-items: center; gap: 52px; }
+      .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
+      .brand-mark {
+        width: 35px; height: 35px; border-radius: 11px;
+        background: var(--lime); display: grid; place-items: center;
+        transform: rotate(-8deg); color: var(--deep-green);
+      }
+      .brand-mark .material-symbols-rounded { font-size: 23px; transform: rotate(8deg); }
+      .brand-name { font: 800 22px/1 "Plus Jakarta Sans", sans-serif; letter-spacing: -1px; }
+      .brand-name em { color: var(--green); font-style: normal; }
+      .menu { display: flex; align-items: center; gap: 34px; flex: 1; }
+      .menu a { text-decoration: none; font-size: 14px; font-weight: 700; color: #728078; padding: 30px 0 27px; border-bottom: 3px solid transparent; }
+      .menu a.active { color: var(--green); border-color: var(--lime); }
+      .nav-actions { display: flex; align-items: center; gap: 12px; margin-left: auto; }
+      .round-btn { width: 40px; height: 40px; border: 1px solid var(--line); border-radius: 50%; background: white; color: var(--ink); display: grid; place-items: center; position: relative; }
+      .round-btn .badge { position: absolute; width: 7px; height: 7px; background: var(--orange); border: 2px solid white; border-radius: 50%; top: 8px; right: 8px; }
+      .profile { display: flex; align-items: center; gap: 10px; margin-left: 5px; }
+      .avatar { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: white; font-weight: 800; background: linear-gradient(145deg, #f6a874, #9f4c2b); border: 2px solid #fff; box-shadow: 0 0 0 1px #e8eae7; }
+      .profile-copy { font-size: 12px; line-height: 1.35; font-weight: 700; }
+      .profile-copy span { display: block; color: var(--muted); font-weight: 500; }
+
+      main { padding: 38px 0 58px; }
+      .eyebrow { color: var(--green); font-size: 12px; letter-spacing: .13em; font-weight: 800; text-transform: uppercase; }
+      .hero { display: grid; grid-template-columns: minmax(0, 1.18fr) minmax(380px, .82fr); gap: 30px; align-items: stretch; }
+      .hero-copy { padding: 25px 0 19px; }
+      h1, h2, h3, p { margin: 0; }
+      h1 { max-width: 700px; margin-top: 12px; letter-spacing: -2.7px; font: 800 clamp(36px, 4vw, 58px)/1.1 "Plus Jakarta Sans", sans-serif; }
+      h1 .highlight { position: relative; white-space: nowrap; z-index: 0; }
+      h1 .highlight::after { content: ""; position: absolute; height: 12px; background: var(--lime); bottom: 3px; left: -3px; right: -4px; border-radius: 5px; z-index: -1; transform: rotate(-1deg); }
+      .hero-copy > p { max-width: 596px; margin: 19px 0 25px; color: var(--muted); line-height: 1.65; font-size: 15px; }
+
+      .finder { background: white; padding: 11px; border: 1px solid #e4e9e3; box-shadow: 0 11px 28px rgba(31, 51, 40, .07); border-radius: 18px; display: grid; grid-template-columns: 1.05fr 1.05fr .95fr auto; gap: 4px; max-width: 740px; }
+      .filter { min-width: 0; padding: 7px 11px; display: flex; align-items: center; gap: 10px; border-right: 1px solid var(--line); text-align: left; background: transparent; border-top: 0; border-bottom: 0; border-left: 0; }
+      .filter .icon-box { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: #f2f6ee; color: var(--green); flex: 0 0 auto; }
+      .filter .material-symbols-rounded { font-size: 19px; }
+      .filter span:not(.material-symbols-rounded) { display: block; color: var(--muted); font-size: 10px; font-weight: 700; line-height: 1.2; }
+      .filter strong { display: block; color: var(--ink); font-size: 12px; line-height: 1.45; white-space: nowrap; }
+      .finder-go { width: 48px; border: 0; border-radius: 13px; display: grid; place-items: center; background: var(--green); color: white; transition: transform .2s, background .2s; }
+      .finder-go:hover { background: var(--deep-green); transform: translateY(-1px); }
+      .finder-go .material-symbols-rounded { font-size: 25px; }
+      .quick-stats { display: flex; gap: 22px; margin-top: 25px; }
+      .quick-stats div { padding-right: 21px; border-right: 1px solid #dce2dc; }
+      .quick-stats div:last-child { border: 0; }
+      .quick-stats b { display: block; font: 800 18px "Plus Jakarta Sans", sans-serif; letter-spacing: -.8px; }
+      .quick-stats span { display: block; margin-top: 2px; color: var(--muted); font-size: 11px; font-weight: 600; }
+
+      .match-spotlight { position: relative; overflow: hidden; min-height: 332px; padding: 23px; background: #235e43; color: white; border-radius: 24px; box-shadow: var(--shadow); }
+      .match-spotlight::before, .match-spotlight::after { content: ""; position: absolute; border: 1px solid rgba(255,255,255,.17); border-radius: 50%; pointer-events: none; }
+      .match-spotlight::before { width: 385px; height: 385px; right: -134px; bottom: -219px; }
+      .match-spotlight::after { width: 205px; height: 205px; right: -43px; bottom: -128px; }
+      .spotlight-top { position: relative; display: flex; align-items: center; justify-content: space-between; z-index: 1; }
+      .spotlight-top span { padding: 6px 10px; color: #30412c; background: var(--lime); border-radius: 999px; font-size: 10px; font-weight: 800; letter-spacing: .05em; }
+      .spotlight-top button { padding: 0; border: 0; background: transparent; color: #d9e7de; display: flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 700; }
+      .spotlight-top .material-symbols-rounded { font-size: 17px; }
+      .spotlight-main { position: relative; z-index: 1; margin-top: 23px; }
+      .mini-teams { display: flex; align-items: center; gap: 13px; }
+      .club-icon { width: 39px; height: 39px; border-radius: 12px; background: #f2f0d9; color: #e77b45; display: grid; place-items: center; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,.12); }
+      .club-icon.blue { background: #d6e4fd; color: #346dc4; }
+      .versus { color: #a9c7b6; font: 800 12px "Plus Jakarta Sans", sans-serif; }
+      .spotlight-main h2 { max-width: 275px; margin-top: 12px; font: 800 21px/1.25 "Plus Jakarta Sans", sans-serif; letter-spacing: -.6px; }
+      .spotlight-detail { margin-top: 11px; color: #cae0d4; font-size: 12px; }
+      .spots { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; margin-top: 27px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,.18); }
+      .people { display: flex; align-items: center; }
+      .people .person { width: 28px; height: 28px; margin-right: -6px; border: 2px solid #235e43; border-radius: 50%; display: grid; place-items: center; color: white; font-size: 9px; font-weight: 800; }
+      .person.p1 { background: #df986b; }.person.p2 { background: #667fba; }.person.p3 { background: #d2b164; }.person.p4 { background: #5d9b89; }
+      .people span { margin-left: 14px; color: #cde2d6; font-size: 11px; }
+      .join-btn { position: relative; z-index: 1; padding: 10px 13px; border: 0; border-radius: 10px; background: white; color: var(--green); font-size: 12px; font-weight: 800; }
+
+      .section-head { display: flex; justify-content: space-between; align-items: end; margin-top: 44px; margin-bottom: 19px; }
+      .section-title { margin-top: 6px; font: 800 25px "Plus Jakarta Sans", sans-serif; letter-spacing: -1px; }
+      .subcopy { margin-top: 6px; color: var(--muted); font-size: 13px; }
+      .text-link { border: 0; padding: 0; background: transparent; color: var(--green); font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 3px; }
+      .text-link .material-symbols-rounded { font-size: 17px; }
+
+      .content-grid { display: grid; grid-template-columns: minmax(0, 1.67fr) minmax(300px, .75fr); gap: 29px; align-items: start; }
+      .sports-tabs { display: flex; gap: 8px; margin-bottom: 15px; overflow-x: auto; scrollbar-width: none; }
+      .sports-tabs::-webkit-scrollbar { display: none; }
+      .sport-tab { white-space: nowrap; border: 1px solid #e2e8e1; border-radius: 999px; padding: 9px 13px; color: #627168; background: white; font-size: 12px; font-weight: 700; transition: all .2s; }
+      .sport-tab.active, .sport-tab:hover { color: var(--green); border-color: #c5e8d4; background: #edf9f0; }
+      .sport-tab .dot { display: inline-block; width: 7px; height: 7px; margin-right: 5px; background: var(--orange); border-radius: 50%; }
+      .match-list { display: grid; gap: 11px; }
+      .match-card { padding: 15px 17px; display: grid; grid-template-columns: 49px minmax(180px, 1fr) minmax(165px, .8fr) auto; align-items: center; gap: 14px; border: 1px solid var(--line); border-radius: 16px; background: white; transition: transform .2s, box-shadow .2s; }
+      .match-card:hover { transform: translateY(-2px); box-shadow: 0 10px 22px rgba(30, 67, 45, .08); }
+      .sport-square { width: 48px; height: 48px; display: grid; place-items: center; background: #eff7ef; color: var(--green); border-radius: 13px; font-size: 22px; }
+      .sport-square.orange { background: #fff2e9; color: #e97535; }.sport-square.blue { background: #ebf2ff; color: #4572c0; }
+      .match-title { display: flex; align-items: center; gap: 7px; }
+      .match-title h3 { font: 800 14px "Plus Jakarta Sans", sans-serif; letter-spacing: -.35px; }
+      .level { padding: 4px 6px; border-radius: 5px; color: #ae681b; background: #fff3d9; font-size: 9px; font-weight: 800; }
+      .match-title + p, .match-info { margin-top: 5px; color: var(--muted); font-size: 11px; }
+      .match-info { display: grid; gap: 5px; }
+      .match-info span { display: flex; align-items: center; gap: 5px; }
+      .match-info .material-symbols-rounded { color: #7f8f84; font-size: 15px; }
+      .match-join { min-width: 86px; align-self: stretch; border: 1px solid #dce6dd; border-radius: 10px; color: var(--green); background: white; font-size: 12px; font-weight: 800; }
+      .match-join:hover { background: var(--green); color: white; border-color: var(--green); }
+
+      .booking { padding: 19px; border-radius: 20px; color: white; background: #182c23; position: sticky; top: 99px; overflow: hidden; }
+      .booking::after { content: ""; position: absolute; width: 198px; height: 198px; border: 1px solid rgba(204,246,69,.22); border-radius: 50%; right: -130px; top: -76px; }
+      .booking > * { position: relative; z-index: 1; }
+      .booking-kicker { display: flex; align-items: center; gap: 7px; color: var(--lime); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; }
+      .booking-kicker .material-symbols-rounded { font-size: 16px; }
+      .booking h2 { margin-top: 8px; font: 800 20px/1.3 "Plus Jakarta Sans", sans-serif; letter-spacing: -.6px; }
+      .booking > p { margin-top: 7px; color: #b6c7ba; font-size: 12px; line-height: 1.5; }
+      .court-select { margin-top: 16px; padding: 12px; display: flex; align-items: center; gap: 10px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: rgba(255,255,255,.07); }
+      .court-select .material-symbols-rounded { color: var(--lime); font-size: 21px; }
+      .court-select span { display: block; color: #a9bdaf; font-size: 10px; font-weight: 600; }
+      .court-select strong { display: block; margin-top: 2px; color: white; font-size: 12px; }
+      .court-select > .material-symbols-rounded:last-child { margin-left: auto; color: #d5e1d9; font-size: 17px; }
+      .date-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 12px; }
+      .date { padding: 8px 3px; color: #aebeb2; text-align: center; border: 1px solid transparent; border-radius: 9px; font-size: 10px; font-weight: 700; background: transparent; }
+      .date b { display: block; margin-top: 3px; color: #fff; font-size: 14px; }
+      .date.active { color: var(--lime); border-color: rgba(204,246,69,.4); background: rgba(204,246,69,.11); }
+      .date.active b { color: var(--lime); }
+      .time-label { display: flex; justify-content: space-between; margin-top: 16px; font-size: 11px; font-weight: 700; }
+      .time-label span:last-child { color: var(--lime); }
+      .times { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+      .time { padding: 8px 2px; border: 1px solid rgba(255,255,255,.15); border-radius: 8px; background: rgba(255,255,255,.05); color: #e4ece7; font-size: 11px; font-weight: 700; }
+      .time.active { border-color: var(--lime); color: #193122; background: var(--lime); }
+      .book-btn { width: 100%; margin-top: 15px; padding: 12px; border: 0; border-radius: 10px; background: white; color: var(--green); font-size: 12px; font-weight: 800; transition: transform .2s; }
+      .book-btn:hover { transform: translateY(-1px); }
+
+      .voucher-wrap { margin-top: 33px; padding: 22px 24px; display: grid; grid-template-columns: 1.1fr 1.55fr auto; gap: 22px; align-items: center; border: 1px solid #f0dc87; border-radius: 18px; background: var(--yellow); }
+      .voucher-intro { display: flex; align-items: center; gap: 12px; }
+      .voucher-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #795a14; background: #ffd95b; }
+      .voucher-intro h3 { font: 800 15px "Plus Jakarta Sans", sans-serif; letter-spacing: -.3px; }
+      .voucher-intro p { margin-top: 3px; color: #816d38; font-size: 11px; }
+      .voucher { min-height: 62px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; border: 1px dashed #dfa928; border-radius: 12px; color: #705815; background: rgba(255,255,255,.42); }
+      .voucher strong { display: block; font: 800 13px "Plus Jakarta Sans", sans-serif; }
+      .voucher span { display: block; margin-top: 4px; color: #927b3b; font-size: 10px; }
+      .copy-code { padding: 8px 10px; border: 0; border-radius: 7px; color: #75570d; background: #ffe58d; font-size: 10px; font-weight: 800; }
+      .all-vouchers { border: 0; background: transparent; color: #705815; font-size: 12px; font-weight: 800; white-space: nowrap; }
+
+      .toast { position: fixed; z-index: 50; left: 50%; bottom: 26px; max-width: calc(100% - 32px); padding: 13px 17px; border-radius: 12px; color: white; background: #18392a; box-shadow: 0 13px 30px rgba(0,0,0,.18); font-size: 13px; font-weight: 700; transform: translate(-50%, 120px); opacity: 0; transition: transform .3s, opacity .3s; }
+      .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+      .mobile-nav { display: none; }
+      @media (max-width: 1040px) {
+        .nav { gap: 28px; }.menu { gap: 22px; }.profile-copy { display: none; }
+        .hero { grid-template-columns: 1fr .75fr; }.finder { grid-template-columns: 1fr 1fr auto; }.finder .filter:nth-child(3) { display: none; }
+        .content-grid { grid-template-columns: minmax(0, 1fr) 310px; }.match-card { grid-template-columns: 49px 1fr auto; }.match-info { display: none; }
+      }
+      @media (max-width: 760px) {
+        .shell { width: min(100% - 32px, 620px); }.topbar { display: none; } header { height: 68px; }.nav { gap: 0; justify-content: space-between; }.menu, .profile { display: none; }.nav-actions { margin-left: auto; }.round-btn:first-child { display: none; }
+        main { padding: 26px 0 95px; }.hero { display: block; }.hero-copy { padding: 0; } h1 { max-width: 520px; letter-spacing: -1.9px; }.hero-copy > p { margin: 15px 0 21px; font-size: 14px; }
+        .finder { grid-template-columns: 1fr 48px; gap: 3px; }.finder .filter:nth-child(2) { display: none; }.finder .filter { border: 0; }.quick-stats { margin-bottom: 25px; }.quick-stats div { padding-right: 14px; }.quick-stats b { font-size: 16px; }
+        .match-spotlight { min-height: 265px; }.section-head { margin-top: 33px; }.section-title { font-size: 22px; }.content-grid { display: block; }.booking { position: relative; top: auto; margin-top: 24px; }.match-card { grid-template-columns: 43px 1fr auto; padding: 13px; gap: 10px; }.sport-square { width: 43px; height: 43px; }.match-join { min-width: 65px; }
+        .voucher-wrap { margin-top: 23px; padding: 16px; grid-template-columns: 1fr; gap: 13px; }.all-vouchers { text-align: left; }.voucher { min-height: 57px; }.mobile-nav { display: flex; position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; height: 70px; align-items: center; justify-content: space-around; border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }.mobile-nav button { border: 0; padding: 6px 12px; background: transparent; color: #77847d; font-size: 10px; font-weight: 700; }.mobile-nav .material-symbols-rounded { display: block; margin-bottom: 2px; font-size: 21px; }.mobile-nav button.active { color: var(--green); }.mobile-nav .make-match { width: 45px; height: 45px; margin-top: -22px; display: grid; place-items: center; border: 4px solid var(--paper); border-radius: 50%; color: var(--green); background: var(--lime); }.make-match .material-symbols-rounded { margin: 0; }
+      }
+      @media (max-width: 400px) { .quick-stats { gap: 12px; }.quick-stats div { padding-right: 11px; }.quick-stats span { font-size: 10px; }.match-title h3 { font-size: 12px; }.match-title + p { font-size: 10px; }.match-join { min-width: 58px; font-size: 11px; } }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="shell">
+        <div class="topbar__location"><span class="material-symbols-rounded">location_on</span> Vị trí hiện tại: <strong data-user-location>Chưa bật vị trí</strong></div>
+        <div class="topbar__links"><a href="#voucher">Ưu đãi</a><a href="#matches">Trung tâm hỗ trợ</a><a href="#booking">Dành cho chủ sân</a></div>
+      </div>
+    </div>
+    <header>
+      <nav class="shell nav" aria-label="Điều hướng chính">
+        <a class="brand" href="#top" aria-label="MatchUp trang chủ">
+          <span class="brand-mark"><span class="material-symbols-rounded">sports_soccer</span></span>
+          <span class="brand-name">match<em>up</em></span>
+        </a>
+        <div class="menu">
+          <a class="active" href="match.html">Tìm trận</a>
+          <a href="booking.html">Đặt sân</a>
+          <a href="#voucher">Ưu đãi</a>
+          <a href="match.html#list-title">Cộng đồng</a>
+        </div>
+        <div class="nav-actions">
+          <button class="round-btn" type="button" data-notifications aria-label="Thông báo"><span class="material-symbols-rounded">notifications</span><i class="badge"></i></button>
+          <div class="profile"><div class="avatar">NA</div><div class="profile-copy">Ngọc Anh<span>Trình độ Khá</span></div></div>
+        </div>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="shell hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <div class="eyebrow">Chơi vui hơn, dễ hơn</div>
+          <h1 id="hero-title">Tìm đúng người chơi.<br />Đặt đúng <span class="highlight">sân bạn cần.</span></h1>
+          <p>MatchUp kết nối bạn với những người cùng trình độ, đúng bộ môn và sân còn trống ngay gần bạn — chỉ trong vài thao tác.</p>
+          <div class="finder" aria-label="Tìm trận thể thao">
+            <button class="filter" data-toast="Đã chọn môn Bóng đá">
+              <span class="icon-box"><span class="material-symbols-rounded">sports_soccer</span></span>
+              <span><span>Môn thể thao</span><strong>Bóng đá</strong></span>
+            </button>
+            <button class="filter" data-toast="Đang dùng vị trí mock: Hà Đông, Hà Nội">
+              <span class="icon-box"><span class="material-symbols-rounded">location_on</span></span>
+              <span><span>Vị trí hiện tại</span><strong data-user-location>Chưa bật vị trí</strong></span>
+            </button>
+            <button class="filter" data-toast="Đã chọn hôm nay, sau 18:00">
+              <span class="icon-box"><span class="material-symbols-rounded">calendar_month</span></span>
+              <span><span>Thời gian</span><strong>Hôm nay, sau 18:00</strong></span>
+            </button>
+            <button class="finder-go" data-toast="Đang tìm những trận phù hợp nhất với bạn" aria-label="Tìm trận"><span class="material-symbols-rounded">search</span></button>
+          </div>
+          <div class="quick-stats" aria-label="Thống kê MatchUp">
+            <div><b>2.400+</b><span>trận mỗi tuần</span></div>
+            <div><b>180+</b><span>sân đối tác</span></div>
+            <div><b>4.9/5</b><span>đánh giá cộng đồng</span></div>
+          </div>
+        </div>
+
+        <aside class="match-spotlight" aria-label="Trận đấu nổi bật">
+          <div class="spotlight-top"><span>CẦN THÊM 1 NGƯỜI</span><button data-toast="Đã lưu trận này"><span class="material-symbols-rounded">bookmark</span>Lưu trận</button></div>
+          <div class="spotlight-main">
+            <div class="mini-teams"><span class="club-icon">⚽</span><span class="versus">VS</span><span class="club-icon blue">⚽</span></div>
+            <h2>FC Văn Quán tìm đối giao hữu</h2>
+            <p class="spotlight-detail">19:00 · Hôm nay &nbsp;•&nbsp; Sân bóng Văn Quán</p>
+          </div>
+          <div class="spots"><div class="people"><div class="person p1">H</div><div class="person p2">M</div><div class="person p3">K</div><div class="person p4">T</div><span>6/7 người</span></div><button class="join-btn" onclick="location.href='match.html'">Tham gia ngay</button></div>
+        </aside>
+      </section>
+
+      <section class="shell" id="matches" aria-labelledby="matches-title">
+        <div class="section-head">
+          <div><div class="eyebrow">Trận phù hợp với bạn</div><h2 class="section-title" id="matches-title">Kèo đang chờ ở gần đây</h2><p class="subcopy">Đã ưu tiên các trận cùng trình độ Khá của bạn.</p></div>
+          <button class="text-link" onclick="location.href='match.html'">Xem tất cả <span class="material-symbols-rounded">arrow_forward</span></button>
+        </div>
+        <div class="content-grid">
+          <div>
+            <div class="sports-tabs" role="tablist" aria-label="Lọc môn thể thao">
+              <button class="sport-tab active" role="tab" aria-selected="true">Tất cả <span class="dot"></span></button>
+              <button class="sport-tab" role="tab" aria-selected="false">⚽ Bóng đá</button>
+              <button class="sport-tab" role="tab" aria-selected="false">🏸 Cầu lông</button>
+              <button class="sport-tab" role="tab" aria-selected="false">🎾 Pickleball</button>
+              <button class="sport-tab" role="tab" aria-selected="false">🏀 Bóng rổ</button>
+            </div>
+            <div class="match-list">
+              <article class="match-card" data-sport="Bóng đá">
+                <div class="sport-square">⚽</div><div><div class="match-title"><h3>FC Văn Quán chiều nay</h3><span class="level">TRUNG BÌNH</span></div><p>Sân cỏ nhân tạo · 7 người · Cần thêm 2</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>20:00 — 21:30, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Sân bóng Văn Quán · 1,2 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+              </article>
+              <article class="match-card" data-sport="Cầu lông">
+                <div class="sport-square orange">🏸</div><div><div class="match-title"><h3>Đánh đôi sau giờ làm</h3><span class="level">KHÁ</span></div><p>Đôi nam nữ · Cần thêm 1 người chơi</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>18:30 — 20:00, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Nhà thi đấu Văn Quán · 2,1 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+              </article>
+              <article class="match-card" data-sport="Pickleball">
+                <div class="sport-square blue">🎾</div><div><div class="match-title"><h3>Pickleball Văn Phú cuối tuần</h3><span class="level">KHÁ</span></div><p>Đánh đôi giao lưu · Cần thêm 2</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>07:00 — 08:30, sáng mai</span><span><span class="material-symbols-rounded">location_on</span>Pickleball Văn Phú · 3 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+              </article>
+            </div>
+          </div>
+
+          <aside class="booking" id="booking" aria-labelledby="booking-title">
+            <div class="booking-kicker"><span class="material-symbols-rounded">bolt</span> Đặt nhanh trong 30 giây</div>
+            <h2 id="booking-title">Sân trống quanh bạn</h2><p>Chọn sân, giờ đá và xác nhận. Hệ thống giữ chỗ trong 10 phút.</p>
+            <button class="court-select" onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span><span><span>Sân gần vị trí mock</span><strong>Hà Đông · nhiều lựa chọn</strong></span><span class="material-symbols-rounded">expand_more</span></button>
+            <div class="date-row" aria-label="Chọn ngày"><button class="date active">Hôm nay<b>08</b></button><button class="date">Thứ Bảy<b>09</b></button><button class="date">Chủ nhật<b>10</b></button><button class="date">Thứ Hai<b>11</b></button></div>
+            <div class="time-label"><span>Khung giờ còn trống</span><span>6 sân khả dụng</span></div>
+            <div class="times"><button class="time">17:00</button><button class="time active">18:30</button><button class="time">20:00</button><button class="time">20:30</button><button class="time">21:00</button><button class="time">21:30</button></div>
+            <button class="book-btn" onclick="location.href='booking.html'">Giữ chỗ sân · 18:30</button>
+          </aside>
+        </div>
+      </section>
+
+      <section class="shell voucher-wrap" id="voucher" aria-labelledby="voucher-title">
+        <div class="voucher-intro"><div class="voucher-icon"><span class="material-symbols-rounded">local_activity</span></div><div><h3 id="voucher-title">Ưu đãi dành cho bạn</h3><p>Giảm giá tự động khi đặt sân</p></div></div>
+        <div class="voucher"><div><strong>GIẢM 20% · LẦN ĐẶT SÂN ĐẦU</strong><span>Áp dụng cho mọi sân đối tác đến hết 31/08</span></div><button class="copy-code" data-code="MATCH20">MATCH20</button></div>
+        <button class="all-vouchers" data-toast="Bạn có 3 ưu đãi đang khả dụng">Xem 3 ưu đãi →</button>
+      </section>
+    </main>
+    <nav class="mobile-nav" aria-label="Điều hướng di động"><button class="active"><span class="material-symbols-rounded">home</span>Khám phá</button><button onclick="location.href='match.html'"><span class="material-symbols-rounded">sports_soccer</span>Trận đấu</button><button class="make-match" onclick="location.href='match.html?create=1'" aria-label="Tạo trận"><span class="material-symbols-rounded">add</span></button><button onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span>Đặt sân</button><button onclick="location.href='profile.html'"><span class="material-symbols-rounded">person</span>Cá nhân</button></nav>
+    <div class="toast" role="status" aria-live="polite"></div>
+    <script src="location.js"></script>
+    <script src="app-state.js"></script>
+    <script src="app-ui.js"></script>
+    <script>
+      const toast = document.querySelector('.toast');
+      let timer;
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(timer);
+        timer = setTimeout(() => toast.classList.remove('show'), 2600);
+      }
+      document.querySelectorAll('[data-toast]').forEach((button) => button.addEventListener('click', () => showToast(button.dataset.toast)));
+      document.querySelectorAll('.sport-tab').forEach((tab) => tab.addEventListener('click', () => {
+        document.querySelectorAll('.sport-tab').forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true');
+        const sport = tab.textContent.trim().replace(/^⚽ |^🏸 |^🎾 |^🏀 /, '').replace('Tất cả', '');
+        document.querySelectorAll('.match-card').forEach((card) => card.style.display = !sport || card.dataset.sport === sport ? '' : 'none');
+      }));
+      document.querySelectorAll('.date').forEach((date) => date.addEventListener('click', () => { document.querySelectorAll('.date').forEach((item) => item.classList.remove('active')); date.classList.add('active'); }));
+      document.querySelectorAll('.time').forEach((time) => time.addEventListener('click', () => { document.querySelectorAll('.time').forEach((item) => item.classList.remove('active')); time.classList.add('active'); document.querySelector('.book-btn').textContent = `Giữ chỗ sân · ${time.textContent}`; }));
+      document.querySelector('[data-code]').addEventListener('click', async (event) => {
+        const code = event.currentTarget.dataset.code;
+        try { await navigator.clipboard.writeText(code); showToast(`Đã sao chép mã ${code}`); } catch { showToast(`Mã ưu đãi của bạn: ${code}`); }
+      });
+    </script>
+  </body>
+</html>
