@@ -6,10 +6,18 @@
 (() => {
   const STORAGE_KEY = "matchup-demo-state-v2";
   const EVENT_NAME = "matchup:state-change";
+  const LOYALTY_POLICY = Object.freeze({
+    earnPerAmount: 1000,
+    pointValue: 100,
+    maxDiscountRate: 0.5,
+  });
   const now = () => Date.now();
   const id = (prefix) => `${prefix}-${now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
   const clone = (value) => JSON.parse(JSON.stringify(value));
   const initials = (name) => String(name || "Ngọc Anh").trim().split(/\s+/).slice(-2).map((part) => part[0]).join("").toUpperCase();
+  const integer = (value) => Math.max(0, Math.floor(Number(value) || 0));
+  const amount = (value) => Math.max(0, Math.round(Number(value) || 0));
+  const loyaltyDefaults = () => ({ balance: 0, transactions: [] });
   const defaultState = () => ({
     profile: {
       name: "Ngọc Anh",
@@ -22,15 +30,31 @@
     matches: [],
     applications: [],
     bookings: [],
+    loyalty: loyaltyDefaults(),
     notifications: [
       { id: id("notice"), type: "tip", title: "Chào mừng đến MatchUp", body: "Hồ sơ của bạn giúp MatchUp gợi ý kèo hợp hơn.", createdAt: now(), read: false },
     ],
   });
 
+  const normaliseState = (saved) => {
+    const loyalty = saved && saved.loyalty && typeof saved.loyalty === "object" ? saved.loyalty : loyaltyDefaults();
+    saved.loyalty = {
+      balance: integer(loyalty.balance),
+      transactions: Array.isArray(loyalty.transactions) ? loyalty.transactions.slice(0, 50) : [],
+    };
+    saved.applications = Array.isArray(saved.applications) ? saved.applications : [];
+    saved.bookings = Array.isArray(saved.bookings) ? saved.bookings : [];
+    saved.notifications = Array.isArray(saved.notifications) ? saved.notifications : [];
+    saved.bookings.forEach((booking) => {
+      if (!Number.isFinite(Number(booking.subtotal))) booking.subtotal = amount(booking.total);
+    });
+    return saved;
+  };
+
   const read = () => {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (saved && saved.profile && Array.isArray(saved.matches)) return saved;
+      if (saved && saved.profile && Array.isArray(saved.matches)) return normaliseState(saved);
     } catch (_) { /* fall through to seed data */ }
     return defaultState();
   };
@@ -44,6 +68,98 @@
     state.notifications = state.notifications.slice(0, 30);
   };
   const money = (amount) => new Intl.NumberFormat("vi-VN").format(Math.round(Number(amount) || 0)) + "đ";
+  const previewPoints = (subtotal, requestedPoints = 0) => {
+    const safeSubtotal = amount(subtotal);
+    const requested = integer(requestedPoints);
+    const maxByOrder = Math.floor((safeSubtotal * LOYALTY_POLICY.maxDiscountRate) / LOYALTY_POLICY.pointValue);
+    const maxPoints = Math.min(state.loyalty.balance, maxByOrder);
+    const points = Math.min(requested, maxPoints);
+    const discount = points * LOYALTY_POLICY.pointValue;
+    return {
+      subtotal: safeSubtotal,
+      requestedPoints: requested,
+      points,
+      maxPoints,
+      availablePoints: state.loyalty.balance,
+      discount,
+      paidAmount: safeSubtotal - discount,
+      isValid: requested === points,
+    };
+  };
+  const addLoyaltyTransaction = ({ type, points, sourceType, sourceId, amount: relatedAmount, description }) => {
+    state.loyalty.balance = Math.max(0, state.loyalty.balance + points);
+    state.loyalty.transactions.unshift({
+      id: id("loyalty"),
+      type,
+      points,
+      sourceType,
+      sourceId,
+      amount: amount(relatedAmount),
+      description,
+      createdAt: now(),
+    });
+    state.loyalty.transactions = state.loyalty.transactions.slice(0, 50);
+  };
+  const settleLoyalty = ({ subtotal, requestedPoints, sourceType, sourceId, label }) => {
+    const preview = previewPoints(subtotal, requestedPoints);
+    if (!preview.isValid) return null;
+    if (preview.points) {
+      addLoyaltyTransaction({
+        type: "redeem",
+        points: -preview.points,
+        sourceType,
+        sourceId,
+        amount: preview.discount,
+        description: `Đổi ${preview.points} điểm giảm ${money(preview.discount)} · ${label}`,
+      });
+    }
+    const earnedPoints = Math.floor(preview.paidAmount / LOYALTY_POLICY.earnPerAmount);
+    if (earnedPoints) {
+      addLoyaltyTransaction({
+        type: "earn",
+        points: earnedPoints,
+        sourceType,
+        sourceId,
+        amount: preview.paidAmount,
+        description: `Tích ${earnedPoints} điểm từ ${label}`,
+      });
+    }
+    return { ...preview, earnedPoints };
+  };
+  const splitEqual = (players, total) => {
+    if (!players.length) return [];
+    const base = Math.floor(total / players.length);
+    const remainder = total - base * players.length;
+    return players.map((player, index) => ({ ...player, amount: base + (index === 0 ? remainder : 0) }));
+  };
+  const splitProportionally = (players, previousTotal, nextTotal) => {
+    if (!players.length || !previousTotal) return splitEqual(players, nextTotal);
+    const shares = players.map((player, index) => {
+      const raw = amount(player.amount) / previousTotal * nextTotal;
+      return { index, base: Math.floor(raw), fraction: raw % 1 };
+    });
+    let remainder = nextTotal - shares.reduce((sum, share) => sum + share.base, 0);
+    shares.sort((a, b) => b.fraction - a.fraction || a.index - b.index).forEach((share) => {
+      if (remainder > 0) {
+        share.base += 1;
+        remainder -= 1;
+      }
+    });
+    return players.map((player, index) => ({ ...player, amount: shares.find((share) => share.index === index).base }));
+  };
+  const applyBookingDiscount = (booking, preview) => {
+    const previousTotal = amount(booking.subtotal);
+    const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
+    if (players.some((player) => player.paid)) return null;
+    const isEqual = !booking.split || booking.split.mode !== "custom";
+    const nextPlayers = isEqual
+      ? splitEqual(players, preview.paidAmount)
+      : splitProportionally(players, players.reduce((sum, player) => sum + amount(player.amount), 0), preview.paidAmount);
+    booking.total = preview.paidAmount;
+    booking.loyalty = { redeemedPoints: preview.points, discount: preview.discount, originalTotal: previousTotal };
+    if (booking.split) booking.split.players = nextPlayers;
+    return nextPlayers;
+  };
   const expireBookings = () => {
     const expired = state.bookings.filter((booking) => booking.status === "held" && booking.holdExpiresAt <= now());
     if (!expired.length) return false;
@@ -63,6 +179,18 @@
   window.MatchUpStore = {
     money,
     getState: () => { expireBookings(); return clone(state); },
+    getLoyalty: () => clone({ ...state.loyalty, policy: LOYALTY_POLICY }),
+    previewPoints: (subtotal, requestedPoints) => clone(previewPoints(subtotal, requestedPoints)),
+    previewBookingPoints: (bookingId, requestedPoints) => {
+      const booking = state.bookings.find((item) => item.id === bookingId);
+      if (!booking) return null;
+      const preview = previewPoints(amount(booking.subtotal), requestedPoints);
+      const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
+      const projectedPlayers = booking.split && booking.split.mode === "custom"
+        ? splitProportionally(players, players.reduce((sum, player) => sum + amount(player.amount), 0), preview.paidAmount)
+        : splitEqual(players, preview.paidAmount);
+      return clone({ ...preview, ownerAmount: amount(projectedPlayers[0] && projectedPlayers[0].amount) });
+    },
     getProfile: () => clone(state.profile),
     updateProfile: (updates) => {
       state.profile = { ...state.profile, ...updates };
@@ -152,14 +280,31 @@
       save("application-updated");
       return clone(application);
     },
-    payForApplication: (applicationId, method = "VietQR") => {
+    payForApplication: (applicationId, method = "VietQR", requestedPoints = 0) => {
       const application = state.applications.find((item) => item.id === applicationId);
       if (!application || application.status !== "accepted") return null;
+      const subtotal = amount(application.match.deposit || application.match.share / 2);
+      const loyaltyPayment = settleLoyalty({
+        subtotal,
+        requestedPoints,
+        sourceType: "application",
+        sourceId: application.id,
+        label: `cọc kèo ${application.match.name}`,
+      });
+      if (!loyaltyPayment) return null;
       application.status = "paid";
       application.paymentStatus = "paid";
       application.paymentMethod = method;
+      application.payment = {
+        subtotal,
+        paidAmount: loyaltyPayment.paidAmount,
+        redeemedPoints: loyaltyPayment.points,
+        discount: loyaltyPayment.discount,
+        earnedPoints: loyaltyPayment.earnedPoints,
+      };
       application.updatedAt = now();
-      addNotification("Đã thanh toán cọc kèo", `${money(application.match.deposit || application.match.share / 2)} cho ${application.match.name}.`, "payment");
+      const loyaltyNote = `${loyaltyPayment.points ? ` Đã đổi ${loyaltyPayment.points} điểm.` : ""}${loyaltyPayment.earnedPoints ? ` Tích ${loyaltyPayment.earnedPoints} điểm.` : ""}`;
+      addNotification("Đã thanh toán cọc kèo", `${money(loyaltyPayment.paidAmount)} cho ${application.match.name}.${loyaltyNote}`, "payment");
       save("application-paid");
       return clone(application);
     },
@@ -175,6 +320,7 @@
         time: input.time,
         duration: input.duration || 90,
         total,
+        subtotal: total,
         status: "held",
         holdExpiresAt: now() + 10 * 60 * 1000,
         createdAt: now(),
@@ -218,21 +364,60 @@
     },
     saveBookingSplit: (bookingId, split) => {
       const booking = getBooking(bookingId);
-      if (!booking) return null;
+      if (!booking || booking.ownerPaid) return null;
       booking.split = clone(split);
       booking.updatedAt = now();
       save("booking-split-updated");
       return clone(booking);
     },
-    payForBooking: (bookingId, method = "VietQR") => {
+    payForBooking: (bookingId, method = "VietQR", requestedPoints = 0) => {
       const booking = getBooking(bookingId);
-      if (!booking || booking.status === "expired" || booking.status === "cancelled") return null;
+      if (!booking || booking.ownerPaid || booking.status === "expired" || booking.status === "cancelled") return null;
+      const subtotal = amount(booking.subtotal);
+      const preview = previewPoints(subtotal, requestedPoints);
+      if (!preview.isValid) return null;
+      const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
+      if (!players.length || players.some((player) => player.paid)) return null;
+      const currentSplitTotal = players.reduce((sum, player) => sum + amount(player.amount), 0);
+      if (booking.split.mode === "custom" && currentSplitTotal !== subtotal) return null;
+      const previewSplit = booking.split.mode === "custom"
+        ? splitProportionally(players, currentSplitTotal, preview.paidAmount)
+        : splitEqual(players, preview.paidAmount);
+      const ownerAmount = amount(previewSplit[0] && previewSplit[0].amount);
+      const loyaltyPayment = settleLoyalty({
+        subtotal: ownerAmount,
+        requestedPoints: 0,
+        sourceType: "booking",
+        sourceId: booking.id,
+        label: `thanh toán sân ${booking.court}`,
+      });
+      if (!loyaltyPayment) return null;
+      if (preview.points) {
+        addLoyaltyTransaction({
+          type: "redeem",
+          points: -preview.points,
+          sourceType: "booking",
+          sourceId: booking.id,
+          amount: preview.discount,
+          description: `Đổi ${preview.points} điểm giảm ${money(preview.discount)} cho đơn sân ${booking.court}`,
+        });
+      }
+      const discountedPlayers = applyBookingDiscount(booking, preview);
+      if (!discountedPlayers) return null;
       booking.ownerPaid = true;
       booking.ownerPaymentMethod = method;
+      booking.payment = {
+        subtotal: ownerAmount,
+        paidAmount: ownerAmount,
+        redeemedPoints: preview.points,
+        discount: preview.discount,
+        earnedPoints: loyaltyPayment.earnedPoints,
+      };
       booking.updatedAt = now();
       const self = booking.split && booking.split.players && booking.split.players[0];
       if (self) self.paid = true;
-      addNotification("Thanh toán sân thành công", `Bạn đã thanh toán phần của mình qua ${method} cho ${booking.court}.`, "payment");
+      const loyaltyNote = `${preview.points ? ` Đã đổi ${preview.points} điểm.` : ""}${loyaltyPayment.earnedPoints ? ` Tích ${loyaltyPayment.earnedPoints} điểm.` : ""}`;
+      addNotification("Thanh toán sân thành công", `Bạn đã thanh toán ${money(ownerAmount)} qua ${method} cho ${booking.court}.${loyaltyNote}`, "payment");
       save("booking-paid");
       return clone(booking);
     },
