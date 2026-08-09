@@ -98,7 +98,7 @@
       .filter { min-width: 0; padding: 7px 11px; display: flex; align-items: center; gap: 10px; border-right: 1px solid var(--line); text-align: left; background: transparent; border-top: 0; border-bottom: 0; border-left: 0; }
       .filter .icon-box { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: #f2f6ee; color: var(--green); flex: 0 0 auto; }
       .filter .material-symbols-rounded { font-size: 19px; }
-      .filter span:not(.material-symbols-rounded) { display: block; color: var(--muted); font-size: 10px; font-weight: 700; line-height: 1.2; }
+      .filter > span:not(.icon-box) { display: block; color: var(--muted); font-size: 10px; font-weight: 700; line-height: 1.2; }
       .filter strong { display: block; color: var(--ink); font-size: 12px; line-height: 1.45; white-space: nowrap; }
       .finder-go { width: 48px; border: 0; border-radius: 13px; display: grid; place-items: center; background: var(--green); color: white; transition: transform .2s, background .2s; }
       .finder-go:hover { background: var(--deep-green); transform: translateY(-1px); }
@@ -183,16 +183,43 @@
       .book-btn { width: 100%; margin-top: 15px; padding: 12px; border: 0; border-radius: 10px; background: white; color: var(--green); font-size: 12px; font-weight: 800; transition: transform .2s; }
       .book-btn:hover { transform: translateY(-1px); }
 
-      .voucher-wrap { margin-top: 33px; padding: 22px 24px; display: grid; grid-template-columns: 1.1fr 1.55fr auto; gap: 22px; align-items: center; border: 1px solid #f0dc87; border-radius: 18px; background: var(--yellow); }
+      .voucher-wrap { margin-top: 33px; padding: 25px; border: 1px solid #dfe9de; border-radius: 22px; background: linear-gradient(135deg, #f4faef 0%, #fffdf3 100%); box-shadow: 0 16px 36px rgba(34, 70, 43, .06); }
+      .voucher-section-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
       .voucher-intro { display: flex; align-items: center; gap: 12px; }
-      .voucher-icon { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; color: #795a14; background: #ffd95b; }
-      .voucher-intro h3 { font: 800 15px "Plus Jakarta Sans", sans-serif; letter-spacing: -.3px; }
-      .voucher-intro p { margin-top: 3px; color: #816d38; font-size: 11px; }
-      .voucher { min-height: 62px; padding: 12px 15px; display: flex; align-items: center; justify-content: space-between; border: 1px dashed #dfa928; border-radius: 12px; color: #705815; background: rgba(255,255,255,.42); }
-      .voucher strong { display: block; font: 800 13px "Plus Jakarta Sans", sans-serif; }
-      .voucher span { display: block; margin-top: 4px; color: #927b3b; font-size: 10px; }
-      .copy-code { padding: 8px 10px; border: 0; border-radius: 7px; color: #75570d; background: #ffe58d; font-size: 10px; font-weight: 800; }
-      .all-vouchers { border: 0; background: transparent; color: #705815; font-size: 12px; font-weight: 800; white-space: nowrap; }
+      .voucher-icon { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; color: #795a14; background: #ffe37b; box-shadow: 0 7px 18px rgba(173, 129, 21, .14); }
+      .voucher-intro h3 { font: 800 18px "Plus Jakarta Sans", sans-serif; letter-spacing: -.5px; }
+      .voucher-intro p { margin-top: 4px; color: #718178; font-size: 11px; }
+      .voucher-count { min-width: 105px; padding: 9px 12px; border: 1px solid #d9e8d9; border-radius: 12px; color: #66816d; background: rgba(255,255,255,.72); text-align: right; }
+      .voucher-count strong { display: block; color: var(--green); font: 800 18px "Plus Jakarta Sans", sans-serif; }
+      .voucher-count span { display: block; margin-top: 2px; font-size: 9px; font-weight: 700; }
+      .voucher-tabs { display: flex; gap: 7px; margin-top: 22px; overflow-x: auto; scrollbar-width: none; }
+      .voucher-tabs::-webkit-scrollbar { display: none; }
+      .voucher-tab { flex: 0 0 auto; padding: 8px 12px; border: 1px solid #d9e5da; border-radius: 999px; color: #6c7b71; background: rgba(255,255,255,.7); font-size: 10px; font-weight: 800; }
+      .voucher-tab.active { border-color: var(--green); color: white; background: var(--green); }
+      .voucher-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+      .voucher-card { position: relative; min-width: 0; padding: 16px; overflow: hidden; border: 1px solid #dce8dc; border-radius: 16px; background: rgba(255,255,255,.9); box-shadow: 0 8px 20px rgba(37, 68, 43, .05); }
+      .voucher-card::after { content: ""; position: absolute; width: 76px; height: 76px; right: -33px; bottom: -35px; border: 1px solid currentColor; border-radius: 50%; opacity: .1; }
+      .voucher-card.featured { border-color: #e4c75e; background: linear-gradient(145deg, #fff8d9, #fffef6); }
+      .voucher-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .voucher-tag { padding: 5px 7px; border-radius: 999px; color: #567260; background: #eef7ee; font-size: 9px; font-weight: 800; }
+      .voucher-card.featured .voucher-tag { color: #806117; background: #ffedaa; }
+      .voucher-card-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; color: #4b7d5d; background: #edf7ef; }
+      .voucher-card.tone-yellow { color: #91701b; }
+      .voucher-card.tone-orange { color: #bd6840; }
+      .voucher-card.tone-green { color: #2c8053; }
+      .voucher-card.tone-blue { color: #3874a4; }
+      .voucher-card.tone-purple { color: #7356a0; }
+      .voucher-card.tone-red { color: #b76154; }
+      .voucher-value { margin-top: 14px; color: currentColor; font: 800 23px/1 "Plus Jakarta Sans", sans-serif; letter-spacing: -1px; }
+      .voucher-card h4 { margin-top: 8px; color: var(--ink); font: 800 13px/1.35 "Plus Jakarta Sans", sans-serif; letter-spacing: -.2px; }
+      .voucher-card p { min-height: 30px; margin-top: 4px; color: #718078; font-size: 10px; line-height: 1.45; }
+      .voucher-meta { display: flex; flex-wrap: wrap; gap: 5px 10px; margin-top: 12px; color: #7c8b82; font-size: 9px; font-weight: 700; }
+      .voucher-meta span { display: inline-flex; align-items: center; gap: 3px; }
+      .voucher-meta .material-symbols-rounded { font-size: 13px; }
+      .voucher-actions { display: flex; align-items: center; gap: 7px; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #dbe7dc; }
+      .copy-code { padding: 8px 9px; border: 1px solid #cbdccc; border-radius: 8px; color: var(--green); background: #f6fbf6; font-size: 9px; font-weight: 800; }
+      .use-voucher { flex: 1; padding: 9px 8px; border: 0; border-radius: 8px; color: #173c2c; background: var(--lime); font-size: 10px; font-weight: 800; text-align: center; text-decoration: none; }
+      .voucher-empty { grid-column: 1 / -1; padding: 22px; border: 1px dashed #cbdccc; border-radius: 13px; color: #748379; background: rgba(255,255,255,.55); font-size: 11px; text-align: center; }
 
       .toast { position: fixed; z-index: 50; left: 50%; bottom: 26px; max-width: calc(100% - 32px); padding: 13px 17px; border-radius: 12px; color: white; background: #18392a; box-shadow: 0 13px 30px rgba(0,0,0,.18); font-size: 13px; font-weight: 700; transform: translate(-50%, 120px); opacity: 0; transition: transform .3s, opacity .3s; }
       .toast.show { opacity: 1; transform: translate(-50%, 0); }
@@ -208,10 +235,12 @@
         main { padding: 26px 0 95px; }.hero { display: block; }.hero-copy { padding: 0; } h1 { max-width: 520px; letter-spacing: -1.9px; }.hero-copy > p { margin: 15px 0 21px; font-size: 14px; }
         .finder { grid-template-columns: 1fr 48px; gap: 3px; }.finder .filter:nth-child(2) { display: none; }.finder .filter { border: 0; }.quick-stats { margin-bottom: 25px; }.quick-stats div { padding-right: 14px; }.quick-stats b { font-size: 16px; }
         .match-spotlight { min-height: 265px; }.section-head { margin-top: 33px; }.section-title { font-size: 22px; }.content-grid { display: block; }.booking { position: relative; top: auto; margin-top: 24px; }.match-card { grid-template-columns: 43px 1fr auto; padding: 13px; gap: 10px; }.sport-square { width: 43px; height: 43px; }.match-join { min-width: 65px; }
-        .voucher-wrap { margin-top: 23px; padding: 16px; grid-template-columns: 1fr; gap: 13px; }.all-vouchers { text-align: left; }.voucher { min-height: 57px; }.mobile-nav { display: flex; position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; height: 70px; align-items: center; justify-content: space-around; border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }.mobile-nav button { border: 0; padding: 6px 12px; background: transparent; color: #77847d; font-size: 10px; font-weight: 700; }.mobile-nav .material-symbols-rounded { display: block; margin-bottom: 2px; font-size: 21px; }.mobile-nav button.active { color: var(--green); }.mobile-nav .make-match { width: 45px; height: 45px; margin-top: -22px; display: grid; place-items: center; border: 4px solid var(--paper); border-radius: 50%; color: var(--green); background: var(--lime); }.make-match .material-symbols-rounded { margin: 0; }
+        .voucher-wrap { margin-top: 23px; padding: 17px; }.voucher-section-head { align-items: center; }.voucher-intro h3 { font-size: 16px; }.voucher-count { min-width: 84px; }.voucher-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }.voucher-card { padding: 13px; }.voucher-value { font-size: 20px; }.voucher-card h4 { font-size: 12px; }.voucher-card p { min-height: 42px; }.voucher-actions { display: grid; grid-template-columns: 1fr; }.use-voucher { order: -1; }.mobile-nav { display: flex; position: fixed; z-index: 30; bottom: 0; left: 0; right: 0; height: 70px; align-items: center; justify-content: space-around; border-top: 1px solid var(--line); background: rgba(255,255,255,.96); backdrop-filter: blur(12px); }.mobile-nav button { border: 0; padding: 6px 12px; background: transparent; color: #77847d; font-size: 10px; font-weight: 700; }.mobile-nav .material-symbols-rounded { display: block; margin-bottom: 2px; font-size: 21px; }.mobile-nav button.active { color: var(--green); }.mobile-nav .make-match { width: 45px; height: 45px; margin-top: -22px; display: grid; place-items: center; border: 4px solid var(--paper); border-radius: 50%; color: var(--green); background: var(--lime); }.make-match .material-symbols-rounded { margin: 0; }
       }
-      @media (max-width: 400px) { .quick-stats { gap: 12px; }.quick-stats div { padding-right: 11px; }.quick-stats span { font-size: 10px; }.match-title h3 { font-size: 12px; }.match-title + p { font-size: 10px; }.match-join { min-width: 58px; font-size: 11px; } }
+      @media (max-width: 400px) { .quick-stats { gap: 12px; }.quick-stats div { padding-right: 11px; }.quick-stats span { font-size: 10px; }.match-title h3 { font-size: 12px; }.match-title + p { font-size: 10px; }.match-join { min-width: 58px; font-size: 11px; }.voucher-grid { grid-template-columns: 1fr; }.voucher-card p { min-height: 0; }.voucher-card.featured { grid-column: auto; } }
+      .match-reason-inline { display: inline-block; margin-left: 4px; padding: 3px 5px; border-radius: 999px; color: #35644a; background: #eff9f1; font-size: 9px; font-weight: 800; }
     </style>
+    <link rel="stylesheet" href="ui-spacing.css" />
   </head>
   <body>
     <div class="topbar">
@@ -231,6 +260,7 @@
           <a href="booking.html">Đặt sân</a>
           <a href="#voucher">Ưu đãi</a>
           <a href="match.html#list-title">Cộng đồng</a>
+          <a href="contact.html">Liên lạc</a>
         </div>
         <div class="nav-actions">
           <button class="round-btn" type="button" data-notifications aria-label="Thông báo"><span class="material-symbols-rounded">notifications</span><i class="badge"></i></button>
@@ -294,13 +324,13 @@
             </div>
             <div class="match-list">
               <article class="match-card" data-sport="Bóng đá">
-                <div class="sport-square">⚽</div><div><div class="match-title"><h3>FC Văn Quán chiều nay</h3><span class="level">TRUNG BÌNH</span></div><p>Sân cỏ nhân tạo · 7 người · Cần thêm 2</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>20:00 — 21:30, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Sân bóng Văn Quán · 1,2 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+                <div class="sport-square">⚽</div><div><div class="match-title"><h3>FC Văn Quán chiều nay</h3><span class="level">TRUNG BÌNH</span></div><p>Sân cỏ nhân tạo · 7 người · Cần thêm 2 <span class="match-reason-inline">✓ Gần bạn</span></p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>20:00 — 21:30, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Sân bóng Văn Quán · 1,2 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
               </article>
               <article class="match-card" data-sport="Cầu lông">
-                <div class="sport-square orange">🏸</div><div><div class="match-title"><h3>Đánh đôi sau giờ làm</h3><span class="level">KHÁ</span></div><p>Đôi nam nữ · Cần thêm 1 người chơi</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>18:30 — 20:00, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Nhà thi đấu Văn Quán · 2,1 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+                <div class="sport-square orange">🏸</div><div><div class="match-title"><h3>Đánh đôi sau giờ làm</h3><span class="level">KHÁ</span></div><p>Đôi nam nữ · Cần thêm 1 người chơi <span class="match-reason-inline">✓ Đúng giờ rảnh</span></p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>18:30 — 20:00, hôm nay</span><span><span class="material-symbols-rounded">location_on</span>Nhà thi đấu Văn Quán · 2,1 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
               </article>
               <article class="match-card" data-sport="Pickleball">
-                <div class="sport-square blue">🎾</div><div><div class="match-title"><h3>Pickleball Văn Phú cuối tuần</h3><span class="level">KHÁ</span></div><p>Đánh đôi giao lưu · Cần thêm 2</p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>07:00 — 08:30, sáng mai</span><span><span class="material-symbols-rounded">location_on</span>Pickleball Văn Phú · 3 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
+                <div class="sport-square blue">🎾</div><div><div class="match-title"><h3>Pickleball Văn Phú cuối tuần</h3><span class="level">KHÁ</span></div><p>Đánh đôi giao lưu · Cần thêm 2 <span class="match-reason-inline">✓ Cùng trình độ</span></p></div><div class="match-info"><span><span class="material-symbols-rounded">schedule</span>07:00 — 08:30, sáng mai</span><span><span class="material-symbols-rounded">location_on</span>Pickleball Văn Phú · 3 km</span></div><button class="match-join" onclick="location.href='match.html'">Xem kèo</button>
               </article>
             </div>
           </div>
@@ -318,12 +348,21 @@
       </section>
 
       <section class="shell voucher-wrap" id="voucher" aria-labelledby="voucher-title">
-        <div class="voucher-intro"><div class="voucher-icon"><span class="material-symbols-rounded">local_activity</span></div><div><h3 id="voucher-title">Ưu đãi dành cho bạn</h3><p>Giảm giá tự động khi đặt sân</p></div></div>
-        <div class="voucher"><div><strong>GIẢM 20% · LẦN ĐẶT SÂN ĐẦU</strong><span>Áp dụng cho mọi sân đối tác đến hết 31/08</span></div><button class="copy-code" data-code="MATCH20">MATCH20</button></div>
-        <button class="all-vouchers" data-toast="Bạn có 3 ưu đãi đang khả dụng">Xem 3 ưu đãi →</button>
+        <div class="voucher-section-head">
+          <div class="voucher-intro"><div class="voucher-icon"><span class="material-symbols-rounded">local_activity</span></div><div><h3 id="voucher-title">Ưu đãi dành cho bạn</h3><p>Chọn đúng ưu đãi, tiết kiệm thêm cho mỗi lần ra sân.</p></div></div>
+          <div class="voucher-count"><strong id="voucher-count">6</strong><span>ưu đãi đang mở</span></div>
+        </div>
+        <div class="voucher-tabs" role="tablist" aria-label="Lọc voucher">
+          <button class="voucher-tab active" type="button" role="tab" aria-selected="true" data-voucher-filter="all">Tất cả</button>
+          <button class="voucher-tab" type="button" role="tab" aria-selected="false" data-voucher-filter="new">Tân thủ</button>
+          <button class="voucher-tab" type="button" role="tab" aria-selected="false" data-voucher-filter="sport">Theo môn</button>
+          <button class="voucher-tab" type="button" role="tab" aria-selected="false" data-voucher-filter="offpeak">Giờ thấp điểm</button>
+          <button class="voucher-tab" type="button" role="tab" aria-selected="false" data-voucher-filter="friends">Bạn bè</button>
+        </div>
+        <div class="voucher-grid" id="voucher-grid" aria-live="polite"></div>
       </section>
     </main>
-    <nav class="mobile-nav" aria-label="Điều hướng di động"><button class="active"><span class="material-symbols-rounded">home</span>Khám phá</button><button onclick="location.href='match.html'"><span class="material-symbols-rounded">sports_soccer</span>Trận đấu</button><button class="make-match" onclick="location.href='match.html?create=1'" aria-label="Tạo trận"><span class="material-symbols-rounded">add</span></button><button onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span>Đặt sân</button><button onclick="location.href='profile.html'"><span class="material-symbols-rounded">person</span>Cá nhân</button></nav>
+    <nav class="mobile-nav" aria-label="Điều hướng di động"><button class="active"><span class="material-symbols-rounded">home</span>Khám phá</button><button onclick="location.href='match.html'"><span class="material-symbols-rounded">sports_soccer</span>Trận đấu</button><button class="make-match" onclick="location.href='match.html?create=1'" aria-label="Tạo trận"><span class="material-symbols-rounded">add</span></button><button onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span>Đặt sân</button><button onclick="location.href='contact.html'"><span class="material-symbols-rounded">forum</span>Liên lạc</button><button onclick="location.href='profile.html'"><span class="material-symbols-rounded">person</span>Cá nhân</button></nav>
     <div class="toast" role="status" aria-live="polite"></div>
     <script src="location.js"></script>
     <script src="app-state.js"></script>
@@ -337,6 +376,37 @@
         clearTimeout(timer);
         timer = setTimeout(() => toast.classList.remove('show'), 2600);
       }
+      const store = window.MatchUpStore;
+      const voucherGrid = document.querySelector('#voucher-grid');
+      const voucherCount = document.querySelector('#voucher-count');
+      const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+      const renderVouchers = (filter = 'all') => {
+        const vouchers = store.getVouchers().filter((voucher) => filter === 'all' || voucher.category === filter);
+        voucherCount.textContent = vouchers.length;
+        voucherGrid.innerHTML = vouchers.length ? vouchers.map((voucher, index) => `<article class="voucher-card tone-${escapeHtml(voucher.tone)} ${index === 0 && filter === 'all' ? 'featured' : ''}">
+          <div class="voucher-card-top"><span class="voucher-tag">${escapeHtml(voucher.categoryLabel)}</span><span class="voucher-card-icon"><span class="material-symbols-rounded">${escapeHtml(voucher.icon)}</span></span></div>
+          <div class="voucher-value">${escapeHtml(voucher.discountLabel)}</div>
+          <h4>${escapeHtml(voucher.title)}</h4>
+          <p>${escapeHtml(voucher.description)}</p>
+          <div class="voucher-meta"><span><span class="material-symbols-rounded">receipt_long</span>${escapeHtml(voucher.condition)}</span><span><span class="material-symbols-rounded">schedule</span>${escapeHtml(voucher.expires)}</span></div>
+          <div class="voucher-actions"><button class="copy-code" type="button" data-voucher-copy="${escapeHtml(voucher.code)}">${escapeHtml(voucher.code)}</button><a class="use-voucher" href="booking.html?voucher=${encodeURIComponent(voucher.id)}" data-voucher-use="${escapeHtml(voucher.id)}">Dùng ngay <span class="material-symbols-rounded">arrow_forward</span></a></div>
+        </article>`).join('') : '<div class="voucher-empty">Chưa có voucher trong nhóm này.</div>';
+      };
+      document.querySelectorAll('[data-voucher-filter]').forEach((tab) => tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-voucher-filter]').forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
+        tab.classList.add('active'); tab.setAttribute('aria-selected', 'true'); renderVouchers(tab.dataset.voucherFilter);
+      }));
+      voucherGrid.addEventListener('click', async (event) => {
+        const copyButton = event.target.closest('[data-voucher-copy]');
+        if (copyButton) {
+          const code = copyButton.dataset.voucherCopy;
+          try { await navigator.clipboard.writeText(code); showToast(`Đã sao chép mã ${code}`); } catch { showToast(`Mã ưu đãi của bạn: ${code}`); }
+          return;
+        }
+        const useButton = event.target.closest('[data-voucher-use]');
+        if (useButton) showToast('Voucher sẽ được kiểm tra lại theo sân và khung giờ bạn chọn.');
+      });
+      renderVouchers();
       document.querySelectorAll('[data-toast]').forEach((button) => button.addEventListener('click', () => showToast(button.dataset.toast)));
       document.querySelectorAll('.sport-tab').forEach((tab) => tab.addEventListener('click', () => {
         document.querySelectorAll('.sport-tab').forEach((item) => { item.classList.remove('active'); item.setAttribute('aria-selected', 'false'); });
@@ -346,10 +416,6 @@
       }));
       document.querySelectorAll('.date').forEach((date) => date.addEventListener('click', () => { document.querySelectorAll('.date').forEach((item) => item.classList.remove('active')); date.classList.add('active'); }));
       document.querySelectorAll('.time').forEach((time) => time.addEventListener('click', () => { document.querySelectorAll('.time').forEach((item) => item.classList.remove('active')); time.classList.add('active'); document.querySelector('.book-btn').textContent = `Giữ chỗ sân · ${time.textContent}`; }));
-      document.querySelector('[data-code]').addEventListener('click', async (event) => {
-        const code = event.currentTarget.dataset.code;
-        try { await navigator.clipboard.writeText(code); showToast(`Đã sao chép mã ${code}`); } catch { showToast(`Mã ưu đãi của bạn: ${code}`); }
-      });
     </script>
   </body>
 </html>

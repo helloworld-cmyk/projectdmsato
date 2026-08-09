@@ -1,0 +1,60 @@
+/* Shared spacing refinements for the responsive layouts. */
+
+/* Keep icon glyphs centered wherever a control uses inline content. */
+.material-symbols-rounded {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.filter .icon-box,
+.search-go,
+.close,
+.loyalty-close {
+  display: grid;
+  place-items: center;
+}
+
+.close,
+.loyalty-close {
+  padding: 0;
+}
+
+.method .material-symbols-rounded {
+  display: block;
+  width: max-content;
+  margin: 0 auto 4px;
+}
+
+@media (min-width: 761px) {
+  .match-grid { gap: 14px; }
+  .section-card { margin-top: 18px; }
+  .content { gap: 18px; }
+}
+
+@media (max-width: 760px) {
+  /* Keep the horizontal filter rail compact instead of stretching each item. */
+  .filter-panel { align-items: flex-start; }
+  .filter-panel .filter-group { height: max-content; min-height: 0; }
+  .filter-panel > .filter-group:last-child { display: none !important; }
+
+  .match-grid { gap: 14px; }
+  .match-card { padding: 16px; }
+  .card-bottom { gap: 12px; }
+
+  /* The court filters are a single horizontal rail on small screens. */
+  .filters { flex-wrap: nowrap; align-items: center; }
+  .area-bar { margin-bottom: 16px; }
+  .court-list { gap: 13px; margin-top: 16px; }
+  .court { padding: 13px; gap: 12px; }
+  .court-right { min-width: 74px; }
+
+  .event-card { padding: 17px; }
+  .section-card { margin-top: 18px; padding: 17px; }
+  .side { margin-top: 18px; }
+
+  .profile-card { margin-bottom: 18px; }
+  .content { gap: 18px; }
+  .section { padding: 18px; }
+}
