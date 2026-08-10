@@ -183,6 +183,13 @@
     };
     saved.applications = Array.isArray(saved.applications) ? saved.applications : [];
     saved.chatRooms = saved.chatRooms && typeof saved.chatRooms === "object" ? saved.chatRooms : {};
+    Object.values(saved.chatRooms).forEach((room) => {
+      const messages = Array.isArray(room.messages) ? room.messages : [];
+      if (room.greetingPending === undefined && messages.length === 2 && messages[0].kind === "system" && messages[1].senderId === "host") {
+        room.messages = [messages[0]];
+        room.greetingPending = true;
+      }
+    });
     saved.bookings = Array.isArray(saved.bookings) ? saved.bookings : [];
     saved.notifications = Array.isArray(saved.notifications) ? saved.notifications : [];
     saved.savedMatches = Array.isArray(saved.savedMatches) ? saved.savedMatches : [];
@@ -237,29 +244,92 @@
     return journey;
   };
   const findJourney = (type, sourceId) => state.playJourneys.find((item) => item.type === type && item.sourceId === sourceId) || null;
-  const chatApplication = (matchId) => state.applications.find((application) => application.matchId === matchId && ["accepted", "paid"].includes(application.status)) || null;
+  // A room is available as soon as the join request succeeds. The host can
+  // still approve the request separately, but the applicant should be able
+  // to reach the kèo's conversation immediately.
+  const chatApplication = (matchId) => state.applications.find((application) => application.matchId === matchId && ["pending", "accepted", "paid"].includes(application.status)) || null;
   const hostForMatch = (match) => {
     const participants = Array.isArray(match && match.participants) ? match.participants : [];
     return participants.find((player) => player.role === "Chủ kèo") || participants[0] || { name: "Chủ kèo MatchUp", initials: "MU", tone: "#6680ba" };
   };
+  const chatAutoReplyText = (text) => {
+    const cleanText = String(text || "").trim();
+    if (cleanText === "Mình sẽ đến sớm 10 phút nhé") return "Ok bạn nhé, đội sẽ đợi bạn khởi động cùng mọi người.";
+    if (cleanText === "Mình xác nhận tham gia kèo nhé!") return "Đã ghi nhận bạn tham gia rồi nhé! Hẹn gặp bạn tại sân.";
+    if (cleanText === "Sân mình chốt ở đâu vậy mọi người?" || cleanText === "Mình đã sẵn sàng rồi!") return "Mình đã ghim thông tin sân ở phía trên rồi nhé, hẹn bạn ở đó!";
+    return "";
+  };
+  const createChatAutoReply = (match, text) => {
+    const replyText = chatAutoReplyText(text);
+    if (!replyText) return null;
+    const host = match ? hostForMatch(match) : { name: "Minh Khang", initials: "MK", tone: "#6680ba" };
+    const sender = host.name === state.profile.name ? { name: "Minh Khang", initials: "MK", tone: "#6680ba" } : host;
+    return {
+      id: id("message"),
+      kind: "text",
+      senderId: "member",
+      senderName: sender.name,
+      senderInitials: sender.initials,
+      senderTone: sender.tone,
+      text: replyText,
+      createdAt: now(),
+    };
+  };
   const ensureChatRoom = (matchId, match) => {
     if (!matchId || !match) return null;
+    const application = state.applications.find((item) => item.matchId === matchId && !["declined", "cancelled"].includes(item.status));
+    const isPending = application && application.status === "pending";
     if (!state.chatRooms[matchId]) {
-      const host = hostForMatch(match);
-      const hostIsCurrentUser = host.name === state.profile.name;
-      const sender = hostIsCurrentUser ? { name: "Minh Khang", initials: "MK", tone: "#6680ba" } : host;
       state.chatRooms[matchId] = {
         id: `chat-${matchId}`,
         matchId,
         createdAt: now(),
         unreadCount: 1,
         messages: [
-          { id: id("message"), kind: "system", text: "Phòng chat riêng đã mở sau khi chủ kèo duyệt bạn vào đội.", createdAt: now() },
-          { id: id("message"), kind: "text", senderId: "host", senderName: sender.name, senderInitials: sender.initials, senderTone: sender.tone, text: "Chào mừng bạn vào kèo! Mình chốt sân và giờ ở đây nhé.", createdAt: now() },
+          { id: id("message"), kind: "system", text: isPending ? "Phòng chat của kèo đã mở sau khi bạn gửi yêu cầu vào đội." : "Phòng chat riêng đã mở sau khi chủ kèo duyệt bạn vào đội.", createdAt: now() },
         ],
+        greetingPending: true,
       };
+    } else if (isPending) {
+      const systemMessage = state.chatRooms[matchId].messages && state.chatRooms[matchId].messages.find((message) => message.kind === "system");
+      if (systemMessage && systemMessage.text === "Phòng chat riêng đã mở sau khi chủ kèo duyệt bạn vào đội.") systemMessage.text = "Phòng chat của kèo đã mở sau khi bạn gửi yêu cầu vào đội.";
+      const greeting = state.chatRooms[matchId].messages && state.chatRooms[matchId].messages.find((message) => message.kind === "text" && message.senderId === "host");
+      if (greeting && greeting.text === "Chào mừng bạn vào kèo! Mình chốt sân và giờ ở đây nhé.") greeting.text = "Chào bạn! Mình chốt sân và giờ ở đây nhé.";
     }
     return state.chatRooms[matchId];
+  };
+  const sendChatAutoReply = (matchId, text) => {
+    const application = chatApplication(matchId);
+    const reply = application ? createChatAutoReply(application.match, text) : null;
+    if (!reply) return null;
+    const room = ensureChatRoom(matchId, application.match);
+    room.messages.push(reply);
+    room.messages = room.messages.slice(-100);
+    save("chat-auto-reply");
+    return clone(reply);
+  };
+  const hasPendingChatGreeting = (matchId) => Boolean(state.chatRooms[matchId] && state.chatRooms[matchId].greetingPending);
+  const sendChatGreeting = (matchId) => {
+    const application = chatApplication(matchId);
+    const room = application ? ensureChatRoom(matchId, application.match) : null;
+    if (!application || !room || !room.greetingPending) return null;
+    const host = hostForMatch(application.match);
+    const hostIsCurrentUser = host.name === state.profile.name;
+    const sender = hostIsCurrentUser ? { name: "Minh Khang", initials: "MK", tone: "#6680ba" } : host;
+    const message = {
+      id: id("message"),
+      kind: "text",
+      senderId: "host",
+      senderName: sender.name,
+      senderInitials: sender.initials,
+      senderTone: sender.tone,
+      text: application.status === "pending" ? "Chào bạn! Mình chốt sân và giờ ở đây nhé." : "Chào mừng bạn vào kèo! Mình chốt sân và giờ ở đây nhé.",
+      createdAt: now(),
+    };
+    room.messages.push(message);
+    room.greetingPending = false;
+    save("chat-greeting");
+    return clone(message);
   };
   const matchInsight = (match) => {
     const profile = state.profile;
@@ -500,8 +570,8 @@
         name: input.name || `${profile.name} tìm đồng đội`,
         format: input.format || "Giao lưu",
         venue: input.venue || "Sân gần bạn",
-        area: input.area || "Hà Đông",
-        address: input.address || "Hà Đông, Hà Nội",
+        area: input.area || "Long Biên",
+        address: input.address || "Long Biên, Hà Nội",
         time: input.time || "Tối nay, 20:00",
         timeKey: input.timeKey || "today",
         timeOrder: Number(input.timeOrder) || 20,
@@ -608,6 +678,7 @@
       };
       upsertJourney("match", application.id, "requested", { matchId: match.id, matchName: match.name });
       state.applications.unshift(application);
+      ensureChatRoom(application.matchId, application.match);
       addNotification("Đã gửi yêu cầu vào kèo", `Yêu cầu vào ${match.name} đang chờ chủ kèo phản hồi.`, "match");
       save("match-applied");
       return clone(application);
@@ -617,9 +688,9 @@
       const application = chatApplication(matchId);
       if (!application) return { allowed: false, status: null, reason: "Phòng chat chỉ mở sau khi chủ kèo duyệt yêu cầu." };
       const room = ensureChatRoom(matchId, application.match);
-      return clone({ allowed: true, status: application.status, match: application.match, roomId: room.id });
+      return clone({ allowed: true, status: application.status, match: application.match, roomId: room.id, greetingPending: Boolean(room.greetingPending) });
     },
-    getChatRooms: () => clone(state.applications.filter((application) => ["accepted", "paid"].includes(application.status)).map((application) => {
+    getChatRooms: () => clone(state.applications.filter((application) => ["pending", "accepted", "paid"].includes(application.status)).map((application) => {
       const room = ensureChatRoom(application.matchId, application.match);
       const messages = Array.isArray(room.messages) ? room.messages : [];
       const lastMessage = messages.filter((message) => message.kind !== "system").slice(-1)[0] || messages.slice(-1)[0] || null;
@@ -633,6 +704,10 @@
       return true;
     },
     getChatMessages: (matchId) => clone((state.chatRooms[matchId] && state.chatRooms[matchId].messages) || []),
+    getChatAutoReply: (text) => clone(createChatAutoReply(null, text)),
+    hasPendingChatGreeting,
+    sendChatGreeting,
+    sendChatAutoReply,
     sendChatMessage: (matchId, text) => {
       const application = chatApplication(matchId);
       const cleanText = String(text || "").trim().slice(0, 500);
@@ -722,6 +797,7 @@
         distance: input.distance || "gần bạn",
         sport: input.sport || "football",
         date: input.date,
+        dateKey: input.dateKey || null,
         time: input.time,
         duration: input.duration || 90,
         total,

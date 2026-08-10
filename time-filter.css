@@ -1,0 +1,151 @@
+.time-filter-layer {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(18, 36, 26, .46);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s, visibility .2s;
+}
+
+.time-filter-layer.show { opacity: 1; visibility: visible; }
+
+.time-filter-modal {
+  width: min(560px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  overflow: auto;
+  padding: 23px;
+  border: 1px solid #e0e9e0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 34, 23, .28);
+  transform: translateY(12px) scale(.98);
+  transition: transform .2s;
+}
+
+.time-filter-layer.show .time-filter-modal { transform: translateY(0) scale(1); }
+
+.time-filter-head,
+.time-filter-heading,
+.time-filter-month,
+.time-filter-actions,
+.time-filter-shortcuts,
+.time-filter-range-head,
+.time-filter-range-options { display: flex; align-items: center; }
+
+.time-filter-head { justify-content: space-between; gap: 15px; }
+.time-filter-heading { gap: 10px; }
+.time-filter-heading > .material-symbols-rounded {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #1e7049;
+  background: #eff9ef;
+  font-size: 21px;
+}
+.time-filter-heading h2 { margin: 0; color: #18251f; font: 800 19px "Plus Jakarta Sans", sans-serif; letter-spacing: -.5px; }
+.time-filter-heading p { margin: 4px 0 0; color: #748178; font-size: 11px; }
+.time-filter-close {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: #65746b;
+  background: #f2f5f1;
+}
+
+.time-filter-shortcuts { flex-wrap: wrap; gap: 7px; margin-top: 20px; }
+.time-filter-shortcuts button,
+.time-filter-range-options button {
+  border: 1px solid #dce8dd;
+  border-radius: 10px;
+  color: #5f7065;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  transition: border-color .2s, background .2s, color .2s;
+}
+.time-filter-shortcuts button { padding: 8px 10px; }
+.time-filter-shortcuts button:hover,
+.time-filter-range-options button:hover { border-color: #b8dec1; color: #1e7049; background: #f4fbf4; }
+.time-filter-shortcuts button.active,
+.time-filter-range-options button.active { border-color: #b9dca3; color: #1c482f; background: #eaf7c9; }
+
+.time-filter-calendar { margin-top: 19px; padding: 15px; border: 1px solid #e5ece5; border-radius: 16px; background: #fbfdfb; }
+.time-filter-month { justify-content: space-between; gap: 10px; }
+.time-filter-month strong { color: #20382b; font: 800 13px "Plus Jakarta Sans", sans-serif; }
+.time-filter-month button {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e0e9e0;
+  border-radius: 8px;
+  color: #4c6755;
+  background: #fff;
+}
+.time-filter-month button:hover { color: #1e7049; border-color: #b8dec1; }
+.time-filter-month-nav { display: flex; gap: 6px; }
+.time-filter-weekdays,
+.time-filter-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; }
+.time-filter-weekdays { margin-top: 14px; }
+.time-filter-weekdays span { color: #94a198; font-size: 9px; font-weight: 800; text-align: center; text-transform: uppercase; }
+.time-filter-days { margin-top: 6px; }
+.time-filter-day {
+  min-height: 34px;
+  padding: 4px 2px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #52655a;
+  background: transparent;
+  font-size: 11px;
+  font-weight: 700;
+}
+.time-filter-day:hover:not(:disabled) { border-color: #b8dec1; background: #f1faf2; }
+.time-filter-day.muted { color: #b8c2bb; }
+.time-filter-day.today { color: #1e7049; box-shadow: inset 0 0 0 1px #d0e8d3; }
+.time-filter-day.selected { border-color: #1e7049; color: #173c2c; background: #ccf645; box-shadow: none; }
+.time-filter-day:disabled { color: #c7d0c9; cursor: not-allowed; }
+
+.time-filter-range { margin-top: 17px; padding-top: 15px; border-top: 1px solid #e8eee8; }
+.time-filter-range-head { justify-content: space-between; gap: 12px; }
+.time-filter-range-head strong { color: #304b39; font-size: 11px; }
+.time-filter-range-head span { color: #91a097; font-size: 9px; font-weight: 700; }
+.time-filter-range-options { flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.time-filter-range-options button { padding: 7px 9px; border-radius: 8px; }
+
+.time-filter-actions { justify-content: flex-end; gap: 8px; margin-top: 19px; }
+.time-filter-actions button { padding: 10px 14px; border-radius: 9px; font-size: 11px; font-weight: 800; }
+.time-filter-cancel { border: 1px solid #d9e5db; color: #547061; background: #fff; }
+.time-filter-apply { border: 0; color: #173c2c; background: #ccf645; }
+.time-filter-actions button:hover { transform: translateY(-1px); }
+
+.time-filter-trigger { cursor: pointer; }
+.time-filter-trigger:focus-visible,
+.time-filter-close:focus-visible,
+.time-filter-month button:focus-visible,
+.time-filter-shortcuts button:focus-visible,
+.time-filter-range-options button:focus-visible,
+.time-filter-day:focus-visible,
+.time-filter-actions button:focus-visible { outline: 3px solid rgba(30, 112, 73, .22); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .time-filter-layer { padding: 0; align-items: end; }
+  .time-filter-modal { width: 100%; max-height: 92vh; padding: 19px 16px calc(16px + env(safe-area-inset-bottom)); border-radius: 22px 22px 0 0; }
+  .time-filter-shortcuts { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+  .time-filter-shortcuts::-webkit-scrollbar { display: none; }
+  .time-filter-shortcuts button { flex: 0 0 auto; }
+  .time-filter-calendar { padding: 12px 9px; }
+  .time-filter-day { min-height: 35px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .time-filter-layer, .time-filter-modal, .time-filter-shortcuts button, .time-filter-range-options button, .time-filter-actions button { transition: none; }
+}

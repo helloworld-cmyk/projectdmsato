@@ -1,13 +1,13 @@
 /*
  * Demo location flow used across MatchUp screens.
  * This is a fully mocked permission UI: it never requests browser geolocation.
- * Once accepted, the displayed location is fixed at Hà Đông for predictable data.
+ * Once accepted, the displayed location is fixed at Long Biên for predictable data.
  */
 (() => {
   const mockLocation = {
-    district: "Hà Đông",
+    district: "Long Biên",
     city: "Hà Nội",
-    label: "Hà Đông, Hà Nội",
+    label: "Long Biên, Hà Nội",
     latitude: 20.9712,
     longitude: 105.7785,
   };
@@ -57,7 +57,7 @@
     layer.setAttribute("role", "dialog");
     layer.setAttribute("aria-modal", "true");
     layer.setAttribute("aria-labelledby", "mock-location-title");
-    layer.innerHTML = `<div class="mock-location-dialog"><div class="mock-location-icon"><span class="material-symbols-rounded">my_location</span></div><h2 id="mock-location-title">Cho phép MatchUp dùng vị trí?</h2><p>Để gợi ý sân và kèo gần bạn nhất, MatchUp cần vị trí của bạn.</p><small>Đây là bản demo: sau khi đồng ý, vị trí sẽ được mock ở Hà Đông, Hà Nội.</small><div class="mock-location-actions"><button type="button" data-location-later>Để sau</button><button type="button" class="accept" data-location-accept>Đồng ý</button></div></div>`;
+    layer.innerHTML = `<div class="mock-location-dialog"><div class="mock-location-icon"><span class="material-symbols-rounded">my_location</span></div><h2 id="mock-location-title">Cho phép MatchUp dùng vị trí?</h2><p>Để gợi ý sân và kèo gần bạn nhất, MatchUp cần vị trí của bạn.</p><small>Đây là bản demo: sau khi đồng ý, vị trí sẽ được mock ở Long Biên, Hà Nội.</small><div class="mock-location-actions"><button type="button" data-location-later>Để sau</button><button type="button" class="accept" data-location-accept>Đồng ý</button></div></div>`;
     document.body.appendChild(layer);
     layer.querySelector("[data-location-later]").addEventListener("click", () => layer.remove());
     layer.querySelector("[data-location-accept]").addEventListener("click", () => {

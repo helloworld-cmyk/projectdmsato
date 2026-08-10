@@ -241,6 +241,7 @@
       .match-reason-inline { display: inline-block; margin-left: 4px; padding: 3px 5px; border-radius: 999px; color: #35644a; background: #eff9f1; font-size: 9px; font-weight: 800; }
     </style>
     <link rel="stylesheet" href="ui-spacing.css" />
+    <link rel="stylesheet" href="time-filter.css" />
   </head>
   <body>
     <div class="topbar">
@@ -259,7 +260,6 @@
           <a class="active" href="match.html">Tìm trận</a>
           <a href="booking.html">Đặt sân</a>
           <a href="#voucher">Ưu đãi</a>
-          <a href="match.html#list-title">Cộng đồng</a>
           <a href="contact.html">Liên lạc</a>
         </div>
         <div class="nav-actions">
@@ -280,13 +280,13 @@
               <span class="icon-box"><span class="material-symbols-rounded">sports_soccer</span></span>
               <span><span>Môn thể thao</span><strong>Bóng đá</strong></span>
             </button>
-            <button class="filter" data-toast="Đang dùng vị trí mock: Hà Đông, Hà Nội">
+            <button class="filter" data-toast="Đang dùng vị trí mock: Long Biên, Hà Nội">
               <span class="icon-box"><span class="material-symbols-rounded">location_on</span></span>
               <span><span>Vị trí hiện tại</span><strong data-user-location>Chưa bật vị trí</strong></span>
             </button>
-            <button class="filter" data-toast="Đã chọn hôm nay, sau 18:00">
+            <button class="filter time-filter-trigger" type="button" data-time-filter-trigger aria-haspopup="dialog" aria-controls="time-filter-modal">
               <span class="icon-box"><span class="material-symbols-rounded">calendar_month</span></span>
-              <span><span>Thời gian</span><strong>Hôm nay, sau 18:00</strong></span>
+              <span><span>Thời gian</span><strong data-time-filter-label>Hôm nay, sau 18:00</strong></span>
             </button>
             <button class="finder-go" data-toast="Đang tìm những trận phù hợp nhất với bạn" aria-label="Tìm trận"><span class="material-symbols-rounded">search</span></button>
           </div>
@@ -338,7 +338,7 @@
           <aside class="booking" id="booking" aria-labelledby="booking-title">
             <div class="booking-kicker"><span class="material-symbols-rounded">bolt</span> Đặt nhanh trong 30 giây</div>
             <h2 id="booking-title">Sân trống quanh bạn</h2><p>Chọn sân, giờ đá và xác nhận. Hệ thống giữ chỗ trong 10 phút.</p>
-            <button class="court-select" onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span><span><span>Sân gần vị trí mock</span><strong>Hà Đông · nhiều lựa chọn</strong></span><span class="material-symbols-rounded">expand_more</span></button>
+            <button class="court-select" onclick="location.href='booking.html'"><span class="material-symbols-rounded">stadium</span><span><span>Sân gần vị trí mock</span><strong>Long Biên · nhiều lựa chọn</strong></span><span class="material-symbols-rounded">expand_more</span></button>
             <div class="date-row" aria-label="Chọn ngày"><button class="date active">Hôm nay<b>08</b></button><button class="date">Thứ Bảy<b>09</b></button><button class="date">Chủ nhật<b>10</b></button><button class="date">Thứ Hai<b>11</b></button></div>
             <div class="time-label"><span>Khung giờ còn trống</span><span>6 sân khả dụng</span></div>
             <div class="times"><button class="time">17:00</button><button class="time active">18:30</button><button class="time">20:00</button><button class="time">20:30</button><button class="time">21:00</button><button class="time">21:30</button></div>
@@ -367,6 +367,7 @@
     <script src="location.js"></script>
     <script src="app-state.js"></script>
     <script src="app-ui.js"></script>
+    <script src="time-filter.js"></script>
     <script>
       const toast = document.querySelector('.toast');
       let timer;
@@ -377,6 +378,11 @@
         timer = setTimeout(() => toast.classList.remove('show'), 2600);
       }
       const store = window.MatchUpStore;
+      const timeFilter = window.MatchUpTimeFilter.init({
+        trigger: document.querySelector('[data-time-filter-trigger]'),
+        initial: { scope: 'today', range: 'evening' },
+        onApply: (selection) => showToast(`Đã chọn ${selection.label}`)
+      });
       const voucherGrid = document.querySelector('#voucher-grid');
       const voucherCount = document.querySelector('#voucher-count');
       const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));

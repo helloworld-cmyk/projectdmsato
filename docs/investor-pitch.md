@@ -108,9 +108,32 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 
 **Hào sâu chiến lược:** Mạng lưới hai phía (người chơi + chủ sân), dữ liệu hồ sơ & danh tiếng tích lũy, lịch sử tương tác theo kèo và hệ điểm thưởng gắn chặt người dùng với nền tảng.
 
+## 6. Giải đáp hai câu hỏi phản biện quan trọng
+
+### 6.1. Nếu người chơi ở Long Biên nhưng sân ở Hai Bà Trưng thì sao?
+
+MatchUp không mặc định rằng sân gần nhà luôn là lựa chọn tốt nhất. Hệ thống hiển thị **khoảng cách thực tế, địa chỉ, bản đồ và khung giờ còn trống**; người chơi có thể đặt bán kính tìm kiếm và tự quyết định có di chuyển hay không. Điểm phù hợp của một kèo cũng tính đến vị trí sân, không chỉ vị trí người dùng.
+
+Đây là bài toán tối ưu giữa **độ gần, chất lượng sân, thời gian phù hợp và khả năng đủ đội**. Người ở Long Biên sẽ ưu tiên các kèo tại Long Biên hoặc khu vực lân cận, nhưng vẫn có thể chọn kèo ở Hai Bà Trưng nếu sân tốt hơn, giờ phù hợp hơn hoặc đã có bạn bè tham gia. Ở giai đoạn thí điểm, MatchUp tập trung mật độ sân và người chơi trong từng cụm quận để giảm quãng đường di chuyển; khi mở rộng, dữ liệu nhu cầu sẽ giúp đề xuất các kèo và sân cân bằng hơn theo từng khu vực.
+
+### 6.2. Người dùng đã quen đặt một sân thì có liên hệ thẳng với chủ sân không?
+
+**Có thể — và đây là rủi ro mà MatchUp phải chủ động giải quyết.** Vì vậy, sản phẩm không chỉ bán một lượt đặt sân mà cung cấp toàn bộ vòng đời trận đấu: tìm người cùng chơi, mở kèo, duyệt thành viên, thu cọc, chia tiền, chat đội, nhắc lịch, đánh giá và đặt lại một chạm.
+
+Với người đã có sân quen, MatchUp tạo lý do để họ vẫn đặt qua nền tảng:
+
+- Đặt lại đúng sân và khung giờ chỉ với một chạm, đồng thời tự mở lại kèo cho đội.
+- Theo dõi tiền cọc và phần thanh toán của từng thành viên, thay cho việc nhắn tin và thu tiền thủ công.
+- Tích điểm, nhận ưu đãi, duy trì lịch sử trận đấu và danh tiếng cá nhân.
+- Có phòng chat, nhắc lịch và quy trình xử lý rõ ràng nếu thành viên hủy hoặc không thanh toán.
+
+Với chủ sân, nền tảng mang lại **khách mới và nhu cầu giờ thấp điểm**, cùng công cụ quản lý lịch, thanh toán và dữ liệu doanh thu. Chủ sân có thể tiếp tục phục vụ khách quen, nhưng đặt qua MatchUp giúp họ lấp đầy công suất và giảm vận hành. Do đó, hoa hồng chỉ có ý nghĩa khi giá trị tăng thêm cho cả hai phía lớn hơn chi phí giao dịch.
+
+Chiến lược giữ giao dịch trong nền tảng là kết hợp **giá trị thực + loyalty + trải nghiệm đặt lại**, thay vì chỉ dựa vào việc ngăn người dùng liên hệ trực tiếp. Khi mạng lưới người chơi, lịch sử đội và dữ liệu tin cậy tích lũy, việc chuyển ra ngoài sẽ làm mất các tiện ích mà họ đang dùng.
+
 ---
 
-## 6. Mô hình kinh doanh (Business Model)
+## 7. Mô hình kinh doanh (Business Model)
 
 1. **Hoa hồng đặt sân** (10–15% mỗi giao dịch thành công từ chủ sân).
 2. **Phí thanh toán** trên mỗi phần chia tiền xử lý qua nền tảng.
@@ -121,22 +144,22 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 
 ---
 
-## 7. Lộ trình sản phẩm (Roadmap)
+## 8. Lộ trình sản phẩm (Roadmap)
 
 - **Giai đoạn 1 — MVP (đã hoàn thành):** Web demo tương tác đầy đủ — ghép đội, lọc / sắp xếp, lưu kèo, báo kèo, đặt sân, mời đội, chia tiền, chat đội sau khi được duyệt, inbox Liên lạc, trung tâm thông báo, điểm thưởng, streak / huy hiệu và đánh giá (toàn bộ luồng được mô phỏng sống động, chạy không cần backend).
-- **Giai đoạn 2 — Thị trường thí điểm (3–6 tháng):** Backend thật, chat realtime và push notification, app iOS/Android, triển khai tại 1–2 quận của Hà Nội (Hà Đông), ký hợp đồng 20–50 sân, đạt 10.000 người dùng thử.
+- **Giai đoạn 2 — Thị trường thí điểm (3–6 tháng):** Backend thật, chat realtime và push notification, app iOS/Android, triển khai tại 1–2 quận của Hà Nội (Long Biên), ký hợp đồng 20–50 sân, đạt 10.000 người dùng thử.
 - **Giai đoạn 3 — Mở rộng (6–12 tháng):** Mở rộng TP.HCM, tích hợp thanh toán chính thức (MoMo, VNPay, ngân hàng), ra mắt bảng điều khiển cho chủ sân, thương mại hóa hoa hồng.
 - **Giai đoạn 4 — Quy mô (12–24 tháng):** Dữ liệu lớn về nhu cầu thể thao, sản phẩm cho giải đấu & câu lạc bộ, mở rộng sang các đô thị lớn khác và Đông Nam Á.
 
 ---
 
-## 8. Đội ngũ (Team)
+## 9. Đội ngũ (Team)
 
 *(Điền thông tin đội ngũ: thành viên, vai trò, kinh nghiệm, điểm mạnh bổ sung cho nhau.)*
 
 ---
 
-## 9. Số tiền kêu gọi & cách sử dụng (The Ask)
+## 10. Số tiền kêu gọi & cách sử dụng (The Ask)
 
 | Hạng mục | Tỷ lệ |
 |---|---|
@@ -149,7 +172,7 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 
 ---
 
-## 10. Cách chạy bản demo (How to Demo)
+## 11. Cách chạy bản demo (How to Demo)
 
 Mở `index.html` trong trình duyệt (không cần cài đặt). Toàn bộ dữ liệu được lưu trên trình duyệt (localStorage), có thể thao tác trực tiếp:
 
