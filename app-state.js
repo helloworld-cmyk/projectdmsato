@@ -130,6 +130,96 @@
   const initials = (name) => String(name || "Ngọc Anh").trim().split(/\s+/).slice(-2).map((part) => part[0]).join("").toUpperCase();
   const integer = (value) => Math.max(0, Math.floor(Number(value) || 0));
   const amount = (value) => Math.max(0, Math.round(Number(value) || 0));
+  const subjectKey = (value) => String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim()
+    .replace(/đ/g, "d")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "unknown";
+  const stableSubjectId = (type, value) => `${type}-${subjectKey(value)}`;
+  const subjectId = (type, value) => {
+    if (value && typeof value === "object") return String(value.id || value[`${type}Id`] || stableSubjectId(type, value.name || value.court || value.label));
+    const raw = String(value || "");
+    if (raw === "self") return "self";
+    if (/^(?:court|player)-/.test(raw) || /^[a-z]+-\d+$/.test(raw)) return raw;
+    return raw.startsWith(`${type}-`) ? raw : stableSubjectId(type, raw);
+  };
+  const emptyPlayer = (player) => !player || player.empty || !String(player.name || "").trim() || /^(còn|trống|empty|slot)/i.test(String(player.name || "").trim());
+  const normalisePlayer = (player) => {
+    if (!player || typeof player !== "object") return null;
+    const name = String(player.name || "").trim();
+    if (!name) return null;
+    return { ...player, id: player.id || stableSubjectId("player", name), initials: player.initials || initials(name) };
+  };
+  const normalisePlayers = (players) => (Array.isArray(players) ? players : []).map(normalisePlayer).filter(Boolean);
+  const negativeTags = new Set(["Sân xuống cấp", "Vệ sinh chưa tốt", "Dịch vụ chưa ổn", "Không đến", "Thanh toán trễ/quỵt", "Sai trình độ", "Trễ giờ"]);
+  const positiveTags = new Set(["Sân tốt", "Vệ sinh tốt", "Dịch vụ ổn", "Đúng giờ", "Thanh toán đúng hẹn", "Đúng trình độ", "Thân thiện"]);
+  const reputationFromReviews = (type, subject, fallback = {}) => {
+    const subjectType = type === "court" ? "court" : "player";
+    const resolvedId = subjectId(subjectType, subject);
+    const reviews = state.reputationReviews.filter((review) => subjectType === "court"
+      ? review.court && review.court.id === resolvedId
+      : Array.isArray(review.players) && review.players.some((player) => player.id === resolvedId));
+    const ratings = reviews.map((review) => subjectType === "court"
+      ? Number(review.court && review.court.rating)
+      : Number(review.players.find((player) => player.id === resolvedId).rating)).filter((rating) => rating > 0);
+    const rating = ratings.length ? Math.round(ratings.reduce((sum, value) => sum + value, 0) / ratings.length * 10) / 10 : Number(fallback.rating) || 0;
+    const fallbackCount = integer(fallback.reviews || fallback.count);
+    const allTags = reviews.flatMap((review) => {
+      const target = subjectType === "court" ? review.court : (review.players || []).find((player) => player.id === resolvedId);
+      return target && Array.isArray(target.tags) ? target.tags : [];
+    });
+    const tags = [...new Set(allTags)].map((tag) => ({ tag, count: allTags.filter((item) => item === tag).length, positive: positiveTags.has(tag), negative: negativeTags.has(tag) }))
+      .sort((a, b) => b.count - a.count || Number(b.positive) - Number(a.positive) || a.tag.localeCompare(b.tag, "vi"));
+    const highlights = tags.filter((item) => item.positive).slice(0, 4);
+    const alerts = tags.filter((item) => item.negative && item.count >= 2);
+    return {
+      subjectId: resolvedId,
+      rating,
+      reviews: reviews.length || fallbackCount,
+      count: reviews.length || fallbackCount,
+      tags,
+      highlights,
+      alerts,
+      warnings: alerts,
+      hasData: reviews.length > 0,
+    };
+  };
+  const DEMO_REPUTATION_SEED_VERSION = 1;
+  const demoReputationReviews = () => {
+    const entries = [
+      { subject: "Ngọc Anh", reviewers: ["Minh Khang", "Thảo Vy"], ratings: [5, 5], tags: [["Đúng giờ", "Thân thiện"], ["Thanh toán đúng hẹn", "Đúng trình độ"]] },
+      { subject: "Minh Khang", reviewers: ["Ngọc Anh", "Thảo Vy"], ratings: [5, 4], tags: [["Đúng giờ", "Thân thiện"], ["Đúng trình độ", "Thanh toán đúng hẹn"]] },
+      { subject: "Thảo Vy", reviewers: ["Ngọc Anh", "Minh Khang"], ratings: [5, 5], tags: [["Thân thiện", "Đúng trình độ"], ["Đúng giờ", "Thanh toán đúng hẹn"]] },
+      { subject: "Quốc Duy", reviewers: ["Ngọc Anh", "Minh Khang"], ratings: [4, 5], tags: [["Đúng giờ", "Đúng trình độ"], ["Thân thiện", "Thanh toán đúng hẹn"]] },
+      { subject: "Hà My", reviewers: ["Ngọc Anh", "Thảo Vy"], ratings: [5, 4], tags: [["Thân thiện", "Đúng giờ"], ["Đúng trình độ", "Thanh toán đúng hẹn"]] },
+      { subject: "Tuấn Anh", reviewers: ["Minh Khang", "Thảo Vy"], ratings: [4, 5], tags: [["Đúng trình độ", "Đúng giờ"], ["Thân thiện", "Thanh toán đúng hẹn"]] },
+    ];
+    return entries.flatMap((entry) => entry.reviewers.map((reviewer, index) => ({
+      id: `demo-reputation-${subjectKey(entry.subject)}-${index + 1}`,
+      type: "match",
+      sourceId: `demo-match-${subjectKey(entry.subject)}-${index + 1}`,
+      reviewer: { id: stableSubjectId("player", reviewer), name: reviewer, initials: initials(reviewer) },
+      createdAt: now() - ((index + 1) * 86400000),
+      court: null,
+      players: [{
+        id: stableSubjectId("player", entry.subject),
+        name: entry.subject,
+        initials: initials(entry.subject),
+        rating: entry.ratings[index],
+        tags: entry.tags[index],
+      }],
+    })));
+  };
+  const seedMissingDemoReputation = (saved) => {
+    if (Number(saved.demoReputationSeedVersion) >= DEMO_REPUTATION_SEED_VERSION) return;
+    const existingSubjectIds = new Set((saved.reputationReviews || []).flatMap((review) => (review.players || []).map((player) => subjectId("player", player))));
+    const missingSeed = demoReputationReviews().filter((review) => !existingSubjectIds.has(review.players[0].id));
+    saved.reputationReviews = [...missingSeed, ...(saved.reputationReviews || [])];
+    saved.demoReputationSeedVersion = DEMO_REPUTATION_SEED_VERSION;
+  };
   const loyaltyDefaults = () => ({ balance: 0, transactions: [] });
   const defaultState = () => ({
     profile: {
@@ -157,6 +247,8 @@
     savedMatchDetails: {},
     playJourneys: [],
     matchFeedback: [],
+    reputationReviews: demoReputationReviews(),
+    demoReputationSeedVersion: DEMO_REPUTATION_SEED_VERSION,
     waitlists: [],
     loyalty: loyaltyDefaults(),
     notifications: [
@@ -196,15 +288,37 @@
     saved.savedMatchDetails = saved.savedMatchDetails && typeof saved.savedMatchDetails === "object" ? saved.savedMatchDetails : {};
     saved.playJourneys = Array.isArray(saved.playJourneys) ? saved.playJourneys : [];
     saved.matchFeedback = Array.isArray(saved.matchFeedback) ? saved.matchFeedback : [];
+    saved.reputationReviews = Array.isArray(saved.reputationReviews) ? saved.reputationReviews : [];
+    seedMissingDemoReputation(saved);
     saved.waitlists = Array.isArray(saved.waitlists) ? saved.waitlists : [];
+    saved.bookings.forEach((booking) => {
+      booking.courtId = booking.courtId || stableSubjectId("court", booking.court);
+      if (booking.split && Array.isArray(booking.split.players)) booking.split.players = normalisePlayers(booking.split.players);
+    });
+    saved.matches.forEach((match) => {
+      if (Array.isArray(match.participants)) match.participants = normalisePlayers(match.participants);
+    });
+    saved.applications.forEach((application) => {
+      if (application.match && Array.isArray(application.match.participants)) application.match.participants = normalisePlayers(application.match.participants);
+    });
+    saved.reputationReviews = saved.reputationReviews.map((review) => ({
+      ...review,
+      reviewer: { ...(review.reviewer || {}), id: "self", name: review.reviewer && review.reviewer.name || saved.profile.name, initials: review.reviewer && review.reviewer.initials || initials(saved.profile.name) },
+      court: review.court ? { ...review.court, id: subjectId("court", review.court), rating: Math.min(5, Math.max(1, integer(review.court.rating) || 5)), tags: Array.isArray(review.court.tags) ? review.court.tags.slice(0, 6) : [] } : null,
+      players: normalisePlayers(review.players).map((player) => ({ ...player, id: subjectId("player", player), rating: Math.min(5, Math.max(1, integer(player.rating) || 5)), tags: Array.isArray(player.tags) ? player.tags.slice(0, 8) : [] })),
+    })).filter((review) => review && review.type && review.sourceId);
+    saved.playJourneys.forEach((journey) => {
+      journey.feedbackSubmitted = Boolean(journey.feedbackSubmitted);
+      journey.reputationSubmitted = Boolean(journey.reputationSubmitted || saved.reputationReviews.some((review) => review.type === journey.type && review.sourceId === journey.sourceId));
+    });
     saved.applications.forEach((application) => {
       if (!saved.playJourneys.some((journey) => journey.type === "match" && journey.sourceId === application.id)) {
-        saved.playJourneys.push({ id: id("journey"), type: "match", sourceId: application.id, matchId: application.matchId, matchName: application.match && application.match.name, status: application.status, feedbackSubmitted: false, createdAt: application.createdAt || now(), updatedAt: application.updatedAt || now() });
+        saved.playJourneys.push({ id: id("journey"), type: "match", sourceId: application.id, matchId: application.matchId, matchName: application.match && application.match.name, status: application.status, feedbackSubmitted: false, reputationSubmitted: false, createdAt: application.createdAt || now(), updatedAt: application.updatedAt || now() });
       }
     });
     saved.bookings.forEach((booking) => {
       if (!saved.playJourneys.some((journey) => journey.type === "booking" && journey.sourceId === booking.id)) {
-        saved.playJourneys.push({ id: id("journey"), type: "booking", sourceId: booking.id, bookingId: booking.id, matchName: booking.court, status: booking.ownerPaid ? "paid" : booking.status, feedbackSubmitted: false, createdAt: booking.createdAt || now(), updatedAt: booking.updatedAt || now() });
+        saved.playJourneys.push({ id: id("journey"), type: "booking", sourceId: booking.id, bookingId: booking.id, matchName: booking.court, status: booking.ownerPaid ? "paid" : booking.status, feedbackSubmitted: false, reputationSubmitted: false, createdAt: booking.createdAt || now(), updatedAt: booking.updatedAt || now() });
       }
     });
     saved.bookings.forEach((booking) => {
@@ -234,7 +348,7 @@
   const upsertJourney = (type, sourceId, status, extra = {}) => {
     let journey = state.playJourneys.find((item) => item.type === type && item.sourceId === sourceId);
     if (!journey) {
-      journey = { id: id("journey"), type, sourceId, status, feedbackSubmitted: false, createdAt: now(), updatedAt: now(), ...extra };
+      journey = { id: id("journey"), type, sourceId, status, feedbackSubmitted: false, reputationSubmitted: false, createdAt: now(), updatedAt: now(), ...extra };
       state.playJourneys.unshift(journey);
     } else {
       journey.status = status;
@@ -244,6 +358,56 @@
     return journey;
   };
   const findJourney = (type, sourceId) => state.playJourneys.find((item) => item.type === type && item.sourceId === sourceId) || null;
+  const hasReputationReview = (type, sourceId) => state.reputationReviews.some((review) => review.type === type && review.sourceId === sourceId);
+  const canSubmitReputationReview = (type, sourceId) => {
+    const journey = findJourney(type, sourceId);
+    if (!journey || hasReputationReview(type, sourceId)) return false;
+    // A saved booking is reviewable from the personal schedule even when it
+    // was cancelled or expired. The user may still have a useful experience
+    // to report about the court or the people attached to that booking.
+    return type === "booking" || journey.status === "completed";
+  };
+  const normaliseReviewTags = (tags, limit) => [...new Set((Array.isArray(tags) ? tags : []).map((tag) => String(tag || "").trim()).filter(Boolean))].slice(0, limit);
+  const submitReputationReview = (input = {}) => {
+    const type = input.type === "match" ? "match" : input.type === "booking" ? "booking" : null;
+    const sourceId = String(input.sourceId || "");
+    if (!type || !sourceId || !canSubmitReputationReview(type, sourceId)) return null;
+    const profile = state.profile;
+    const courtInput = input.court || {};
+    const courtName = String(courtInput.name || input.courtName || input.court || "Sân chưa cập nhật").trim();
+    const court = {
+      id: subjectId("court", courtInput.id || input.courtId || courtName),
+      name: courtName,
+      rating: Math.min(5, Math.max(1, integer(courtInput.rating || input.courtRating) || 5)),
+      tags: normaliseReviewTags(courtInput.tags || input.courtTags, 6),
+    };
+    const selfPlayerId = stableSubjectId("player", profile.name);
+    const players = normalisePlayers(input.players).map((player) => ({
+      ...player,
+      id: subjectId("player", player),
+      rating: Math.min(5, Math.max(1, integer(player.rating) || 5)),
+      tags: normaliseReviewTags(player.tags, 8),
+    })).filter((player, index, all) => {
+      const isSelf = player.id === "self" || player.id === selfPlayerId || subjectKey(player.name) === subjectKey(profile.name);
+      return !isSelf && !emptyPlayer(player) && all.findIndex((item) => item.id === player.id) === index;
+    });
+    const review = {
+      id: id("reputation"),
+      type,
+      sourceId,
+      reviewer: { id: "self", name: profile.name, initials: profile.initials || initials(profile.name) },
+      createdAt: now(),
+      court,
+      players,
+    };
+    state.reputationReviews.unshift(review);
+    const journey = findJourney(type, sourceId);
+    journey.reputationSubmitted = true;
+    journey.updatedAt = now();
+    addNotification("Đã lưu đánh giá uy tín", "Cảm ơn bạn đã giúp cộng đồng MatchUp chơi vui và đúng hẹn hơn.", "feedback");
+    save("reputation-review-submitted");
+    return clone(review);
+  };
   // A room is available as soon as the join request succeeds. The host can
   // still approve the request separately, but the applicant should be able
   // to reach the kèo's conversation immediately.
@@ -348,10 +512,13 @@
     if (!reasons.length) reasons.push("Đang được xếp theo sở thích của bạn");
     const baseScore = Number(match.score) || 78;
     const score = Math.min(99, Math.max(60, Math.round((baseScore + (levelMatch ? 2 : 0) + (sportMatch ? 1 : 0)) / 1)));
+    const host = hostForMatch(match);
+    const hostName = match.creatorName || host.name || "Chủ kèo MatchUp";
+    const hostReputation = reputationFromReviews("player", { id: host.id, name: hostName }, {});
     return {
       score,
       reasons: reasons.slice(0, 4),
-      host: { name: match.creatorName || (match.participants && match.participants[0] && match.participants[0].name) || "Chủ kèo MatchUp", reliability: 98, matches: 24 },
+      host: { name: hostName, reliability: hostReputation.hasData ? Math.round(hostReputation.rating / 5 * 100) : 98, matches: hostReputation.hasData ? hostReputation.reviews : 24, reputation: hostReputation },
       vibe: match.vibe || (match.format && match.format.toLowerCase().includes("giao") ? "Giao lưu, thân thiện" : "Cân bằng và vui vẻ"),
     };
   };
@@ -544,6 +711,18 @@
       return clone({ ...preview, ownerAmount: amount(projectedPlayers[0] && projectedPlayers[0].amount) });
     },
     getProfile: () => clone(state.profile),
+    getSubjectId: (type, value) => subjectId(type === "court" ? "court" : "player", value),
+    submitReputationReview: (input = {}) => submitReputationReview(input),
+    canSubmitReputationReview: (type, sourceId) => canSubmitReputationReview(type, sourceId),
+    getCourtReputation: (courtId, fallback = {}) => clone(reputationFromReviews("court", courtId, fallback)),
+    getPlayerReputation: (playerId) => clone(reputationFromReviews("player", playerId === "self" ? stableSubjectId("player", state.profile.name) : playerId, {})),
+    getReviewsForSubject: (subjectType, subjectIdValue) => {
+      const type = subjectType === "court" ? "court" : "player";
+      const resolvedId = type === "player" && subjectIdValue === "self" ? stableSubjectId("player", state.profile.name) : subjectId(type, subjectIdValue);
+      return clone(state.reputationReviews.filter((review) => type === "court"
+        ? review.court && review.court.id === resolvedId
+        : Array.isArray(review.players) && review.players.some((player) => player.id === resolvedId)));
+    },
     getPreferences: () => clone(state.preferences),
     updateProfile: (updates) => {
       state.profile = { ...state.profile, ...updates };
@@ -588,7 +767,7 @@
         creatorName: profile.name,
         status: "open",
         createdAt: now(),
-        participants: [{ name: profile.name, initials: profile.initials, role: "Chủ kèo", tone: "#d78c68", payment: "Chưa thanh toán" }],
+        participants: [{ id: stableSubjectId("player", profile.name), name: profile.name, initials: profile.initials, role: "Chủ kèo", tone: "#d78c68", payment: "Chưa thanh toán" }],
         vibe: "Giao lưu, thân thiện",
       };
       state.matches.unshift(match);
@@ -794,6 +973,7 @@
       const booking = {
         id: id("booking"),
         court: input.court,
+        courtId: input.courtId || stableSubjectId("court", input.court),
         distance: input.distance || "gần bạn",
         sport: input.sport || "football",
         date: input.date,
@@ -819,9 +999,9 @@
         split: {
           mode: "equal",
           players: [
-            { name: state.profile.name, initials: state.profile.initials, role: "Người tạo kèo", amount: Math.round(total / 4), paid: false },
-            { name: "Minh Khoa", initials: "MK", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
-            { name: "Thu Linh", initials: "TL", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
+            { id: stableSubjectId("player", state.profile.name), name: state.profile.name, initials: state.profile.initials, role: "Người tạo kèo", amount: Math.round(total / 4), paid: false },
+            { id: stableSubjectId("player", "Minh Khoa"), name: "Minh Khoa", initials: "MK", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
+            { id: stableSubjectId("player", "Thu Linh"), name: "Thu Linh", initials: "TL", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
             { name: "Còn 1 chỗ", initials: "+", role: "Mời thêm người để chia đều hơn", amount: Math.round(total / 4), paid: false, empty: true },
           ],
         },
