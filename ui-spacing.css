@@ -34,6 +34,8 @@
 }
 
 @media (max-width: 760px) {
+  /* Keep the dynamically-added match price range available on mobile. */
+  .filter-panel .filter-group:has(#price-min) { display: block !important; }
   /* Keep the horizontal filter rail compact instead of stretching each item. */
   .filter-panel { align-items: flex-start; }
   .filter-panel .filter-group { height: max-content; min-height: 0; }
