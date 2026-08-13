@@ -220,6 +220,19 @@
     saved.reputationReviews = [...missingSeed, ...(saved.reputationReviews || [])];
     saved.demoReputationSeedVersion = DEMO_REPUTATION_SEED_VERSION;
   };
+  const BOOKING_ROSTER_MIGRATION_VERSION = 1;
+  const seededBookingPlayer = (player) => {
+    const name = String(player && player.name || "").trim();
+    const role = String(player && player.role || "").trim();
+    return ["Minh Khoa", "Thu Linh"].includes(name) && role === "Đã vào kèo · Đang chờ thanh toán";
+  };
+  const equalBookingPlayers = (players, total) => {
+    if (!players.length) return [];
+    const safeTotal = amount(total);
+    const base = Math.floor(safeTotal / players.length);
+    const remainder = safeTotal - base * players.length;
+    return players.map((player, index) => ({ ...player, amount: base + (index === 0 ? remainder : 0) }));
+  };
   const loyaltyDefaults = () => ({ balance: 0, transactions: [] });
   const defaultState = () => ({
     profile: {
@@ -243,6 +256,7 @@
     applications: [],
     chatRooms: {},
     bookings: [],
+    bookingRosterMigrationVersion: BOOKING_ROSTER_MIGRATION_VERSION,
     savedMatches: [],
     savedMatchDetails: {},
     playJourneys: [],
@@ -257,6 +271,7 @@
   });
 
   const normaliseState = (saved) => {
+    const shouldMigrateBookingRosters = Number(saved.bookingRosterMigrationVersion) < BOOKING_ROSTER_MIGRATION_VERSION;
     saved.profile = saved.profile && typeof saved.profile === "object" ? saved.profile : defaultState().profile;
     saved.profile.sports = Array.isArray(saved.profile.sports) ? saved.profile.sports : ["football"];
     saved.profile.streak = integer(saved.profile.streak);
@@ -293,8 +308,18 @@
     saved.waitlists = Array.isArray(saved.waitlists) ? saved.waitlists : [];
     saved.bookings.forEach((booking) => {
       booking.courtId = booking.courtId || stableSubjectId("court", booking.court);
-      if (booking.split && Array.isArray(booking.split.players)) booking.split.players = normalisePlayers(booking.split.players);
+      booking.teamSize = Math.max(1, integer(booking.teamSize) || 4);
+      if (booking.split && Array.isArray(booking.split.players)) {
+        const players = shouldMigrateBookingRosters && !booking.ownerPaid
+          ? booking.split.players.filter((player) => !emptyPlayer(player) && !seededBookingPlayer(player))
+          : booking.split.players;
+        const normalisedPlayers = normalisePlayers(players);
+        booking.split.players = shouldMigrateBookingRosters && !booking.ownerPaid && booking.split.mode !== "custom"
+          ? equalBookingPlayers(normalisedPlayers, booking.total)
+          : normalisedPlayers;
+      }
     });
+    saved.bookingRosterMigrationVersion = BOOKING_ROSTER_MIGRATION_VERSION;
     saved.matches.forEach((match) => {
       if (Array.isArray(match.participants)) match.participants = normalisePlayers(match.participants);
     });
@@ -332,7 +357,14 @@
   const read = () => {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-      if (saved && saved.profile && Array.isArray(saved.matches)) return normaliseState(saved);
+      if (saved && saved.profile && Array.isArray(saved.matches)) {
+        const previousRosterVersion = Number(saved.bookingRosterMigrationVersion) || 0;
+        const normalised = normaliseState(saved);
+        if (previousRosterVersion < BOOKING_ROSTER_MIGRATION_VERSION) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(normalised));
+        }
+        return normalised;
+      }
     } catch (_) { /* fall through to seed data */ }
     return defaultState();
   };
@@ -956,12 +988,13 @@
       expireBookings();
       const hasSubtotal = Object.prototype.hasOwnProperty.call(input, "subtotal");
       const originalTotal = amount(hasSubtotal ? input.subtotal : input.total);
+      const teamSize = Math.max(1, integer(input.teamSize) || 4);
       const voucherContext = {
         subtotal: originalTotal,
         sport: input.sport || "",
         date: input.date || "",
         time: input.time || "",
-        teamSize: Number(input.teamSize) || 4,
+        teamSize,
         isFirstBooking: !bookingHistoryExists(),
       };
       const voucherPreview = input.voucherId
@@ -974,6 +1007,7 @@
         id: id("booking"),
         court: input.court,
         courtId: input.courtId || stableSubjectId("court", input.court),
+        teamSize,
         distance: input.distance || "gần bạn",
         sport: input.sport || "football",
         date: input.date,
@@ -999,10 +1033,7 @@
         split: {
           mode: "equal",
           players: [
-            { id: stableSubjectId("player", state.profile.name), name: state.profile.name, initials: state.profile.initials, role: "Người tạo kèo", amount: Math.round(total / 4), paid: false },
-            { id: stableSubjectId("player", "Minh Khoa"), name: "Minh Khoa", initials: "MK", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
-            { id: stableSubjectId("player", "Thu Linh"), name: "Thu Linh", initials: "TL", role: "Đã vào kèo · Đang chờ thanh toán", amount: Math.round(total / 4), paid: false },
-            { name: "Còn 1 chỗ", initials: "+", role: "Mời thêm người để chia đều hơn", amount: Math.round(total / 4), paid: false, empty: true },
+            { id: stableSubjectId("player", state.profile.name), name: state.profile.name, initials: state.profile.initials, role: "Người tạo kèo", amount: total, paid: false },
           ],
         },
       };
@@ -1042,6 +1073,26 @@
       booking.split = clone(split);
       booking.updatedAt = now();
       save("booking-split-updated");
+      return clone(booking);
+    },
+    addBookingPlayer: (bookingId, playerInput = {}) => {
+      const booking = getBooking(bookingId);
+      if (!booking || booking.ownerPaid || ["expired", "cancelled"].includes(booking.status)) return null;
+      const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
+      const maxPlayers = Math.max(1, integer(booking.teamSize) || 4);
+      if (players.length >= maxPlayers) return null;
+      const player = normalisePlayer({
+        ...playerInput,
+        role: playerInput.role || "Đã được mời · Đang chờ tham gia",
+        paid: false,
+      });
+      if (!player || players.some((item) => subjectKey(item.name) === subjectKey(player.name))) return null;
+      booking.split = {
+        mode: "equal",
+        players: splitEqual([...players, player], amount(booking.total)),
+      };
+      booking.updatedAt = now();
+      save("booking-player-added");
       return clone(booking);
     },
     payForBooking: (bookingId, method = "VietQR", requestedPoints = 0) => {
@@ -1097,6 +1148,12 @@
       return clone(booking);
     },
     getSecondsRemaining: (booking) => booking && booking.status === "held" ? Math.max(0, Math.ceil((booking.holdExpiresAt - now()) / 1000)) : 0,
-    resetDemo: () => { state = defaultState(); save("demo-reset"); },
+    resetDemo: () => {
+      state = defaultState();
+      try { localStorage.clear(); } catch (_) { /* storage may be unavailable */ }
+      try { sessionStorage.clear(); } catch (_) { /* storage may be unavailable */ }
+      document.dispatchEvent(new CustomEvent(EVENT_NAME, { detail: { reason: "demo-reset", state: clone(state) } }));
+      return clone(state);
+    },
   };
 })();
