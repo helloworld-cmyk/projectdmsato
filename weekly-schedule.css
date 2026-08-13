@@ -1,0 +1,164 @@
+.weekly-schedule-layer {
+  position: fixed;
+  z-index: 85;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(18, 36, 26, .48);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .2s, visibility .2s;
+}
+
+.weekly-schedule-layer.show { opacity: 1; visibility: visible; }
+
+.weekly-schedule-modal {
+  width: min(760px, 100%);
+  max-height: min(760px, calc(100vh - 40px));
+  overflow: hidden;
+  padding: 22px;
+  border: 1px solid #e0e9e0;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 34, 23, .28);
+  transform: translateY(12px) scale(.98);
+  transition: transform .2s;
+}
+
+.weekly-schedule-layer.show .weekly-schedule-modal { transform: translateY(0) scale(1); }
+
+.weekly-schedule-head,
+.weekly-schedule-title,
+.weekly-schedule-toolbar,
+.weekly-schedule-legend,
+.weekly-schedule-actions { display: flex; align-items: center; }
+
+.weekly-schedule-head { justify-content: space-between; gap: 15px; }
+.weekly-schedule-title { gap: 10px; }
+.weekly-schedule-title > .material-symbols-rounded {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: #1e7049;
+  background: #eff9ef;
+  font-size: 21px;
+}
+.weekly-schedule-title h2 { margin: 0; color: #18251f; font: 800 19px "Plus Jakarta Sans", sans-serif; letter-spacing: -.5px; }
+.weekly-schedule-title p { margin: 4px 0 0; color: #748178; font-size: 11px; }
+.weekly-schedule-close {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9px;
+  color: #65746b;
+  background: #f2f5f1;
+}
+
+.weekly-schedule-toolbar { justify-content: space-between; gap: 10px; margin-top: 20px; }
+.weekly-schedule-toolbar strong { color: #20382b; font: 800 13px "Plus Jakarta Sans", sans-serif; }
+.weekly-schedule-nav {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #e0e9e0;
+  border-radius: 8px;
+  color: #4c6755;
+  background: #fff;
+}
+.weekly-schedule-nav:hover,
+.weekly-schedule-close:hover { color: #1e7049; border-color: #b8dec1; }
+
+.weekly-schedule-legend { flex-wrap: wrap; gap: 10px; margin-top: 14px; color: #819087; font-size: 10px; font-weight: 700; }
+.weekly-schedule-legend span { display: inline-flex; align-items: center; gap: 5px; }
+.weekly-schedule-legend i { width: 9px; height: 9px; display: inline-block; border-radius: 3px; background: #eaf7c9; }
+.weekly-schedule-legend .is-full { background: #fff0e9; }
+.weekly-schedule-legend .is-past { background: #f0f3ef; border: 1px dotted #b7c2ba; }
+
+.weekly-schedule-scroll {
+  overflow: auto;
+  margin-top: 13px;
+  border: 1px solid #e2ebe2;
+  border-radius: 13px;
+  scrollbar-width: thin;
+}
+
+.weekly-schedule-grid {
+  display: grid;
+  grid-template-columns: 58px repeat(7, minmax(86px, 1fr));
+  min-width: 660px;
+  background: #fbfdfb;
+}
+
+.weekly-schedule-grid > * { border-right: 1px solid #e7eee7; border-bottom: 1px solid #e7eee7; }
+.weekly-schedule-grid > :nth-child(8n) { border-right: 0; }
+.weekly-schedule-corner,
+.weekly-schedule-day { min-height: 59px; }
+.weekly-schedule-corner { display: grid; place-items: center; color: #96a39a; font-size: 9px; font-weight: 800; }
+.weekly-schedule-day {
+  padding: 9px 4px 7px;
+  border: 0;
+  color: #627168;
+  background: #f4f8f4;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+.weekly-schedule-day strong { display: block; margin-top: 4px; color: #263c2f; font: 800 15px "Plus Jakarta Sans", sans-serif; }
+.weekly-schedule-day:hover:not(:disabled) { color: #1e7049; background: #eff9ef; }
+.weekly-schedule-day.is-selected { color: #1e7049; background: #eaf7c9; box-shadow: inset 0 -3px 0 #a9d76a; }
+.weekly-schedule-day.is-today strong { color: #1e7049; }
+.weekly-schedule-day.is-past { color: #aab6ad; background: #f6f8f5; }
+
+.weekly-schedule-time { display: grid; place-items: center; color: #7e8c83; background: #fff; font-size: 9px; font-weight: 800; }
+.weekly-schedule-slot {
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 5px 3px;
+  border: 0;
+  color: #37634b;
+  background: #f8fcf7;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+}
+.weekly-schedule-slot small { color: #759182; font-size: 8px; font-weight: 700; }
+.weekly-schedule-slot:hover:not(:disabled) { background: #eaf7c9; box-shadow: inset 0 0 0 1px #a9d76a; }
+.weekly-schedule-slot.is-full { color: #ad725b; background: #fff7f3; }
+.weekly-schedule-slot.is-full small { color: #c08a77; }
+.weekly-schedule-slot.is-past { color: #aab5ad; background: #f1f4f1; cursor: not-allowed; }
+.weekly-schedule-slot.is-past small { color: #aeb9b1; }
+.weekly-schedule-slot.is-selected { color: #173c2c; background: #ccf645; box-shadow: inset 0 0 0 2px #93c94a; }
+
+.weekly-schedule-note { margin: 12px 0 0; color: #748178; font-size: 10px; font-weight: 700; line-height: 1.45; }
+.weekly-schedule-actions { justify-content: flex-end; gap: 8px; margin-top: 17px; }
+.weekly-schedule-actions button { padding: 10px 14px; border-radius: 9px; font-size: 11px; font-weight: 800; }
+.weekly-schedule-cancel { border: 1px solid #d9e5db; color: #547061; background: #fff; }
+.weekly-schedule-actions button:hover { transform: translateY(-1px); }
+
+.weekly-schedule-close:focus-visible,
+.weekly-schedule-nav:focus-visible,
+.weekly-schedule-day:focus-visible,
+.weekly-schedule-slot:focus-visible,
+.weekly-schedule-actions button:focus-visible { outline: 3px solid rgba(30, 112, 73, .22); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .weekly-schedule-layer { padding: 0; align-items: end; }
+  .weekly-schedule-modal { width: 100%; max-height: 92vh; padding: 19px 16px calc(16px + env(safe-area-inset-bottom)); border-radius: 22px 22px 0 0; }
+  .weekly-schedule-title h2 { font-size: 17px; }
+  .weekly-schedule-title p { max-width: 220px; }
+  .weekly-schedule-grid { grid-template-columns: 54px repeat(7, minmax(82px, 1fr)); min-width: 628px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weekly-schedule-layer, .weekly-schedule-modal, .weekly-schedule-actions button { transition: none; }
+}
