@@ -11,6 +11,7 @@
     pointValue: 100,
     maxDiscountRate: 0.5,
   });
+  const WALLET_PAYMENT_METHOD = "Ví MatchUp";
   const SPORT_LABELS = Object.freeze({ football: "bóng đá", badminton: "cầu lông", pickleball: "pickleball", basketball: "bóng rổ" });
   const VOUCHER_CATALOG = Object.freeze([
     {
@@ -233,7 +234,44 @@
     const remainder = safeTotal - base * players.length;
     return players.map((player, index) => ({ ...player, amount: base + (index === 0 ? remainder : 0) }));
   };
+  const joinRuleDefaults = () => ({
+    requirePaymentBeforeJoin: false,
+    autoApprove: false,
+    criteria: {
+      levelMatch: false,
+      minRating: 0,
+      minCompletedMatches: 0,
+    },
+  });
+  const normaliseJoinRules = (input = {}) => {
+    const defaults = joinRuleDefaults();
+    const criteria = input && typeof input.criteria === "object" ? input.criteria : {};
+    const allowedRatings = [0, 4, 4.5];
+    const allowedMatches = [0, 3, 5, 10];
+    const rating = Number(criteria.minRating);
+    const completed = integer(criteria.minCompletedMatches);
+    return {
+      requirePaymentBeforeJoin: Boolean(input && input.requirePaymentBeforeJoin),
+      autoApprove: Boolean(input && input.autoApprove),
+      criteria: {
+        levelMatch: Boolean(criteria.levelMatch),
+        minRating: allowedRatings.includes(rating) ? rating : defaults.criteria.minRating,
+        minCompletedMatches: allowedMatches.includes(completed) ? completed : defaults.criteria.minCompletedMatches,
+      },
+    };
+  };
+  const approvalCheck = (match, candidate = {}) => {
+    const rules = normaliseJoinRules(match && match.joinRules);
+    const reputation = reputationFromReviews("player", candidate.id || candidate.name || "unknown", { rating: Number(candidate.rating) || 0 });
+    const completedMatches = Number(candidate.completedMatches) || reputation.reviews || 0;
+    const failed = [];
+    if (rules.criteria.levelMatch && match && match.level && candidate.level !== match.level) failed.push(`Đúng trình độ ${match.level}`);
+    if (rules.criteria.minRating && (!(reputation.hasData || Number(candidate.rating) > 0) || reputation.rating < rules.criteria.minRating)) failed.push(`Từ ${rules.criteria.minRating.toFixed(1)}★`);
+    if (rules.criteria.minCompletedMatches && completedMatches < rules.criteria.minCompletedMatches) failed.push(`${rules.criteria.minCompletedMatches} trận đã hoàn thành`);
+    return { rules, eligible: failed.length === 0, failed, reputation, completedMatches };
+  };
   const loyaltyDefaults = () => ({ balance: 0, transactions: [] });
+  const walletDefaults = () => ({ balance: 0, transactions: [] });
   const defaultState = () => ({
     profile: {
       name: "Ngọc Anh",
@@ -265,6 +303,7 @@
     demoReputationSeedVersion: DEMO_REPUTATION_SEED_VERSION,
     waitlists: [],
     loyalty: loyaltyDefaults(),
+    wallet: walletDefaults(),
     notifications: [
       { id: id("notice"), type: "tip", title: "Chào mừng đến MatchUp", body: "Hồ sơ của bạn giúp MatchUp gợi ý kèo hợp hơn.", createdAt: now(), read: false },
     ],
@@ -288,6 +327,12 @@
       balance: integer(loyalty.balance),
       transactions: Array.isArray(loyalty.transactions) ? loyalty.transactions.slice(0, 50) : [],
     };
+    const wallet = saved && saved.wallet && typeof saved.wallet === "object" ? saved.wallet : walletDefaults();
+    saved.wallet = {
+      balance: amount(wallet.balance),
+      transactions: Array.isArray(wallet.transactions) ? wallet.transactions.slice(0, 50) : [],
+    };
+    saved.matches = Array.isArray(saved.matches) ? saved.matches : [];
     saved.applications = Array.isArray(saved.applications) ? saved.applications : [];
     saved.chatRooms = saved.chatRooms && typeof saved.chatRooms === "object" ? saved.chatRooms : {};
     Object.values(saved.chatRooms).forEach((room) => {
@@ -306,7 +351,9 @@
     saved.reputationReviews = Array.isArray(saved.reputationReviews) ? saved.reputationReviews : [];
     seedMissingDemoReputation(saved);
     saved.waitlists = Array.isArray(saved.waitlists) ? saved.waitlists : [];
+    saved.matches.forEach((match) => { match.joinRules = normaliseJoinRules(match.joinRules); });
     saved.bookings.forEach((booking) => {
+      booking.joinRules = normaliseJoinRules(booking.joinRules);
       booking.courtId = booking.courtId || stableSubjectId("court", booking.court);
       booking.teamSize = Math.max(1, integer(booking.teamSize) || 4);
       if (booking.split && Array.isArray(booking.split.players)) {
@@ -337,6 +384,7 @@
       journey.reputationSubmitted = Boolean(journey.reputationSubmitted || saved.reputationReviews.some((review) => review.type === journey.type && review.sourceId === journey.sourceId));
     });
     saved.applications.forEach((application) => {
+      if (application.match) application.match.joinRules = normaliseJoinRules(application.match.joinRules);
       if (!saved.playJourneys.some((journey) => journey.type === "match" && journey.sourceId === application.id)) {
         saved.playJourneys.push({ id: id("journey"), type: "match", sourceId: application.id, matchId: application.matchId, matchName: application.match && application.match.name, status: application.status, feedbackSubmitted: false, reputationSubmitted: false, createdAt: application.createdAt || now(), updatedAt: application.updatedAt || now() });
       }
@@ -574,6 +622,7 @@
       subtotal: amount(context.subtotal),
       sport: context.sport || "",
       time: context.time || "",
+      times: Array.isArray(context.times) ? context.times.map(String) : [],
       date: context.date || "",
       teamSize: Number(context.teamSize) || 0,
       isFirstBooking: context.isFirstBooking === undefined ? !bookingHistoryExists() : Boolean(context.isFirstBooking),
@@ -586,9 +635,13 @@
     if (voucher.sports && context.sport && !voucher.sports.includes(context.sport)) return `Chỉ áp dụng cho ${voucher.sports.map((sport) => SPORT_LABELS[sport] || sport).join(" hoặc ")}`;
     if (voucher.minSpend && context.subtotal && context.subtotal < voucher.minSpend) return `Đơn tối thiểu ${money(voucher.minSpend)}`;
     if (voucher.weekdayOnly && context.date && ["Thứ Bảy", "Chủ nhật"].includes(context.date)) return "Chỉ áp dụng từ thứ 2 đến thứ 6";
-    if (voucher.timeRange && context.time) {
-      const hour = Number(String(context.time).split(":")[0]);
-      if (hour < voucher.timeRange.start || hour >= voucher.timeRange.end) return "Không áp dụng cho khung giờ này";
+    if (voucher.timeRange && (context.time || context.times.length)) {
+      const times = context.times.length ? context.times : [context.time];
+      const outsideOfferWindow = times.some((time) => {
+        const hour = Number(String(time).split(":")[0]);
+        return hour < voucher.timeRange.start || hour >= voucher.timeRange.end;
+      });
+      if (outsideOfferWindow) return "Không áp dụng cho tất cả khung giờ đã chọn";
     }
     if (voucher.minTeamSize && context.teamSize && context.teamSize < voucher.minTeamSize) return `Cần nhóm từ ${voucher.minTeamSize} người`;
     return "";
@@ -645,6 +698,51 @@
       createdAt: now(),
     });
     state.loyalty.transactions = state.loyalty.transactions.slice(0, 50);
+  };
+  const addWalletTransaction = ({ type, amount: relatedAmount, sourceType, sourceId, method, description }) => {
+    const value = amount(relatedAmount);
+    state.wallet.balance = Math.max(0, state.wallet.balance + (type === "topup" ? value : -value));
+    state.wallet.transactions.unshift({
+      id: id("wallet"),
+      type,
+      amount: type === "topup" ? value : -value,
+      balance: state.wallet.balance,
+      sourceType: sourceType || "wallet",
+      sourceId: sourceId || null,
+      method: method || "",
+      description,
+      createdAt: now(),
+    });
+    state.wallet.transactions = state.wallet.transactions.slice(0, 50);
+    return state.wallet.balance;
+  };
+  const debitWallet = ({ amount: relatedAmount, sourceType, sourceId, label, method = WALLET_PAYMENT_METHOD }) => {
+    const value = amount(relatedAmount);
+    if (value > state.wallet.balance) return null;
+    addWalletTransaction({
+      type: "payment",
+      amount: value,
+      sourceType,
+      sourceId,
+      method,
+      description: `Thanh toán ${money(value)} từ ví · ${label}`,
+    });
+    return { amount: value, balance: state.wallet.balance };
+  };
+  const topUpWallet = (rawAmount, method = "Nạp tiền trong app") => {
+    const value = amount(rawAmount);
+    if (value < 10000 || value > 5000000) return null;
+    addWalletTransaction({
+      type: "topup",
+      amount: value,
+      sourceType: "wallet",
+      sourceId: null,
+      method,
+      description: `Nạp ${money(value)} vào Ví MatchUp`,
+    });
+    addNotification("Nạp tiền vào ví thành công", `Ví MatchUp đã được cộng ${money(value)}.`, "wallet");
+    save("wallet-topped-up");
+    return clone(state.wallet);
   };
   const settleLoyalty = ({ subtotal, requestedPoints, sourceType, sourceId, label }) => {
     const preview = previewPoints(subtotal, requestedPoints);
@@ -727,6 +825,9 @@
     money,
     getState: () => { expireBookings(); return clone(state); },
     getLoyalty: () => clone({ ...state.loyalty, policy: LOYALTY_POLICY }),
+    getWallet: () => clone({ ...state.wallet, paymentMethod: WALLET_PAYMENT_METHOD }),
+    topUpWallet,
+    canPayWithWallet: (requiredAmount) => state.wallet.balance >= amount(requiredAmount),
     getVouchers: (context = {}) => clone(getVouchers(context)),
     getVoucher: (voucherId) => clone(VOUCHER_CATALOG.find((voucher) => voucher.id === voucherId || voucher.code === voucherId) || null),
     previewVoucher: (voucherId, context = {}) => clone(previewVoucher(voucherId, context)),
@@ -797,6 +898,7 @@
         deposit: Math.ceil((Number(input.fee) || 360000) / capacity / 2000) * 1000,
         paymentMethod: "Chuyển khoản QR qua MatchUp",
         creatorName: profile.name,
+        joinRules: normaliseJoinRules(input.joinRules),
         status: "open",
         createdAt: now(),
         participants: [{ id: stableSubjectId("player", profile.name), name: profile.name, initials: profile.initials, role: "Chủ kèo", tone: "#d78c68", payment: "Chưa thanh toán" }],
@@ -807,6 +909,15 @@
       save("match-created");
       return clone(match);
     },
+    updateMatchRules: (matchId, rules) => {
+      const match = state.matches.find((item) => item.id === matchId);
+      if (!match) return null;
+      match.joinRules = normaliseJoinRules(rules);
+      match.updatedAt = now();
+      save("match-rules-updated");
+      return clone(match);
+    },
+    getMatchApproval: (match, candidate = state.profile) => clone(approvalCheck(match, candidate)),
     getCustomMatches: () => clone(state.matches),
     getMatch: (matchId) => clone(state.matches.find((match) => match.id === matchId) || null),
     getMatchInsights: (match) => clone(matchInsight(match || {})),
@@ -878,19 +989,29 @@
     applyToMatch: (match) => {
       const existing = state.applications.find((application) => application.matchId === match.id && application.status !== "cancelled");
       if (existing) return clone(existing);
+      const decision = approvalCheck(match, state.profile);
+      const status = decision.rules.autoApprove && decision.eligible ? "accepted" : "pending";
       const application = {
         id: id("application"),
         matchId: match.id,
         match: clone(match),
-        status: "pending",
+        status,
         paymentStatus: "unpaid",
+        autoApproved: status === "accepted" && decision.rules.autoApprove,
+        approvalCriteria: clone(decision.rules.criteria),
+        approvalNote: decision.eligible ? "Đủ tiêu chí tham gia" : `Còn thiếu: ${decision.failed.join(", ")}`,
         createdAt: now(),
         updatedAt: now(),
       };
-      upsertJourney("match", application.id, "requested", { matchId: match.id, matchName: match.name });
+      upsertJourney("match", application.id, status === "accepted" ? "accepted" : "requested", { matchId: match.id, matchName: match.name });
       state.applications.unshift(application);
       ensureChatRoom(application.matchId, application.match);
-      addNotification("Đã gửi yêu cầu vào kèo", `Yêu cầu vào ${match.name} đang chờ chủ kèo phản hồi.`, "match");
+      if (status === "accepted") {
+        addNotification("Đã tự động duyệt vào kèo", `${match.name}. ${decision.rules.requirePaymentBeforeJoin ? "Hãy thanh toán cọc để giữ chỗ." : "Bạn đã được thêm vào đội."}`, "match");
+        addNotification("Phòng chat đã mở", `Bạn có thể làm quen với đội trong ${match.name}.`, "chat");
+      } else {
+        addNotification("Đã gửi yêu cầu vào kèo", `Yêu cầu vào ${match.name} đang chờ chủ kèo phản hồi.`, "match");
+      }
       save("match-applied");
       return clone(application);
     },
@@ -959,6 +1080,9 @@
       const application = state.applications.find((item) => item.id === applicationId);
       if (!application || application.status !== "accepted") return null;
       const subtotal = amount(application.match.deposit || application.match.share / 2);
+      const pointsPreview = previewPoints(subtotal, requestedPoints);
+      const walletPayment = method === WALLET_PAYMENT_METHOD;
+      if (!pointsPreview.isValid || (walletPayment && pointsPreview.paidAmount > state.wallet.balance)) return null;
       const loyaltyPayment = settleLoyalty({
         subtotal,
         requestedPoints,
@@ -967,6 +1091,10 @@
         label: `cọc kèo ${application.match.name}`,
       });
       if (!loyaltyPayment) return null;
+      const walletPaymentDetail = walletPayment
+        ? debitWallet({ amount: loyaltyPayment.paidAmount, sourceType: "application", sourceId: application.id, label: `cọc kèo ${application.match.name}` })
+        : null;
+      if (walletPayment && !walletPaymentDetail) return null;
       application.status = "paid";
       application.paymentStatus = "paid";
       application.paymentMethod = method;
@@ -976,11 +1104,12 @@
         redeemedPoints: loyaltyPayment.points,
         discount: loyaltyPayment.discount,
         earnedPoints: loyaltyPayment.earnedPoints,
+        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
       };
       upsertJourney("match", application.id, "paid", { matchId: application.matchId, matchName: application.match.name });
       application.updatedAt = now();
       const loyaltyNote = `${loyaltyPayment.points ? ` Đã đổi ${loyaltyPayment.points} điểm.` : ""}${loyaltyPayment.earnedPoints ? ` Tích ${loyaltyPayment.earnedPoints} điểm.` : ""}`;
-      addNotification("Đã thanh toán cọc kèo", `${money(loyaltyPayment.paidAmount)} cho ${application.match.name}.${loyaltyNote}`, "payment");
+      addNotification("Đã thanh toán cọc kèo", `${money(loyaltyPayment.paidAmount)} qua ${method} cho ${application.match.name}.${loyaltyNote}`, "payment");
       save("application-paid");
       return clone(application);
     },
@@ -994,6 +1123,7 @@
         sport: input.sport || "",
         date: input.date || "",
         time: input.time || "",
+        times: Array.isArray(input.timeSlots) ? input.timeSlots : [],
         teamSize,
         isFirstBooking: !bookingHistoryExists(),
       };
@@ -1013,10 +1143,14 @@
         date: input.date,
         dateKey: input.dateKey || null,
         time: input.time,
+        timeSlots: Array.isArray(input.timeSlots) ? [...input.timeSlots] : null,
         duration: input.duration || 90,
         total,
         subtotal: total,
         originalTotal,
+        level: input.level || state.profile.level,
+        creatorName: state.profile.name,
+        joinRules: normaliseJoinRules(input.joinRules),
         voucher: appliedVoucher ? {
           id: appliedVoucher.id,
           code: appliedVoucher.code,
@@ -1042,6 +1176,14 @@
       const voucherNote = booking.voucher ? ` Đã dùng ${booking.voucher.code}, giảm ${money(booking.voucher.discount)}.` : "";
       addNotification("Đã giữ sân trong 10 phút", `${booking.court} · ${booking.date}, ${booking.time}.${voucherNote} Hãy xác nhận hoặc mời đội.`, "booking");
       save("booking-held");
+      return clone(booking);
+    },
+    updateBookingRules: (bookingId, rules) => {
+      const booking = getBooking(bookingId);
+      if (!booking || booking.ownerPaid || ["expired", "cancelled"].includes(booking.status)) return null;
+      booking.joinRules = normaliseJoinRules(rules);
+      booking.updatedAt = now();
+      save("booking-rules-updated");
       return clone(booking);
     },
     getBookings: () => { expireBookings(); return clone(state.bookings); },
@@ -1087,6 +1229,15 @@
         paid: false,
       });
       if (!player || players.some((item) => subjectKey(item.name) === subjectKey(player.name))) return null;
+      const decision = approvalCheck(booking, { ...player, level: playerInput.level || booking.level, completedMatches: playerInput.completedMatches, rating: playerInput.rating });
+      const joinStatus = booking.joinRules && booking.joinRules.autoApprove && decision.eligible
+        ? booking.joinRules.requirePaymentBeforeJoin ? "payment_pending" : "approved"
+        : "pending";
+      player.joinStatus = joinStatus;
+      player.approvalNote = decision.eligible ? "Đủ tiêu chí tham gia" : `Còn thiếu: ${decision.failed.join(", ")}`;
+      if (joinStatus === "payment_pending") player.role = "Đã qua tiêu chí · Chờ thanh toán cọc";
+      else if (joinStatus === "approved") player.role = "Đã tự động duyệt · Chờ thanh toán";
+      else player.role = "Đang chờ chủ kèo duyệt";
       booking.split = {
         mode: "equal",
         players: splitEqual([...players, player], amount(booking.total)),
@@ -1095,12 +1246,24 @@
       save("booking-player-added");
       return clone(booking);
     },
+    updateBookingPlayerStatus: (bookingId, playerId, status) => {
+      const booking = getBooking(bookingId);
+      if (!booking || !booking.split || !Array.isArray(booking.split.players)) return null;
+      const player = booking.split.players.find((item) => item.id === playerId);
+      if (!player || !["approved", "rejected"].includes(status)) return null;
+      player.joinStatus = status;
+      player.role = status === "approved" ? "Đã được chủ kèo duyệt · Chờ thanh toán" : "Không được duyệt";
+      booking.updatedAt = now();
+      save("booking-player-status-updated");
+      return clone(booking);
+    },
     payForBooking: (bookingId, method = "VietQR", requestedPoints = 0) => {
       const booking = getBooking(bookingId);
       if (!booking || booking.ownerPaid || booking.status === "expired" || booking.status === "cancelled") return null;
       const subtotal = amount(booking.subtotal);
       const preview = previewPoints(subtotal, requestedPoints);
       if (!preview.isValid) return null;
+      const walletPayment = method === WALLET_PAYMENT_METHOD;
       const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
       if (!players.length || players.some((player) => player.paid)) return null;
       const currentSplitTotal = players.reduce((sum, player) => sum + amount(player.amount), 0);
@@ -1109,6 +1272,7 @@
         ? splitProportionally(players, currentSplitTotal, preview.paidAmount)
         : splitEqual(players, preview.paidAmount);
       const ownerAmount = amount(previewSplit[0] && previewSplit[0].amount);
+      if (walletPayment && ownerAmount > state.wallet.balance) return null;
       const loyaltyPayment = settleLoyalty({
         subtotal: ownerAmount,
         requestedPoints: 0,
@@ -1129,6 +1293,10 @@
       }
       const discountedPlayers = applyBookingDiscount(booking, preview);
       if (!discountedPlayers) return null;
+      const walletPaymentDetail = walletPayment
+        ? debitWallet({ amount: ownerAmount, sourceType: "booking", sourceId: booking.id, label: `sân ${booking.court}` })
+        : null;
+      if (walletPayment && !walletPaymentDetail) return null;
       booking.ownerPaid = true;
       booking.ownerPaymentMethod = method;
       booking.payment = {
@@ -1137,6 +1305,7 @@
         redeemedPoints: preview.points,
         discount: preview.discount,
         earnedPoints: loyaltyPayment.earnedPoints,
+        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
       };
       booking.updatedAt = now();
       const self = booking.split && booking.split.players && booking.split.players[0];

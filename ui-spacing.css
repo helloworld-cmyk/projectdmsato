@@ -1,4 +1,282 @@
-/* Shared spacing refinements for the responsive layouts. */
+/* Shared visual refinements for the responsive layouts.
+   These overrides deliberately affect presentation only: page structure,
+   controls, data attributes and JavaScript behaviour remain unchanged. */
+
+:root {
+  --reading-ink: #17241d;
+  --reading-muted: #5e6d64;
+  --reading-line: #d8e0d9;
+  --reading-focus: 0 0 0 3px rgba(83, 145, 101, .22);
+}
+
+html { text-size-adjust: 100%; }
+
+body {
+  color: var(--reading-ink);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* A narrower reading column and calmer page chrome make scanning easier. */
+.shell { width: min(1240px, calc(100% - 48px)); }
+.topbar { height: 34px; font-size: 13px; }
+header { height: 76px; }
+.nav { gap: 38px; }
+.menu { gap: 28px; }
+.menu a { padding: 27px 0 24px; font-size: 15px; }
+.brand-name { font-size: 23px; }
+.profile-copy { font-size: 13px; }
+.round-btn, .icon-btn { width: 42px; height: 42px; }
+
+/* One clear heading style across the separate flows. */
+h1,
+.title-row h1,
+.page-intro h1,
+.page-head h1,
+.intro h1,
+.hero h1 {
+  letter-spacing: -1.4px;
+  line-height: 1.16;
+}
+
+.title-row h1,
+.page-intro h1,
+.page-head h1,
+.intro h1 { font-size: clamp(32px, 3.1vw, 42px); }
+
+.eyebrow,
+.crumb,
+.topbar,
+.topbar__location,
+.topbar__links,
+.topbar-left,
+.topbar-right { font-size: 13px; }
+
+.title-row p,
+.page-intro p,
+.page-head > div > p,
+.intro > div > p,
+.hero-copy > p {
+  color: var(--reading-muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Raise the visual floor for form fields, labels and action buttons. */
+button,
+input,
+select { min-height: 40px; }
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+a:focus-visible { outline: none; box-shadow: var(--reading-focus); }
+
+.create,
+.finder-go,
+.search-go,
+.pay,
+.book-btn,
+.pay-button,
+.modal-submit,
+.modal-pay,
+.rules-save,
+.join,
+.match-join,
+.select-court,
+.use-voucher,
+.copy,
+.share,
+.add-player,
+.journey-cta button,
+.feedback-actions button,
+.confirm-booking {
+  min-height: 42px;
+  font-size: 14px;
+}
+
+.filter,
+.query,
+.finder .filter { min-height: 52px; }
+
+.filter > span:not(.icon-box),
+.query small,
+.finder .filter > span:not(.icon-box) { font-size: 12px; }
+
+.filter strong,
+.query strong,
+.finder .filter strong { font-size: 14px; }
+
+.chip,
+.sport-tab,
+.voucher-tab,
+.split-tab,
+.feedback-tag,
+.filter,
+.court-right span,
+.court-meta,
+.court-availability,
+.result-note,
+.court-result-note { font-size: 13px; }
+
+.chip,
+.sport-tab,
+.voucher-tab,
+.split-tab,
+.filter { min-height: 38px; padding: 8px 12px; }
+
+.filter-label,
+.summary-label,
+.time-label,
+.booking-kicker,
+.summary-kicker,
+.side-kicker,
+.detail-kicker { font-size: 13px; }
+
+/* Keep filters available, but turn a dense block into a single scanable rail. */
+.filters,
+.sports-tabs,
+.voucher-tabs,
+.split-tabs {
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  overflow-x: auto;
+  padding: 2px 1px 6px;
+  scrollbar-width: thin;
+}
+
+.filters > *,
+.sports-tabs > *,
+.voucher-tabs > *,
+.split-tabs > * { flex: 0 0 auto; }
+
+/* Cards use more breathing room and a readable content hierarchy. */
+.card,
+.match-card,
+.court,
+.section-card,
+.event-card,
+.profile-card,
+.booking-detail,
+.summary,
+.filter-panel,
+.inbox-card,
+.conversation-card { border-color: var(--reading-line); }
+
+.match-card,
+.court,
+.section-card,
+.event-card,
+.profile-card,
+.card { border-radius: 18px; }
+
+.match-card,
+.court,
+.section-card,
+.event-card { padding: 18px; }
+
+.match-card h3,
+.court h3,
+.section-card h2,
+.event-card h2,
+.profile-card h2,
+.inbox-head h2,
+.conversation-title-copy strong { font-size: 17px; }
+
+.match-title h3,
+.court-title h3,
+.voucher-card h4,
+.detail-section h3,
+.reputation-section h3 { font-size: 16px; }
+
+.match-title + p,
+.match-info,
+.card-info,
+.court p,
+.smart-copy p,
+.match-head p,
+.summary-head p,
+.modal p,
+.section-title p,
+.event-card > p,
+.profile-card p,
+.booking-detail small,
+.journey-head p,
+.conversation-pin-copy span { color: var(--reading-muted); font-size: 14px; line-height: 1.5; }
+
+.tag,
+.level,
+.match-score,
+.payment-state,
+.journey-badge,
+.voucher-tag,
+.conversation-pin-tag { font-size: 12px; }
+
+.card-info,
+.card-cost,
+.match-info,
+.detail-meta,
+.payment-method,
+.distance-callout,
+.availability-note { font-size: 13px; }
+
+.court-right strong,
+.amount,
+.total strong,
+.split-total strong,
+.voucher-value { font-size: 20px; }
+
+.summary h2,
+.booking h2,
+.progress-card h2,
+.payment-card h2,
+.booking-detail h2,
+.match-head h2 { font-size: 22px; line-height: 1.3; }
+
+.time,
+.day,
+.date { min-height: 48px; font-size: 13px; }
+.time small { font-size: 11px; }
+.time b,
+.day b,
+.date b { font-size: 16px; }
+
+.toast { font-size: 14px; }
+
+/* Small screens retain a compact layout but no longer use microtext. */
+@media (max-width: 760px) {
+  .shell { width: min(100% - 32px, 620px); }
+  .topbar { display: none; }
+  header { height: 70px; }
+  .brand-name { font-size: 21px; }
+  .title-row h1,
+  .page-intro h1,
+  .page-head h1,
+  .intro h1 { font-size: 32px; }
+  .title-row p,
+  .page-intro p,
+  .page-head > div > p,
+  .intro > div > p,
+  .hero-copy > p { font-size: 15px; }
+  .match-card,
+  .court,
+  .section-card,
+  .event-card,
+  .card { padding: 15px; }
+  .match-card h3,
+  .court h3,
+  .section-card h2,
+  .event-card h2 { font-size: 16px; }
+  .card-info,
+  .match-info,
+  .court p,
+  .court-meta,
+  .court-availability,
+  .match-title + p { font-size: 13px; }
+  .mobile-nav a,
+  .mobile-nav button { font-size: 12px; }
+  .mobile-nav { height: 74px; }
+}
 
 /* Keep icon glyphs centered wherever a control uses inline content. */
 .material-symbols-rounded {
