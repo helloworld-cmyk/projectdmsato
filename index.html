@@ -275,12 +275,12 @@
           <div class="eyebrow">Chơi vui hơn, dễ hơn</div>
           <h1 id="hero-title">Tìm đúng người chơi.<br />Đặt đúng <span class="highlight">sân bạn cần.</span></h1>
           <p>MatchUp kết nối bạn với những người cùng trình độ, đúng bộ môn và sân còn trống ngay gần bạn — chỉ trong vài thao tác.</p>
-          <div class="finder" aria-label="Tìm trận thể thao">
-            <button class="filter" data-toast="Đã chọn môn Bóng đá">
+          <form class="finder" id="quick-match-search" data-sport="football" aria-label="Tìm trận thể thao">
+            <button class="filter" type="button" data-toast="Đã chọn môn Bóng đá">
               <span class="icon-box"><span class="material-symbols-rounded">sports_soccer</span></span>
               <span><span>Môn thể thao</span><strong>Bóng đá</strong></span>
             </button>
-            <button class="filter" data-toast="Đang dùng vị trí mock: Long Biên, Hà Nội">
+            <button class="filter" type="button" data-toast="Đang dùng vị trí mock: Long Biên, Hà Nội">
               <span class="icon-box"><span class="material-symbols-rounded">location_on</span></span>
               <span><span>Vị trí hiện tại</span><strong data-user-location>Chưa bật vị trí</strong></span>
             </button>
@@ -288,8 +288,8 @@
               <span class="icon-box"><span class="material-symbols-rounded">calendar_month</span></span>
               <span><span>Thời gian</span><strong data-time-filter-label>Hôm nay, sau 18:00</strong></span>
             </button>
-            <button class="finder-go" data-toast="Đang tìm những trận phù hợp nhất với bạn" aria-label="Tìm trận"><span class="material-symbols-rounded">search</span></button>
-          </div>
+            <button class="finder-go" type="submit" aria-label="Tìm trận"><span class="material-symbols-rounded">search</span></button>
+          </form>
           <div class="quick-stats" aria-label="Thống kê MatchUp">
             <div><b>2.400+</b><span>trận mỗi tuần</span></div>
             <div><b>180+</b><span>sân đối tác</span></div>
@@ -382,6 +382,19 @@
         trigger: document.querySelector('[data-time-filter-trigger]'),
         initial: { scope: 'today', range: 'evening' },
         onApply: (selection) => showToast(`Đã chọn ${selection.label}`)
+      });
+      document.querySelector('#quick-match-search').addEventListener('submit', (event) => {
+        event.preventDefault();
+        const selection = timeFilter.getSelection();
+        const location = window.MatchUpLocation?.label || document.querySelector('[data-user-location]')?.textContent || '';
+        const params = new URLSearchParams({
+          sport: event.currentTarget.dataset.sport || 'football',
+          time: selection.scope,
+          range: selection.range || 'all'
+        });
+        if (selection.scope === 'custom') params.set('date', selection.dateKey);
+        if (location && location !== 'Chưa bật vị trí') params.set('location', location);
+        window.location.assign(`match.html?${params.toString()}`);
       });
       const voucherGrid = document.querySelector('#voucher-grid');
       const voucherCount = document.querySelector('#voucher-count');

@@ -365,6 +365,18 @@
           ? equalBookingPlayers(normalisedPlayers, booking.total)
           : normalisedPlayers;
       }
+      if (booking.joinRules.requirePaymentBeforeJoin && booking.split && Array.isArray(booking.split.players)) {
+        booking.split.players.forEach((player) => {
+          if (player.paid) {
+            if (player.joinStatus === "approved") player.role = "Đã được duyệt · Đã thanh toán";
+            return;
+          }
+          if (player.joinStatus === "approved") {
+            player.joinStatus = "payment_pending";
+            player.role = "Đã đủ điều kiện · Chờ thanh toán cọc";
+          }
+        });
+      }
     });
     saved.bookingRosterMigrationVersion = BOOKING_ROSTER_MIGRATION_VERSION;
     saved.matches.forEach((match) => {
@@ -384,7 +396,11 @@
       journey.reputationSubmitted = Boolean(journey.reputationSubmitted || saved.reputationReviews.some((review) => review.type === journey.type && review.sourceId === journey.sourceId));
     });
     saved.applications.forEach((application) => {
-      if (application.match) application.match.joinRules = normaliseJoinRules(application.match.joinRules);
+      if (application.match) {
+        application.match.joinRules = normaliseJoinRules(application.match.joinRules);
+        if (application.match.joinRules.requirePaymentBeforeJoin && application.paymentStatus !== "paid" && application.status === "accepted") application.status = "payment_pending";
+        if (application.match.joinRules.requirePaymentBeforeJoin && application.paymentStatus === "paid" && application.status === "accepted") application.status = "paid";
+      }
       if (!saved.playJourneys.some((journey) => journey.type === "match" && journey.sourceId === application.id)) {
         saved.playJourneys.push({ id: id("journey"), type: "match", sourceId: application.id, matchId: application.matchId, matchName: application.match && application.match.name, status: application.status, feedbackSubmitted: false, reputationSubmitted: false, createdAt: application.createdAt || now(), updatedAt: application.updatedAt || now() });
       }
@@ -882,10 +898,12 @@
         name: input.name || `${profile.name} tìm đồng đội`,
         format: input.format || "Giao lưu",
         venue: input.venue || "Sân gần bạn",
+        bookingId: input.bookingId || null,
         area: input.area || "Long Biên",
         address: input.address || "Long Biên, Hà Nội",
         time: input.time || "Tối nay, 20:00",
         timeKey: input.timeKey || "today",
+        dateKey: input.dateKey || null,
         timeOrder: Number(input.timeOrder) || 20,
         distance: Number(input.distance) || 2.1,
         level: input.level || profile.level,
@@ -990,14 +1008,16 @@
       const existing = state.applications.find((application) => application.matchId === match.id && application.status !== "cancelled");
       if (existing) return clone(existing);
       const decision = approvalCheck(match, state.profile);
-      const status = decision.rules.autoApprove && decision.eligible ? "accepted" : "pending";
+      const paymentFirst = decision.rules.requirePaymentBeforeJoin;
+      const autoApproved = decision.rules.autoApprove && decision.eligible;
+      const status = paymentFirst ? "payment_pending" : autoApproved ? "accepted" : "pending";
       const application = {
         id: id("application"),
         matchId: match.id,
         match: clone(match),
         status,
         paymentStatus: "unpaid",
-        autoApproved: status === "accepted" && decision.rules.autoApprove,
+        autoApproved,
         approvalCriteria: clone(decision.rules.criteria),
         approvalNote: decision.eligible ? "Đủ tiêu chí tham gia" : `Còn thiếu: ${decision.failed.join(", ")}`,
         createdAt: now(),
@@ -1009,6 +1029,8 @@
       if (status === "accepted") {
         addNotification("Đã tự động duyệt vào kèo", `${match.name}. ${decision.rules.requirePaymentBeforeJoin ? "Hãy thanh toán cọc để giữ chỗ." : "Bạn đã được thêm vào đội."}`, "match");
         addNotification("Phòng chat đã mở", `Bạn có thể làm quen với đội trong ${match.name}.`, "chat");
+      } else if (status === "payment_pending") {
+        addNotification("Thanh toán cọc trước khi được duyệt", `${match.name}. Sau khi thanh toán, ${autoApproved ? "bạn sẽ được tự động vào đội." : "chủ kèo mới có thể duyệt bạn vào đội."}`, "payment");
       } else {
         addNotification("Đã gửi yêu cầu vào kèo", `Yêu cầu vào ${match.name} đang chờ chủ kèo phản hồi.`, "match");
       }
@@ -1064,12 +1086,15 @@
     updateApplicationStatus: (applicationId, status) => {
       const application = state.applications.find((item) => item.id === applicationId);
       if (!application) return null;
-      application.status = status;
+      const paymentFirst = Boolean(application.match && application.match.joinRules && application.match.joinRules.requirePaymentBeforeJoin);
+      if (status === "accepted" && paymentFirst && application.paymentStatus !== "paid") return null;
+      const nextStatus = status === "accepted" && paymentFirst ? "paid" : status;
+      application.status = nextStatus;
       application.updatedAt = now();
-      upsertJourney("match", application.id, status, { matchId: application.matchId, matchName: application.match.name });
-      const label = status === "accepted" ? "Bạn đã được nhận vào kèo" : status === "declined" ? "Yêu cầu vào kèo không được duyệt" : "Đã hủy yêu cầu vào kèo";
+      upsertJourney("match", application.id, nextStatus, { matchId: application.matchId, matchName: application.match.name });
+      const label = nextStatus === "accepted" || nextStatus === "paid" ? "Bạn đã được nhận vào kèo" : nextStatus === "declined" ? "Yêu cầu vào kèo không được duyệt" : "Đã hủy yêu cầu vào kèo";
       addNotification(label, application.match.name, "match");
-      if (status === "accepted") {
+      if (nextStatus === "accepted" || nextStatus === "paid") {
         ensureChatRoom(application.matchId, application.match);
         addNotification("Phòng chat đã mở", `Bạn có thể làm quen với đội trong ${application.match.name}.`, "chat");
       }
@@ -1078,7 +1103,8 @@
     },
     payForApplication: (applicationId, method = "VietQR", requestedPoints = 0) => {
       const application = state.applications.find((item) => item.id === applicationId);
-      if (!application || application.status !== "accepted") return null;
+      if (!application || !["accepted", "payment_pending"].includes(application.status)) return null;
+      const paymentFirst = Boolean(application.match && application.match.joinRules && application.match.joinRules.requirePaymentBeforeJoin);
       const subtotal = amount(application.match.deposit || application.match.share / 2);
       const pointsPreview = previewPoints(subtotal, requestedPoints);
       const walletPayment = method === WALLET_PAYMENT_METHOD;
@@ -1095,7 +1121,7 @@
         ? debitWallet({ amount: loyaltyPayment.paidAmount, sourceType: "application", sourceId: application.id, label: `cọc kèo ${application.match.name}` })
         : null;
       if (walletPayment && !walletPaymentDetail) return null;
-      application.status = "paid";
+      application.status = paymentFirst && !application.autoApproved ? "pending" : "paid";
       application.paymentStatus = "paid";
       application.paymentMethod = method;
       application.payment = {
@@ -1106,10 +1132,10 @@
         earnedPoints: loyaltyPayment.earnedPoints,
         walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
       };
-      upsertJourney("match", application.id, "paid", { matchId: application.matchId, matchName: application.match.name });
+      upsertJourney("match", application.id, application.status, { matchId: application.matchId, matchName: application.match.name });
       application.updatedAt = now();
       const loyaltyNote = `${loyaltyPayment.points ? ` Đã đổi ${loyaltyPayment.points} điểm.` : ""}${loyaltyPayment.earnedPoints ? ` Tích ${loyaltyPayment.earnedPoints} điểm.` : ""}`;
-      addNotification("Đã thanh toán cọc kèo", `${money(loyaltyPayment.paidAmount)} qua ${method} cho ${application.match.name}.${loyaltyNote}`, "payment");
+      addNotification(application.status === "pending" ? "Đã thanh toán cọc — chờ duyệt" : "Đã thanh toán cọc kèo", `${money(loyaltyPayment.paidAmount)} qua ${method} cho ${application.match.name}.${loyaltyNote}`, "payment");
       save("application-paid");
       return clone(application);
     },
@@ -1182,6 +1208,20 @@
       const booking = getBooking(bookingId);
       if (!booking || booking.ownerPaid || ["expired", "cancelled"].includes(booking.status)) return null;
       booking.joinRules = normaliseJoinRules(rules);
+      const players = booking.split && Array.isArray(booking.split.players) ? booking.split.players : [];
+      players.forEach((player) => {
+        if (booking.joinRules.requirePaymentBeforeJoin) {
+          if (!player.paid && player.joinStatus === "approved") {
+            player.joinStatus = "payment_pending";
+            player.role = "Đã đủ điều kiện · Chờ thanh toán cọc";
+          } else if (player.paid && player.joinStatus === "approved") {
+            player.role = "Đã được duyệt · Đã thanh toán";
+          }
+        } else if (player.joinStatus === "payment_pending") {
+          player.joinStatus = player.autoApproved ? "approved" : "pending";
+          player.role = player.joinStatus === "approved" ? "Đã tự động duyệt · Chờ thanh toán" : "Đang chờ chủ kèo duyệt";
+        }
+      });
       booking.updatedAt = now();
       save("booking-rules-updated");
       return clone(booking);
@@ -1230,12 +1270,15 @@
       });
       if (!player || players.some((item) => subjectKey(item.name) === subjectKey(player.name))) return null;
       const decision = approvalCheck(booking, { ...player, level: playerInput.level || booking.level, completedMatches: playerInput.completedMatches, rating: playerInput.rating });
-      const joinStatus = booking.joinRules && booking.joinRules.autoApprove && decision.eligible
-        ? booking.joinRules.requirePaymentBeforeJoin ? "payment_pending" : "approved"
-        : "pending";
+      const requirePayment = Boolean(booking.joinRules && booking.joinRules.requirePaymentBeforeJoin);
+      const autoEligible = Boolean(booking.joinRules && booking.joinRules.autoApprove && decision.eligible);
+      // Payment-first means payment is the gate before approval. Never expose an
+      // approval action for an unpaid player, even when the host uses manual approval.
+      const joinStatus = requirePayment ? "payment_pending" : autoEligible ? "approved" : "pending";
       player.joinStatus = joinStatus;
+      player.autoApproved = autoEligible;
       player.approvalNote = decision.eligible ? "Đủ tiêu chí tham gia" : `Còn thiếu: ${decision.failed.join(", ")}`;
-      if (joinStatus === "payment_pending") player.role = "Đã qua tiêu chí · Chờ thanh toán cọc";
+      if (joinStatus === "payment_pending") player.role = autoEligible ? "Đã đủ điều kiện · Chờ thanh toán cọc" : "Đang chờ thanh toán cọc trước khi duyệt";
       else if (joinStatus === "approved") player.role = "Đã tự động duyệt · Chờ thanh toán";
       else player.role = "Đang chờ chủ kèo duyệt";
       booking.split = {
@@ -1251,10 +1294,36 @@
       if (!booking || !booking.split || !Array.isArray(booking.split.players)) return null;
       const player = booking.split.players.find((item) => item.id === playerId);
       if (!player || !["approved", "rejected"].includes(status)) return null;
+      if (status === "approved" && booking.joinRules && booking.joinRules.requirePaymentBeforeJoin && !player.paid) return null;
       player.joinStatus = status;
-      player.role = status === "approved" ? "Đã được chủ kèo duyệt · Chờ thanh toán" : "Không được duyệt";
+      player.role = status === "approved"
+        ? player.paid ? "Đã được chủ kèo duyệt · Đã thanh toán" : "Đã được chủ kèo duyệt · Chờ thanh toán"
+        : "Không được duyệt";
       booking.updatedAt = now();
       save("booking-player-status-updated");
+      return clone(booking);
+    },
+    markBookingPlayerPaid: (bookingId, playerId) => {
+      const booking = getBooking(bookingId);
+      if (!booking || !booking.split || !Array.isArray(booking.split.players)) return null;
+      const player = booking.split.players.find((item) => item.id === playerId);
+      if (!player || player.id === booking.split.players[0].id || player.joinStatus === "rejected") return null;
+      player.paid = true;
+      const requirePayment = Boolean(booking.joinRules && booking.joinRules.requirePaymentBeforeJoin);
+      if (requirePayment && player.joinStatus === "payment_pending") {
+        if (player.autoApproved) {
+          player.joinStatus = "approved";
+          player.role = "Đã tự động duyệt · Đã thanh toán";
+        } else {
+          player.joinStatus = "pending";
+          player.role = "Đã thanh toán cọc · Chờ chủ kèo duyệt";
+        }
+      } else if (player.joinStatus === "approved") {
+        player.role = "Đã được duyệt · Đã thanh toán";
+      }
+      booking.updatedAt = now();
+      addNotification("Đã ghi nhận thanh toán của người chơi", `${player.name} đã thanh toán phần ${money(player.amount)} cho ${booking.court}.`, "payment");
+      save("booking-player-paid");
       return clone(booking);
     },
     payForBooking: (bookingId, method = "VietQR", requestedPoints = 0) => {
