@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="vi" data-profile-path="../profile/">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8f4" />
+    <title>
+      Tìm trận gần bạn — MatchUp
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="../../css/ui-spacing.css" />
+    <link rel="stylesheet" href="../../css/app-ui.css" />
+    <link rel="stylesheet" href="css/overrides.css" />
+    <link rel="stylesheet" href="css/reputation.css" />
+    <link rel="stylesheet" href="../../css/time-filter.css" />
+    <link rel="stylesheet" href="css/filters.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="shell">
+        <div class="topbar-left">
+          <span class="material-symbols-rounded">
+            location_on
+          </span>
+          Vị trí hiện tại:
+          <strong data-user-location>
+            Chưa bật vị trí
+          </strong>
+        </div>
+        <div class="topbar-right">
+          <a href="../../index.html#voucher">
+            Ưu đãi
+          </a>
+          <a href="../booking/">
+            Đặt sân
+          </a>
+          <a href="../booking/#courts-title">
+            Dành cho chủ sân
+          </a>
+        </div>
+      </div>
+    </div>
+    <header>
+      <nav class="shell nav" aria-label="Điều hướng chính">
+        <a class="brand" href="../../index.html">
+          <span class="brand-mark">
+            <span class="material-symbols-rounded">
+              sports_soccer
+            </span>
+          </span>
+          <span class="brand-name">
+            match
+            <em>
+              up
+            </em>
+          </span>
+        </a>
+        <div class="menu">
+          <a class="active" href="./">
+            Tìm trận
+          </a>
+          <a href="../booking/">
+            Đặt sân
+          </a>
+          <a href="../../index.html#voucher">
+            Ưu đãi
+          </a>
+          <a href="../contact/">
+            Liên lạc
+          </a>
+        </div>
+        <div class="nav-actions">
+          <button class="icon-btn" type="button" data-notifications aria-label="Thông báo">
+            <span class="material-symbols-rounded">
+              notifications
+            </span>
+            <i>
+            </i>
+          </button>
+          <div class="avatar" data-profile>
+            NA
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="shell crumb">
+        <a href="../../index.html">
+          Trang chủ
+        </a>
+        <span class="material-symbols-rounded">
+          chevron_right
+        </span>
+        <span>
+          Tìm trận
+        </span>
+      </div>
+      <section class="shell title-row">
+        <div>
+          <div class="eyebrow">
+            Ghép đội thông minh
+          </div>
+          <h1>
+            Kèo hợp gu, ở ngay gần bạn.
+          </h1>
+          <p>
+            Dữ liệu mock được xếp theo môn, thời gian và bán kính từ
+            <strong data-user-location>
+              Chưa bật vị trí
+            </strong>
+            .
+          </p>
+        </div>
+        <button class="create" id="open-modal">
+          <span class="material-symbols-rounded">
+            add_circle
+          </span>
+          Tạo kèo mới
+        </button>
+      </section>
+      <div class="shell layout">
+        <aside class="filter-panel" aria-label="Bộ lọc trận đấu">
+          <div class="filter-head">
+            <h2>
+              Bộ lọc tìm trận
+            </h2>
+            <button class="reset" id="reset">
+              Đặt lại
+            </button>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">
+              <span class="material-symbols-rounded">
+                sports_soccer
+              </span>
+              Môn thể thao
+            </div>
+            <div class="chips">
+              <button class="chip active" data-filter="sport" data-value="all">
+                Tất cả
+              </button>
+              <button class="chip" data-filter="sport" data-value="football">
+                ⚽ Bóng đá
+              </button>
+              <button class="chip" data-filter="sport" data-value="badminton">
+                🏸 Cầu lông
+              </button>
+              <button class="chip" data-filter="sport" data-value="pickleball">
+                🎾 Pickleball
+              </button>
+              <button class="chip" data-filter="sport" data-value="basketball">
+                🏀 Bóng rổ
+              </button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <button
+              class="filter-label time-filter-trigger"
+              type="button"
+              data-time-filter-trigger
+              aria-haspopup="dialog"
+              aria-controls="time-filter-modal"
+            >
+              <span class="material-symbols-rounded">
+                calendar_month
+              </span>
+              <span>
+                Thời gian
+              </span>
+              <strong data-time-filter-label>
+                Tất cả ngày
+              </strong>
+              <span class="material-symbols-rounded time-filter-trigger-arrow">
+                tune
+              </span>
+            </button>
+            <div class="chips">
+              <button class="chip active" data-filter="time" data-value="all">
+                Tất cả
+              </button>
+              <button class="chip" data-filter="time" data-value="today">
+                Hôm nay
+              </button>
+              <button class="chip" data-filter="time" data-value="tomorrow">
+                Ngày mai
+              </button>
+              <button class="chip" data-filter="time" data-value="weekend">
+                Cuối tuần
+              </button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">
+              <span class="material-symbols-rounded">
+                signal_cellular_alt
+              </span>
+              Trình độ
+            </div>
+            <div class="chips">
+              <button class="chip active" data-filter="level" data-value="all">
+                Tất cả
+              </button>
+              <button class="chip" data-filter="level" data-value="Mới chơi">
+                Mới chơi
+              </button>
+              <button class="chip" data-filter="level" data-value="Khá">
+                Khá
+              </button>
+              <button class="chip" data-filter="level" data-value="Giỏi">
+                Giỏi
+              </button>
+            </div>
+          </div>
+          <div class="filter-group">
+            <div class="filter-label">
+              <span class="material-symbols-rounded">
+                near_me
+              </span>
+              Khoảng cách
+            </div>
+            <div class="distance-range">
+              <div class="distance-values">
+                <output id="distance-min-label" for="distance-min">
+                  0 km
+                </output>
+                <span>
+                  đến
+                </span>
+                <output id="distance-max-label" for="distance-max">
+                  10 km
+                </output>
+              </div>
+              <div class="range-slider" id="distance-slider">
+                <input
+                  class="distance-min"
+                  id="distance-min"
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value="0"
+                  aria-label="Khoảng cách tối thiểu"
+                />
+                <input
+                  class="distance-max"
+                  id="distance-max"
+                  type="range"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value="10"
+                  aria-label="Khoảng cách tối đa"
+                />
+              </div>
+            </div>
+            <p class="hint">
+              Tính từ vị trí mock
+              <strong data-user-location>
+                Chưa bật vị trí
+              </strong>
+              .
+            </p>
+          </div>
+        </aside>
+        <section aria-labelledby="list-title">
+          <div class="match-head">
+            <div>
+              <h2 id="list-title">
+                <span id="match-count">
+                  0
+                </span>
+                kèo chờ người quanh
+                <span data-user-location>
+                  Chưa bật vị trí
+                </span>
+              </h2>
+              <p id="sort-description">
+                Đang ưu tiên mức độ phù hợp và khoảng cách đến vị trí
+                hiện tại
+              </p>
+            </div>
+            <div class="sort-control">
+              <span class="material-symbols-rounded">
+                sort
+              </span>
+              <label class="sr-only" for="sort-matches">
+                Sắp xếp kèo
+              </label>
+              <select id="sort-matches">
+                <option value="recommended">
+                  Phù hợp nhất
+                </option>
+                <option value="distance">
+                  Khoảng cách gần
+                </option>
+                <option value="time">
+                  Thời gian sớm
+                </option>
+                <option value="spots">
+                  Còn nhiều chỗ
+                </option>
+                <option value="price">
+                  Phí tham gia thấp
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="smart-pick">
+            <div class="smart-icon">
+              <span class="material-symbols-rounded">
+                auto_awesome
+              </span>
+            </div>
+            <div class="smart-copy">
+              <h3>
+                Gợi ý cho Ngọc Anh
+                <b>
+                  · nhiều lựa chọn
+                </b>
+              </h3>
+              <p>
+                Chạm “Xem kèo” để biết người đã vào, cách chia tiền,
+                địa chỉ sân và đường đi.
+              </p>
+            </div>
+            <button
+              class="smart-link"
+              data-toast="Khoảng cách được tính từ vị trí hiện tại của bạn"
+            >
+              Chi tiết
+            </button>
+          </div>
+          <p class="result-note" id="result-note">
+          </p>
+          <div class="match-grid" id="match-grid">
+          </div>
+          <div class="empty">
+            <span class="material-symbols-rounded">
+              search_off
+            </span>
+            <strong>
+              Chưa có kèo đúng gu của bạn.
+            </strong>
+            <br />
+            <span>
+              MatchUp có thể báo ngay khi có người mở kèo phù hợp.
+            </span>
+            <div class="empty-actions">
+              <button class="primary" data-empty-action="waitlist">
+                Báo tôi khi có kèo
+              </button>
+              <button data-empty-action="expand">
+                Mở rộng bán kính
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+    <div
+      class="modal-layer"
+      id="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+    >
+      <div class="modal">
+        <div class="modal-top">
+          <div>
+            <h2 id="modal-title">
+              Tạo kèo mới
+            </h2>
+            <p>
+              Điền thông tin, MatchUp sẽ lưu kèo vào danh sách của bạn.
+            </p>
+          </div>
+          <button class="close" id="close-modal" aria-label="Đóng">
+            <span class="material-symbols-rounded">
+              close
+            </span>
+          </button>
+        </div>
+        <form id="create-match-form">
+          <div class="modal-fields">
+            <label class="field wide">
+              <small>
+                Tên kèo
+              </small>
+              <input name="name" maxlength="60" required value="Kèo giao lưu sau giờ làm" />
+            </label>
+            <label class="field">
+              <small>
+                Môn thể thao
+              </small>
+              <select name="sport">
+                <option value="football">
+                  ⚽ Bóng đá
+                </option>
+                <option value="badminton">
+                  🏸 Cầu lông
+                </option>
+                <option value="pickleball">
+                  🎾 Pickleball
+                </option>
+                <option value="basketball">
+                  🏀 Bóng rổ
+                </option>
+              </select>
+            </label>
+            <label class="field">
+              <small>
+                Trình độ
+              </small>
+              <select name="level">
+                <option>
+                  Mới chơi
+                </option>
+                <option selected>
+                  Khá
+                </option>
+                <option>
+                  Giỏi
+                </option>
+              </select>
+            </label>
+            <label class="field">
+              <small>
+                Thời gian
+              </small>
+              <select name="timeKey">
+                <option value="today">
+                  Tối nay, 20:00
+                </option>
+                <option value="tomorrow">
+                  Ngày mai, 18:30
+                </option>
+                <option value="weekend">
+                  Cuối tuần, 08:00
+                </option>
+              </select>
+            </label>
+            <label class="field">
+              <small>
+                Số người tối đa
+              </small>
+              <input name="capacity" type="number" min="2" max="20" value="6" required />
+            </label>
+            <label class="field wide">
+              <small>
+                Sân / khu vực
+              </small>
+              <input name="venue" maxlength="60" required value="Sân bóng Văn Quán" />
+            </label>
+            <label class="field">
+              <small>
+                Tổng tiền sân
+              </small>
+              <input name="fee" type="number" min="50000" step="10000" value="360000" required />
+            </label>
+            <label class="field">
+              <small>
+                Khoảng cách (km)
+              </small>
+              <input
+                name="distance"
+                type="number"
+                min="0.1"
+                max="30"
+                step="0.1"
+                value="2.1"
+                required
+              />
+            </label>
+          </div>
+          <section class="join-rules">
+            <div class="join-rules-head">
+              <span class="material-symbols-rounded">
+                admin_panel_settings
+              </span>
+              <div>
+                <strong>
+                  Quy tắc tham gia
+                </strong>
+                <small>
+                  Chọn cách duyệt người vào kèo và thu tiền.
+                </small>
+              </div>
+            </div>
+            <label class="rule-toggle">
+              <input name="requirePaymentBeforeJoin" type="checkbox" />
+              <span>
+                Bắt thanh toán cọc trước khi vào kèo
+              </span>
+              <em>
+                Minh bạch chi phí
+              </em>
+            </label>
+            <label class="rule-toggle">
+              <input name="autoApprove" id="create-auto-approve" type="checkbox" />
+              <span>
+                Tự động duyệt người đủ điều kiện
+              </span>
+              <em>
+                Tiết kiệm thời gian
+              </em>
+            </label>
+            <div class="rules-criteria" id="create-approval-criteria" hidden>
+              <label class="rule-toggle" style="margin-top:0">
+                <input name="levelMatch" type="checkbox" />
+                <span>
+                  Cùng trình độ với chủ kèo
+                </span>
+              </label>
+              <label>
+                <small
+                  style="
+                    display: block;
+                    margin-bottom: 4px;
+                    color: #6f8075;
+                    font-size: 9px;
+                    font-weight: 800;
+                  "
+                >
+                  Uy tín tối thiểu
+                </small>
+                <select class="rule-select" name="minRating">
+                  <option value="0">
+                    Không yêu cầu
+                  </option>
+                  <option value="4">
+                    Từ 4,0★
+                  </option>
+                  <option value="4.5">
+                    Từ 4,5★
+                  </option>
+                </select>
+              </label>
+              <label>
+                <small
+                  style="
+                    display: block;
+                    margin-bottom: 4px;
+                    color: #6f8075;
+                    font-size: 9px;
+                    font-weight: 800;
+                  "
+                >
+                  Kinh nghiệm tối thiểu
+                </small>
+                <select class="rule-select" name="minCompletedMatches">
+                  <option value="0">
+                    Không yêu cầu
+                  </option>
+                  <option value="3">
+                    Đã hoàn thành 3 trận
+                  </option>
+                  <option value="5">
+                    Đã hoàn thành 5 trận
+                  </option>
+                  <option value="10">
+                    Đã hoàn thành 10 trận
+                  </option>
+                </select>
+              </label>
+            </div>
+          </section>
+          <button class="modal-submit" type="submit">
+            Đăng kèo và tìm đồng đội
+          </button>
+        </form>
+      </div>
+    </div>
+    <div
+      class="create-flow"
+      id="create-flow"
+      hidden
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="create-flow-title"
+      tabindex="-1"
+    >
+      <div class="create-flow-dialog">
+        <div class="create-flow-head">
+          <div>
+            <div class="create-flow-kicker">
+              <span class="material-symbols-rounded">
+                event_available
+              </span>
+              Tạo kèo từ lịch sân
+            </div>
+            <h2 id="create-flow-title">
+              Chọn sân bạn đã đặt
+            </h2>
+            <p class="create-flow-lead">
+              Kèo mới sẽ gắn với một lịch sân đã đặt để cả đội biết
+              chính xác địa điểm và thời gian chơi.
+            </p>
+          </div>
+          <button class="create-flow-back" id="close-create-flow" type="button">
+            <span class="material-symbols-rounded">
+              arrow_back
+            </span>
+            Quay lại tìm kèo
+          </button>
+        </div>
+        <div class="create-court-picker" id="create-court-picker">
+        </div>
+        <div class="modal create-form-card" id="create-form-card" hidden>
+          <div class="create-selected-booking" id="create-selected-booking">
+            <span class="material-symbols-rounded">
+              task_alt
+            </span>
+            <span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="modal-layer"
+      id="details-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="details-title"
+    >
+      <div class="modal detail-modal">
+        <div id="detail-content">
+        </div>
+      </div>
+    </div>
+    <script type="module" src="../../js/time-filter/index.js"></script>
+    <div
+      class="modal-layer"
+      id="team-moment-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="team-moment-title"
+    >
+      <div class="modal team-modal">
+        <div class="team-celebrate">
+          <span class="material-symbols-rounded">
+            groups
+          </span>
+        </div>
+        <h2 id="team-moment-title">
+          Bạn đã có một chỗ trong đội!
+        </h2>
+        <p id="team-moment-copy">
+          Yêu cầu của bạn đã được gửi. Chủ kèo sẽ phản hồi
+          sớm — bạn có thể chuẩn bị lời chào trước.
+        </p>
+        <div class="team-roster" id="team-roster">
+        </div>
+        <div class="team-progress">
+          <span id="team-progress-bar">
+          </span>
+        </div>
+        <div class="team-progress-copy">
+          <span id="team-progress-label">
+            6/7 người
+          </span>
+          <strong id="team-progress-need">
+            Còn 1 chỗ
+          </strong>
+        </div>
+        <div class="chat-cta">
+          <span class="material-symbols-rounded">
+            forum
+          </span>
+          <div class="chat-cta-copy">
+            <strong>
+              Kênh chat của kèo đã sẵn sàng
+            </strong>
+            <span>
+              Chuyển sang Liên lạc để trao đổi trực tiếp với đội.
+            </span>
+          </div>
+          <button type="button" id="team-open-chat">
+            Mở kênh chat
+          </button>
+        </div>
+        <div class="team-modal-actions">
+          <button class="secondary" id="team-view-details">
+            Xem lịch chuẩn bị
+          </button>
+          <button class="secondary" id="team-payment">
+            Thanh toán cọc
+          </button>
+          <button class="secondary" id="team-finish" disabled>
+            Đã chơi xong · đánh giá
+          </button>
+          <button class="primary" id="team-share">
+            Mời thêm bạn
+          </button>
+        </div>
+        <button
+          class="close"
+          id="close-team-moment"
+          aria-label="Đóng"
+          style="position: absolute; top: 18px; right: 18px"
+        >
+          <span class="material-symbols-rounded">
+            close
+          </span>
+        </button>
+      </div>
+    </div>
+    <div
+      class="modal-layer"
+      id="match-payment-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="match-payment-title"
+    >
+      <div class="modal match-payment-modal">
+        <div class="modal-top">
+          <div>
+            <h2 id="match-payment-title">
+              Thanh toán cọc để vào kèo
+            </h2>
+            <p>
+              Chọn phương thức thanh toán phần của bạn để giữ chỗ.
+            </p>
+          </div>
+          <button class="close" id="close-match-payment" aria-label="Đóng">
+            <span class="material-symbols-rounded">
+              close
+            </span>
+          </button>
+        </div>
+        <div class="payment-summary">
+          <div>
+            <span>
+              Kèo
+            </span>
+            <strong id="match-payment-name">
+              —
+            </strong>
+          </div>
+          <div>
+            <span>
+              Tiền cọc
+            </span>
+            <strong id="match-payment-subtotal">
+              0đ
+            </strong>
+          </div>
+          <div>
+            <span>
+              Thanh toán sau điểm
+            </span>
+            <strong id="match-payment-total">
+              0đ
+            </strong>
+          </div>
+        </div>
+        <div class="match-payment-methods">
+          <button class="match-payment-method active" type="button" data-join-method="VietQR">
+            <span class="material-symbols-rounded">
+              qr_code_2
+            </span>
+            <div>
+              <strong>
+                VietQR / Chuyển khoản
+              </strong>
+              <span>
+                Quét mã để thanh toán tức thì
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+              check_circle
+            </span>
+          </button>
+          <button class="match-payment-method" type="button" data-join-method="Ví MatchUp">
+            <span class="material-symbols-rounded">
+              account_balance_wallet
+            </span>
+            <div>
+              <strong>
+                Ví MatchUp
+              </strong>
+              <span id="match-payment-wallet">
+                Số dư 0đ
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+            </span>
+          </button>
+        </div>
+        <div class="match-payment-points">
+          <div class="match-payment-points-head">
+            <span>
+              Đổi điểm thành viên
+            </span>
+            <span id="match-payment-point-balance">
+              Bạn có 0 điểm
+            </span>
+          </div>
+          <div class="match-payment-points-row">
+            <input
+              id="match-payment-points-input"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="Nhập số điểm"
+              aria-label="Số điểm muốn dùng"
+            />
+            <button type="button" id="match-payment-use-max">
+              Dùng tối đa
+            </button>
+          </div>
+        </div>
+        <button class="modal-submit" id="confirm-match-payment" type="button">
+          Thanh toán 0đ qua VietQR
+        </button>
+      </div>
+    </div>
+    <div
+      class="modal-layer"
+      id="match-feedback-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="match-feedback-title"
+    >
+      <div class="modal match-feedback-modal">
+        <div class="team-celebrate">
+          <span class="material-symbols-rounded">
+            celebration
+          </span>
+        </div>
+        <h2 id="match-feedback-title">
+          Trận đấu thế nào?
+        </h2>
+        <p>
+          Đánh giá sân và những người bạn vừa chơi cùng.
+        </p>
+        <div class="feedback-stars" id="match-feedback-stars">
+        </div>
+        <div class="feedback-tags" id="match-feedback-tags">
+        </div>
+        <button class="modal-submit" id="submit-match-feedback" type="button">
+          Gửi đánh giá
+        </button>
+      </div>
+    </div>
+    <nav class="mobile-nav" aria-label="Điều hướng di động">
+      <a href="../../index.html">
+        <span class="material-symbols-rounded">
+          home
+        </span>
+        Khám phá
+      </a>
+      <a class="active" href="./">
+        <span class="material-symbols-rounded">
+          sports_soccer
+        </span>
+        Trận đấu
+      </a>
+      <a class="add" href="#create" id="mobile-create" aria-label="Tạo trận">
+        <span class="material-symbols-rounded">
+          add
+        </span>
+      </a>
+      <a href="../booking/">
+        <span class="material-symbols-rounded">
+          stadium
+        </span>
+        Đặt sân
+      </a>
+      <a href="../contact/">
+        <span class="material-symbols-rounded">
+          forum
+        </span>
+        Liên lạc
+      </a>
+      <a href="../profile/">
+        <span class="material-symbols-rounded">
+          person
+        </span>
+        Cá nhân
+      </a>
+    </nav>
+    <div class="toast" role="status" aria-live="polite">
+    </div>
+    <script src="../../js/location.js">
+    </script>
+    <script type="module" src="../../js/app-state/index.js"></script>
+    <script type="module" src="../../js/app-ui.js"></script>
+    <script type="module" src="js/index.js"></script>
+  </body>
+</html>

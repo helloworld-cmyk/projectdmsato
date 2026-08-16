@@ -1,0 +1,100 @@
+@media (max-width:850px) {
+  .layout {
+    grid-template-columns: minmax(0,1fr) 290px;
+  }
+  .nav {
+    gap: 28px;
+  }
+  .menu {
+    gap: 22px;
+  }
+}
+
+@media (max-width:700px) {
+  .shell {
+    width: min(100% - 32px,600px);
+  }
+  .topbar,
+  .menu {
+    display: none;
+  }
+  header {
+    height: 68px;
+  }
+  .nav {
+    gap: 0;
+    justify-content: space-between;
+  }
+  .nav-actions .icon-btn {
+    display: none;
+  }
+  .page-head {
+    display: block;
+    margin: 15px 0 18px;
+  }
+  .page-head h1 {
+    font-size: 31px;
+    letter-spacing: -1.4px;
+  }
+  .booking-code {
+    width: max-content;
+    margin-top: 13px;
+  }
+  .layout {
+    display: block;
+  }
+  .event-card,
+  .section-card {
+    padding: 15px;
+    border-radius: 15px;
+  }
+  .event-card h2 {
+    font-size: 19px;
+  }
+  .event-info {
+    grid-template-columns: 1fr 1fr;
+  }
+  .event-info div:last-child {
+    grid-column: 1/-1;
+  }
+  .side {
+    position: relative;
+    top: auto;
+    margin-top: 15px;
+  }
+  .progress-card,
+  .payment-card,
+  .booking-detail,
+  .join-rules-card {
+    padding: 15px;
+  }
+  .link-box {
+    grid-template-columns: minmax(0,1fr) auto;
+  }
+  .share {
+    grid-column: 1/-1;
+    justify-content: center;
+  }
+  .section-head {
+    align-items: center;
+  }
+  .people-stack b {
+    display: none;
+  }
+  .rules-form-grid {
+    grid-template-columns: 1fr;
+  }
+  .rules-criteria {
+    grid-column: auto;
+  }
+}
+
+.page-head.shell {
+  margin: 20px auto 22px;
+}
+
+@media (max-width:700px) {
+  .page-head.shell {
+    margin: 15px auto 18px;
+  }
+}

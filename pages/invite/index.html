@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="vi" data-profile-path="../profile/">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f7f8f4" />
+    <title>
+      Rủ đội & chia tiền — MatchUp
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-50..200" rel="stylesheet" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/features.css" />
+    <link rel="stylesheet" href="../../css/ui-spacing.css" />
+    <link rel="stylesheet" href="../../css/app-ui.css" />
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="shell">
+        <div class="topbar-left">
+          <span class="material-symbols-rounded">
+            location_on
+          </span>
+          Vị trí hiện tại:
+          <strong data-user-location>
+            Chưa bật vị trí
+          </strong>
+        </div>
+        <div class="topbar-right">
+          <a href="../../index.html#voucher">
+            Ưu đãi
+          </a>
+          <a href="../match/">
+            Tìm trận
+          </a>
+          <a href="../booking/#courts-title">
+            Dành cho chủ sân
+          </a>
+        </div>
+      </div>
+    </div>
+    <header>
+      <nav class="shell nav" aria-label="Điều hướng chính">
+        <a class="brand" href="../../index.html">
+          <span class="brand-mark">
+            <span class="material-symbols-rounded">
+              sports_soccer
+            </span>
+          </span>
+          <span class="brand-name">
+            match
+            <em>
+              up
+            </em>
+          </span>
+        </a>
+        <div class="menu">
+          <a href="../match/">
+            Tìm trận
+          </a>
+          <a class="active" href="../booking/">
+            Đặt sân
+          </a>
+          <a href="../../index.html#voucher">
+            Ưu đãi
+          </a>
+          <a href="../contact/">
+            Liên lạc
+          </a>
+        </div>
+        <div class="nav-actions">
+          <button class="icon-btn" type="button" data-notifications aria-label="Thông báo">
+            <span class="material-symbols-rounded">
+              notifications
+            </span>
+            <i>
+            </i>
+          </button>
+          <div class="avatar" data-profile>
+            NA
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main>
+      <div class="shell crumb">
+        <a href="../../index.html">
+          Trang chủ
+        </a>
+        <span class="material-symbols-rounded">
+          chevron_right
+        </span>
+        <a href="../booking/">
+          Đặt sân
+        </a>
+        <span class="material-symbols-rounded">
+          chevron_right
+        </span>
+        <span>
+          Rủ đội &amp; chia tiền
+        </span>
+      </div>
+      <section class="shell page-head">
+        <div>
+          <div class="eyebrow">
+            Kèo của bạn đã sẵn sàng
+          </div>
+          <h1>
+            Rủ đội, chia tiền dễ dàng.
+          </h1>
+          <p>
+            Gửi một link để mọi người vào kèo và thanh toán phần của mình.
+          </p>
+        </div>
+        <div class="booking-code">
+          <span class="material-symbols-rounded">
+            confirmation_number
+          </span>
+          <span id="booking-code">
+            Mã đặt sân: MU-8D4N2
+          </span>
+        </div>
+      </section>
+      <div class="shell layout">
+        <section>
+          <article class="event-card card">
+            <div class="success-chip" id="booking-chip">
+              <span class="material-symbols-rounded">
+                check_circle
+              </span>
+              ĐÃ GIỮ SÂN THÀNH CÔNG
+            </div>
+            <h2 id="event-court">
+              Sân Gia Định · Sân 7 người
+            </h2>
+            <p id="event-description">
+              Hãy hoàn tất phần thanh toán của đội trước 18:00 hôm nay để xác nhận sân.
+            </p>
+            <div class="event-info">
+              <div>
+                <span>
+                  THỜI GIAN
+                </span>
+                <strong id="event-time">
+                  Hôm nay, 18:30 — 20:00
+                </strong>
+              </div>
+              <div>
+                <span>
+                  ĐỊA ĐIỂM
+                </span>
+                <strong id="event-location" data-user-location>
+                  Chưa bật vị trí
+                </strong>
+              </div>
+              <div>
+                <span>
+                  NGƯỜI TẠO KÈO
+                </span>
+                <strong id="event-owner">
+                  Ngọc Anh
+                </strong>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:14px">
+              <button id="confirm-booking" style="padding:9px 11px;border:0;border-radius:9px;color:#173c2c;background:#ccf645;font-size:10px;font-weight:800">
+                Xác nhận giữ sân
+              </button>
+            </div>
+          </article>
+          <article class="journey-card" id="journey-card">
+            <div class="journey-head">
+              <div>
+                <h2>
+                  Hành trình trận chơi
+                </h2>
+                <p id="journey-caption">
+                  Bạn đang ở bước giữ sân.
+                </p>
+              </div>
+              <span class="journey-badge" id="journey-badge">
+                Đang chuẩn bị
+              </span>
+            </div>
+            <div class="journey-steps">
+              <div class="journey-step" data-step="held">
+                Giữ sân
+              </div>
+              <div class="journey-step" data-step="confirmed">
+                Xác nhận
+              </div>
+              <div class="journey-step" data-step="team">
+                Đủ người
+              </div>
+              <div class="journey-step" data-step="paid">
+                Chia tiền
+              </div>
+              <div class="journey-step" data-step="ready">
+                Sắp bắt đầu
+              </div>
+            </div>
+            <div class="journey-cta">
+              <span id="journey-next">
+                Xác nhận sân để bắt đầu hành trình.
+              </span>
+              <button id="journey-action">
+                Xác nhận sân
+              </button>
+            </div>
+          </article>
+          <article class="section-card card">
+            <div class="section-head">
+              <div class="section-title">
+                <span class="material-symbols-rounded">
+                  group_add
+                </span>
+                <div>
+                  <h2>
+                    Mời người chơi vào kèo
+                  </h2>
+                  <p id="share-description">
+                    Ai có link đều có thể xem kèo và thanh toán phần của họ.
+                  </p>
+                </div>
+              </div>
+              <div class="people-stack" id="people-stack" aria-label="1 trong 4 người chơi">
+                <span class="mini-avatar orange">
+                  NA
+                </span>
+                <b id="people-count">
+                  1/4 người
+                </b>
+              </div>
+            </div>
+            <div class="link-box">
+              <input class="share-link" id="share-link" aria-label="Link mời vào kèo" value="https://matchup.vn/keo/MU-8D4N2" readonly />
+              <button class="copy" id="copy-link">
+                <span class="material-symbols-rounded">
+                  content_copy
+                </span>
+                Sao chép
+              </button>
+              <button class="share" id="share-link-button">
+                <span class="material-symbols-rounded">
+                  ios_share
+                </span>
+                Chia sẻ
+              </button>
+            </div>
+            <p class="share-note">
+              <span class="material-symbols-rounded">
+                info
+              </span>
+              Link này chỉ dành cho những người bạn muốn mời vào kèo. Sau khi chia sẻ, đội sẽ được cập nhật thêm người sau khoảng 1 giây.
+            </p>
+          </article>
+          <article class="join-rules-card card">
+            <h2>
+              Quy tắc tham gia kèo
+            </h2>
+            <p>
+              Bạn có thể chỉnh lại trước khi gửi link cho đội.
+            </p>
+            <form id="booking-rules-form">
+              <div class="rules-form-grid">
+                <label class="rule-toggle">
+                  <input id="share-require-payment" type="checkbox" />
+                  <span>
+                    Thanh toán trước khi được duyệt
+                  </span>
+                  <em>
+                    Chỉ duyệt sau khi đã thu
+                  </em>
+                </label>
+                <label class="rule-toggle">
+                  <input id="share-auto-approve" type="checkbox" />
+                  <span>
+                    Tự động duyệt người đủ điều kiện
+                  </span>
+                  <em>
+                    Đỡ chờ duyệt
+                  </em>
+                </label>
+                <div class="rules-criteria" id="share-approval-criteria" hidden>
+                  <label class="rule-toggle" style="margin-top:0">
+                    <input id="share-level-match" type="checkbox" />
+                    <span>
+                      Cùng trình độ với chủ kèo
+                    </span>
+                  </label>
+                  <label>
+                    <small style="display:block;margin-bottom:4px;color:#6f8075;font-size:9px;font-weight:800">
+                      Uy tín tối thiểu
+                    </small>
+                    <select class="rule-select" id="share-min-rating">
+                      <option value="0">
+                        Không yêu cầu
+                      </option>
+                      <option value="4">
+                        Từ 4,0★
+                      </option>
+                      <option value="4.5">
+                        Từ 4,5★
+                      </option>
+                    </select>
+                  </label>
+                  <label>
+                    <small style="display:block;margin-bottom:4px;color:#6f8075;font-size:9px;font-weight:800">
+                      Kinh nghiệm tối thiểu
+                    </small>
+                    <select class="rule-select" id="share-min-completed">
+                      <option value="0">
+                        Không yêu cầu
+                      </option>
+                      <option value="3">
+                        Đã hoàn thành 3 trận
+                      </option>
+                      <option value="5">
+                        Đã hoàn thành 5 trận
+                      </option>
+                      <option value="10">
+                        Đã hoàn thành 10 trận
+                      </option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <button class="rules-save" type="submit">
+                Lưu quy tắc tham gia
+              </button>
+            </form>
+          </article>
+          <article class="section-card card split-section">
+            <div class="section-head">
+              <div class="section-title">
+                <span class="material-symbols-rounded">
+                  account_balance_wallet
+                </span>
+                <div>
+                  <h2>
+                    Chia tiền sân
+                  </h2>
+                  <p id="split-caption">
+                    Chia đều cho 1 người chơi.
+                  </p>
+                </div>
+              </div>
+              <div class="split-tabs" role="tablist" aria-label="Cách chia tiền">
+                <button class="split-tab active" data-mode="equal" role="tab" aria-selected="true">
+                  Chia đều
+                </button>
+                <button class="split-tab" data-mode="custom" role="tab" aria-selected="false">
+                  Tùy chỉnh
+                </button>
+              </div>
+            </div>
+            <div class="split-total">
+              <div>
+                <span>
+                  Tổng cần thu
+                </span>
+                <strong id="split-total">
+                  168.000đ
+                </strong>
+              </div>
+              <small id="each-total">
+                168.000đ / người
+              </small>
+            </div>
+            <div class="player-list" id="player-list">
+              <div class="player" data-name="Ngọc Anh" data-color="">
+                <span class="player-avatar">
+                  NA
+                </span>
+                <div class="player-copy">
+                  <strong>
+                    Ngọc Anh
+                    <span style="color:#79867e;font-size:9px">
+                      (bạn)
+                    </span>
+                  </strong>
+                  <span>
+                    Người tạo kèo
+                  </span>
+                  <b class="payment-state" id="my-payment-state">
+                    Chưa thanh toán
+                  </b>
+                </div>
+                <span class="amount">
+                  168.000đ
+                </span>
+              </div>
+            </div>
+            <button class="add-player" id="add-player">
+              <span class="material-symbols-rounded">
+                person_add
+              </span>
+              Mời thêm người chơi
+            </button>
+          </article>
+        </section>
+        <aside class="side">
+          <article class="progress-card card">
+            <div class="side-kicker">
+              <span class="material-symbols-rounded">
+                monitoring
+              </span>
+              Tiến độ thanh toán
+            </div>
+            <h2 id="progress-title">
+              0/4 người đã thanh toán
+            </h2>
+            <p>
+              Đội cần thanh toán đủ để sân được xác nhận.
+            </p>
+            <div class="progress-line">
+              <span id="progress-bar">
+              </span>
+            </div>
+            <div class="progress-numbers">
+              <span>
+                Đã thu
+                <b id="paid-total">
+                  0đ
+                </b>
+              </span>
+              <span>
+                Còn
+                <b id="remaining-total">
+                  168.000đ
+                </b>
+              </span>
+            </div>
+          </article>
+          <article class="payment-card card">
+            <h2>
+              Thanh toán phần của bạn
+            </h2>
+            <p>
+              Chọn cách trả tiền an toàn, nhanh chóng.
+            </p>
+            <div class="method-row" aria-label="Phương thức hỗ trợ">
+              <div class="method active">
+                <span class="material-symbols-rounded">
+                  qr_code_2
+                </span>
+                VietQR
+              </div>
+              <div class="method">
+                <span class="material-symbols-rounded">
+                  account_balance_wallet
+                </span>
+                MoMo
+              </div>
+              <div class="method">
+                <span class="material-symbols-rounded">
+                  credit_card
+                </span>
+                VNPay
+              </div>
+            </div>
+            <button class="pay-button" id="open-payment">
+              <span class="material-symbols-rounded">
+                lock
+              </span>
+              Thanh toán
+              <span id="pay-button-amount">
+                42.000đ
+              </span>
+            </button>
+            <div class="payment-safe">
+              <span class="material-symbols-rounded">
+                verified_user
+              </span>
+              Thanh toán được mã hóa và bảo mật
+            </div>
+          </article>
+          <article class="booking-detail card">
+            <h2>
+              Thông tin đặt sân
+            </h2>
+            <div>
+              <span class="material-symbols-rounded">
+                stadium
+              </span>
+              <span>
+                SÂN
+                <strong id="detail-court">
+                  Sân Gia Định · Sân 7 người
+                </strong>
+              </span>
+            </div>
+            <div>
+              <span class="material-symbols-rounded">
+                schedule
+              </span>
+              <span>
+                KHUNG GIỜ
+                <strong id="detail-time">
+                  Hôm nay, 18:30 — 20:00
+                </strong>
+              </span>
+            </div>
+            <div>
+              <span class="material-symbols-rounded">
+                receipt_long
+              </span>
+              <span>
+                TỔNG ĐƠN
+                <strong id="detail-total">
+                  168.000đ · đã bao gồm ưu đãi
+                </strong>
+              </span>
+            </div>
+            <div class="booking-voucher" id="detail-voucher" hidden>
+              <span class="material-symbols-rounded">
+                local_activity
+              </span>
+              <span>
+                <strong id="detail-voucher-title">
+                  Voucher đang áp dụng
+                </strong>
+                <small id="detail-voucher-copy">
+                  Ưu đãi đã được trừ vào tổng đơn.
+                </small>
+              </span>
+            </div>
+          </article>
+        </aside>
+      </div>
+    </main>
+    <div class="modal-layer" id="payment-modal" role="dialog" aria-modal="true" aria-labelledby="payment-title">
+      <div class="modal">
+        <div class="modal-top">
+          <div>
+            <h2 id="payment-title">
+              Chọn phương thức thanh toán
+            </h2>
+            <p>
+              Bạn sẽ thanh toán phần của mình là
+              <strong id="modal-amount">
+                42.000đ
+              </strong>
+              .
+            </p>
+          </div>
+          <button class="close" id="close-payment" aria-label="Đóng">
+            <span class="material-symbols-rounded">
+              close
+            </span>
+          </button>
+        </div>
+        <div class="modal-methods">
+          <button class="modal-method active" data-method="VietQR">
+            <span class="material-symbols-rounded">
+              qr_code_2
+            </span>
+            <div>
+              <strong>
+                VietQR / Chuyển khoản ngân hàng
+              </strong>
+              <span>
+                Quét mã để thanh toán tức thì
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+              check_circle
+            </span>
+          </button>
+          <button class="modal-method" data-method="Ví MatchUp">
+            <span class="material-symbols-rounded">
+              account_balance_wallet
+            </span>
+            <div>
+              <strong>
+                Ví MatchUp
+              </strong>
+              <span id="booking-wallet-balance">
+                Số dư 0đ
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+            </span>
+          </button>
+          <button class="modal-method" data-method="MoMo">
+            <span class="material-symbols-rounded">
+              account_balance_wallet
+            </span>
+            <div>
+              <strong>
+                Ví MoMo
+              </strong>
+              <span>
+                Thanh toán qua ứng dụng MoMo
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+            </span>
+          </button>
+          <button class="modal-method" data-method="VNPay">
+            <span class="material-symbols-rounded">
+              credit_card
+            </span>
+            <div>
+              <strong>
+                VNPay / Thẻ ngân hàng
+              </strong>
+              <span>
+                Thẻ ATM nội địa và thẻ quốc tế
+              </span>
+            </div>
+            <span class="material-symbols-rounded check">
+            </span>
+          </button>
+        </div>
+        <button class="modal-pay" id="confirm-payment">
+          Thanh toán
+          <span id="modal-pay-amount">
+            42.000đ
+          </span>
+          qua VietQR
+        </button>
+      </div>
+    </div>
+    <div class="modal-layer" id="feedback-modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title">
+      <div class="modal feedback-card reputation-modal">
+        <div class="team-celebrate">
+          <span class="material-symbols-rounded">
+            celebration
+          </span>
+        </div>
+        <h2 id="feedback-title">
+          Lịch này thế nào?
+        </h2>
+        <p>
+          Đánh giá sân và những người có trong lịch chơi này.
+        </p>
+        <section class="reputation-section">
+          <h3>
+            Đánh giá sân
+          </h3>
+          <p>
+            Chất lượng trải nghiệm tại sân hôm nay.
+          </p>
+          <span class="reputation-label">
+            Điểm tổng quan
+          </span>
+          <div class="reputation-rating" id="court-rating-row">
+          </div>
+          <span class="reputation-label">
+            Tiêu chí về sân
+          </span>
+          <div class="reputation-tags" id="court-feedback-tags">
+          </div>
+        </section>
+        <section class="reputation-section">
+          <h3>
+            Đánh giá người chơi
+          </h3>
+          <p>
+            Bỏ qua người chơi nếu bạn chưa có đủ thông tin.
+          </p>
+          <div class="reputation-player-list" id="player-feedback-list">
+          </div>
+        </section>
+        <div class="reputation-note">
+          Tên người gửi và thời điểm sẽ hiển thị trong uy tín cộng đồng. Nhãn rủi ro chỉ tạo cảnh báo khi có ít nhất 2 phản hồi.
+        </div>
+        <div class="feedback-actions">
+          <button class="secondary" id="skip-feedback">
+            Để sau
+          </button>
+          <button class="primary" id="submit-feedback">
+            Gửi đánh giá
+          </button>
+        </div>
+        <div class="feedback-note">
+          Bạn chỉ có thể gửi một lần cho lịch này.
+        </div>
+      </div>
+    </div>
+    <div class="toast" role="status" aria-live="polite">
+    </div>
+    <script src="../../js/location.js">
+    </script>
+    <script type="module" src="../../js/app-state/index.js"></script>
+    <script type="module" src="../../js/app-ui.js"></script>
+    <script type="module" src="js/index.js"></script>
+  </body>
+</html>

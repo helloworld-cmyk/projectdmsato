@@ -1,0 +1,5 @@
+/* Shared profile shell is split into focused style layers. */
+@import url("tokens.css");
+@import url("hero.css");
+@import url("content.css");
+@import url("responsive.css");

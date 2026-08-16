@@ -1,0 +1,398 @@
+:root {
+  --ink: #18251f;
+  --muted: #6c786f;
+  --line: #e4eae3;
+  --paper: #f7f8f4;
+  --green: #1d7049;
+  --deep: #173c2c;
+  --lime: #ccf645;
+  --orange: #fa7a35;
+  --blue: #eaf2ff;
+  --shadow: 0 16px 40px rgba(26,47,35,.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: "DM Sans",sans-serif;
+}
+
+button, input {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.material-symbols-rounded {
+  font-variation-settings: "FILL" 1,"wght" 550,"GRAD" 0,"opsz" 24;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.shell {
+  width: min(1380px,calc(100% - 48px));
+  margin: 0 auto;
+}
+
+.topbar {
+  height: 38px;
+  color: #cfe0d5;
+  background: #18392a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.topbar .shell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.topbar-left, .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.topbar-right {
+  gap: 19px;
+}
+
+.topbar a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.topbar .material-symbols-rounded {
+  font-size: 16px;
+}
+
+header {
+  height: 80px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--line);
+  background: rgba(255,255,255,.94);
+  backdrop-filter: blur(12px);
+}
+
+.nav {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 52px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #17583a;
+  background: var(--lime);
+  transform: rotate(-8deg);
+}
+
+.brand-mark .material-symbols-rounded {
+  font-size: 23px;
+  transform: rotate(8deg);
+}
+
+.brand-name {
+  font: 800 22px/1 "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -1px;
+}
+
+.brand-name em {
+  color: var(--green);
+  font-style: normal;
+}
+
+.menu {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 34px;
+}
+
+.menu a {
+  padding: 30px 0 27px;
+  border-bottom: 3px solid transparent;
+  color: #748178;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.menu a.active {
+  color: var(--green);
+  border-color: var(--lime);
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  position: relative;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  background: white;
+}
+
+.icon-btn i {
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 2px solid white;
+  border-radius: 50%;
+  background: var(--orange);
+}
+
+.avatar {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  background: linear-gradient(145deg,#f6a874,#9f4c2b);
+  box-shadow: 0 0 0 1px #e8eae7;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+main {
+  padding: 29px 0 70px;
+}
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #75827a;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.crumb a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.crumb .material-symbols-rounded {
+  font-size: 15px;
+}
+
+.crumb span:last-child {
+  color: var(--green);
+}
+
+.title-row {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin: 19px 0 22px;
+}
+
+.eyebrow {
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.title-row h1 {
+  margin: 7px 0 0;
+  font: 800 clamp(28px,3vw,40px)/1.15 "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -1.8px;
+}
+
+.title-row p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.create {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 10px;
+  color: #183b2a;
+  background: var(--lime);
+  box-shadow: 0 8px 18px rgba(156,187,39,.22);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.create .material-symbols-rounded {
+  font-size: 19px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 252px minmax(0,1fr);
+  gap: 27px;
+  align-items: start;
+}
+
+.filter-panel {
+  position: sticky;
+  top: 99px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.filter-head {
+  padding: 16px 16px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-head h2 {
+  margin: 0;
+  font: 800 14px "Plus Jakarta Sans",sans-serif;
+}
+
+.reset {
+  border: 0;
+  padding: 0;
+  color: var(--green);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.filter-group {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-group:last-child {
+  border: 0;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #607066;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.filter-label .material-symbols-rounded {
+  color: var(--green);
+  font-size: 16px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  padding: 7px 9px;
+  border: 1px solid #e2e8e2;
+  border-radius: 8px;
+  color: #6d7a72;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.chip.active {
+  border-color: #b7ddc4;
+  color: var(--green);
+  background: #effaf1;
+}
+
+.range {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.range span {
+  height: 4px;
+  flex: 1;
+  position: relative;
+  border-radius: 6px;
+  background: linear-gradient(90deg,var(--green) 0 72%,#dfe6df 72%);
+}
+
+.range span::before, .range span::after {
+  content: "";
+  width: 13px;
+  height: 13px;
+  position: absolute;
+  top: 50%;
+  border: 3px solid var(--green);
+  border-radius: 50%;
+  background: #fff;
+  transform: translateY(-50%);
+}
+
+.range span::before {
+  left: 0;
+}
+
+.range span::after {
+  left: 67%;
+}
+
+.range b {
+  color: #4e5e54;
+  font-size: 10px;
+}
+
+.hint {
+  margin: 10px 0 0;
+  color: #87938b;
+  font-size: 10px;
+  line-height: 1.45;
+}

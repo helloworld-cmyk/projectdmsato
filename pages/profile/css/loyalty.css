@@ -1,0 +1,248 @@
+.loyalty-card {
+  padding:17px
+}
+.loyalty-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+.loyalty-title {
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+.loyalty-title>span {
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  color:#765712;
+  background:#fff1af;
+  font-size:18px
+}
+.loyalty-title h3 {
+  margin:0;
+  font:800 15px "Plus Jakarta Sans",sans-serif
+}
+.loyalty-title p {
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:10px
+}
+.loyalty-balance {
+  padding:8px 10px;
+  border-radius:10px;
+  color:#21402f;
+  background:#eff8ef;
+  text-align:right
+}
+.loyalty-balance span {
+  display:block;
+  color:#708077;
+  font-size:9px;
+  font-weight:700
+}
+.loyalty-balance strong {
+  display:block;
+  margin-top:2px;
+  color:var(--green);
+  font:800 17px "Plus Jakarta Sans",sans-serif
+}
+.loyalty-rule {
+  margin:13px 0 0;
+  padding:9px 10px;
+  border-radius:9px;
+  color:#637269;
+  background:#f7f9f6;
+  font-size:10px;
+  line-height:1.45
+}
+.loyalty-history {
+  display:grid;
+  gap:7px;
+  margin-top:12px
+}
+.loyalty-item {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  padding:9px 10px;
+  border:1px solid #edf0ec;
+  border-radius:10px
+}
+.loyalty-item strong {
+  display:block;
+  color:#294033;
+  font-size:10px
+}
+.loyalty-item small {
+  display:block;
+  margin-top:3px;
+  color:#87938b;
+  font-size:9px
+}
+.loyalty-points {
+  padding:5px 7px;
+  border-radius:7px;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap
+}
+.loyalty-points.earn {
+  color:#1e7049;
+  background:#e6f7eb
+}
+.loyalty-points.redeem {
+  color:#99583d;
+  background:#fff0eb
+}
+.loyalty-empty {
+  padding:12px 4px;
+  color:#7d8a81;
+  font-size:10px;
+  text-align:center
+}
+.loyalty-modal-layer {
+  position:fixed;
+  z-index:110;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:20px;
+  background:rgba(18,36,26,.45);
+  opacity:0;
+  visibility:hidden;
+  transition:.2s
+}
+.loyalty-modal-layer.show {
+  opacity:1;
+  visibility:visible
+}
+.loyalty-modal {
+  width:min(410px,100%);
+  padding:20px;
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 22px 60px rgba(15,34,23,.25);
+  transform:translateY(12px);
+  transition:.2s
+}
+.loyalty-modal-layer.show .loyalty-modal {
+  transform:translateY(0)
+}
+.loyalty-modal-top {
+  display:flex;
+  align-items:start;
+  justify-content:space-between;
+  gap:12px
+}
+.loyalty-modal h2 {
+  margin:0;
+  font:800 18px "Plus Jakarta Sans",sans-serif
+}
+.loyalty-modal p {
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45
+}
+.loyalty-close {
+  width:30px;
+  height:30px;
+  border:0;
+  border-radius:8px;
+  color:#647168;
+  background:#f1f4f1
+}
+.point-box {
+  margin-top:15px;
+  padding:12px;
+  border:1px solid #d9eadc;
+  border-radius:12px;
+  background:#f8fcf8
+}
+.point-box-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  color:#294033;
+  font-size:11px;
+  font-weight:800
+}
+.point-box-head small {
+  color:#718077;
+  font-size:9px
+}
+.point-input-row {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:7px;
+  margin-top:9px
+}
+.point-input-row input {
+  width:100%;
+  padding:9px 10px;
+  border:1px solid #cfe1d2;
+  border-radius:8px;
+  color:var(--green);
+  background:#fff;
+  font-size:11px;
+  font-weight:800
+}
+.point-max {
+  padding:8px 10px;
+  border:0;
+  border-radius:8px;
+  color:#21402f;
+  background:var(--lime);
+  font-size:10px;
+  font-weight:800
+}
+.point-summary {
+  display:grid;
+  gap:6px;
+  margin-top:11px;
+  padding-top:10px;
+  border-top:1px solid #ddeade
+}
+.point-summary div {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#627168;
+  font-size:10px
+}
+.point-summary strong {
+  color:#1f3b2b
+}
+.point-summary .discount strong {
+  color:#c35b34
+}
+.point-summary .due {
+  font-size:11px;
+  font-weight:800
+}
+.point-summary .due strong {
+  color:var(--green);
+  font-size:14px
+}
+.app-pay-confirm {
+  width:100%;
+  margin-top:14px;
+  padding:11px;
+  border:0;
+  border-radius:10px;
+  color:#173c2c;
+  background:var(--lime);
+  font-size:11px;
+  font-weight:800
+}
+@media (max-width:760px) {
+  .intro.shell {
+    margin:18px auto;
+  }
+}

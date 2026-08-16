@@ -1,0 +1,206 @@
+.wallet-card {
+  padding:17px;
+  border-color:#cfe5d4;
+  background:linear-gradient(135deg,#f7fff8,#fff)
+}
+.wallet-head {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px
+}
+.wallet-title {
+  display:flex;
+  align-items:center;
+  gap:8px
+}
+.wallet-title>span {
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:9px;
+  color:#1e7049;
+  background:#dff5b2;
+  font-size:18px
+}
+.wallet-title h3 {
+  margin:0;
+  font:800 15px "Plus Jakarta Sans",sans-serif
+}
+.wallet-title p {
+  margin:3px 0 0;
+  color:var(--muted);
+  font-size:10px
+}
+.wallet-balance {
+  padding:8px 10px;
+  border-radius:10px;
+  color:#21402f;
+  background:#e8f8ea;
+  text-align:right
+}
+.wallet-balance span {
+  display:block;
+  color:#708077;
+  font-size:9px;
+  font-weight:700
+}
+.wallet-balance strong {
+  display:block;
+  margin-top:2px;
+  color:var(--green);
+  font:800 19px "Plus Jakarta Sans",sans-serif
+}
+.wallet-actions {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:13px
+}
+.wallet-topup {
+  padding:7px 9px;
+  border:1px solid #bcdcc3;
+  border-radius:8px;
+  color:var(--green);
+  background:#fff;
+  font-size:10px;
+  font-weight:800
+}
+.wallet-topup.custom {
+  color:#21402f;
+  background:var(--lime);
+  border-color:var(--lime)
+}
+.wallet-note {
+  margin:11px 0 0;
+  color:#718077;
+  font-size:10px;
+  line-height:1.4
+}
+.wallet-history {
+  display:grid;
+  gap:7px;
+  margin-top:12px
+}
+.wallet-item {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+  padding:9px 10px;
+  border:1px solid #e4eee5;
+  border-radius:10px
+}
+.wallet-item strong {
+  display:block;
+  color:#294033;
+  font-size:10px
+}
+.wallet-item small {
+  display:block;
+  margin-top:3px;
+  color:#87938b;
+  font-size:9px
+}
+.wallet-amount {
+  padding:5px 7px;
+  border-radius:7px;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap
+}
+.wallet-amount.topup {
+  color:#1e7049;
+  background:#e6f7eb
+}
+.wallet-amount.payment {
+  color:#99583d;
+  background:#fff0eb
+}
+.wallet-empty {
+  padding:12px 4px;
+  color:#7d8a81;
+  font-size:10px;
+  text-align:center
+}
+.wallet-modal-copy {
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.45
+}
+.wallet-amount-input {
+  width:100%;
+  margin-top:15px;
+  padding:11px 12px;
+  border:1px solid #cfe1d2;
+  border-radius:9px;
+  color:var(--green);
+  background:#fff;
+  font-size:13px;
+  font-weight:800
+}
+.wallet-presets {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-top:8px
+}
+.wallet-preset {
+  padding:8px 5px;
+  border:1px solid #dce9de;
+  border-radius:8px;
+  color:#38694d;
+  background:#f7fbf7;
+  font-size:10px;
+  font-weight:800
+}
+.wallet-confirm {
+  width:100%;
+  margin-top:14px;
+  padding:11px;
+  border:0;
+  border-radius:10px;
+  color:#173c2c;
+  background:var(--lime);
+  font-size:11px;
+  font-weight:800
+}
+.wallet-payment-methods {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:14px
+}
+.wallet-payment-method {
+  padding:10px 9px;
+  border:1px solid #dce8de;
+  border-radius:10px;
+  color:#627168;
+  background:#fff;
+  text-align:left;
+  font-size:10px;
+  font-weight:800
+}
+.wallet-payment-method small {
+  display:block;
+  margin-top:3px;
+  color:#87938b;
+  font-size:9px;
+  font-weight:600
+}
+.wallet-payment-method.active {
+  border-color:#98cfa5;
+  color:var(--green);
+  background:#eff9f0
+}
+.wallet-payment-method .material-symbols-rounded {
+  float:right;
+  font-size:16px
+}
+.app-pay-confirm:disabled {
+  color:#8a968e;
+  background:#e5e9e4;
+  cursor:not-allowed
+}

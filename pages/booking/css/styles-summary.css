@@ -1,0 +1,280 @@
+.summary
+{
+  position: sticky;
+  top: 99px;
+  overflow: visible;
+  border: 1px solid #dfe7df;
+  border-radius: 19px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+.summary-head
+{
+  position: relative;
+  padding: 18px 18px 14px;
+  color: white;
+  background: var(--deep);
+  border-radius: 18px 18px 0 0;
+}
+.summary-head > *
+{
+  position: relative;
+  z-index: 1;
+}
+.summary-kicker
+{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--lime);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.summary-kicker .material-symbols-rounded
+{
+  font-size: 15px;
+}
+.summary h2
+{
+  margin: 7px 0 0;
+  font: 800 19px "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -.55px;
+}
+.summary-head p
+{
+  margin: 5px 0 0;
+  color: #c1d0c6;
+  font-size: 11px;
+}
+.summary-body
+{
+  padding: 15px 18px 18px;
+}
+.summary-label
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #58685e;
+  font-size: 11px;
+  font-weight: 800;
+}
+.summary-label button
+{
+  border: 0;
+  padding: 0;
+  color: var(--green);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+}
+.days
+{
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 5px;
+  margin-top: 9px;
+}
+.day
+{
+  padding: 8px 2px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  color: #78867d;
+  background: #f6f8f5;
+  font-size: 10px;
+  font-weight: 700;
+}
+.day b
+{
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: 13px;
+}
+.day.active
+{
+  color: var(--green);
+  border-color: #a8d8b7;
+  background: #effaf1;
+}
+.day.active b
+{
+  color: var(--green);
+}
+.time-title
+{
+  margin-top: 16px;
+}
+.time-range
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  color: #7a887f;
+  font-size: 9px;
+  font-weight: 800;
+}
+.time-range::before,
+.time-range::after
+{
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: #dde6dd;
+}
+.time-helper
+{
+  margin: 6px 0 0;
+  color: #748178;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.times
+{
+  display: grid;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+.time
+{
+  min-height: 59px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 8px 7px;
+  border: 1px solid #e2e8e2;
+  border-radius: 9px;
+  color: #405147;
+  background: white;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: left;
+  transition: .16s ease;
+}
+.time::after
+{
+  content: "";
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid #cbd8cd;
+  border-radius: 50%;
+}
+.time:hover:not(:disabled)
+{
+  border-color: #93caa4;
+  background: #f5fbf5;
+}
+.time small
+{
+  max-width: 100%;
+  overflow: hidden;
+  color: #789085;
+  font-size: 9px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.time[data-period="morning"]
+{
+  border-top: 3px solid #f3c957;
+}
+.time[data-period="afternoon"]
+{
+  border-top: 3px solid #7bbdd3;
+}
+.time[data-period="evening"]
+{
+  border-top: 3px solid #7162a8;
+}
+.time.active
+{
+  color: #1c3a2b;
+  border-color: #93c94a;
+  background: #effbc7;
+  box-shadow: 0 4px 12px rgba(77,119,37,.13);
+}
+.time.active::after
+{
+  border-color: #1d7049;
+  background: #1d7049;
+  box-shadow: inset 0 0 0 3px #effbc7;
+}
+.time.active small
+{
+  color: #406142;
+}
+.time.full
+{
+  border-style: dashed;
+  color: #a86c55;
+  background: #fff8f4;
+  cursor: not-allowed;
+}
+.time.full::after,
+.time.past::after
+{
+  border-color: #d9c5bd;
+  background: #f5eee9;
+}
+.time.full small
+{
+  color: #bd7f67;
+}
+.selected-times
+{
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  min-height: 42px;
+  margin-top: 10px;
+  padding: 8px 9px;
+  border: 1px solid #d7e8da;
+  border-radius: 10px;
+  color: #3a5d46;
+  background: #f4fbf4;
+  font-size: 10px;
+  font-weight: 800;
+}
+.selected-times .material-symbols-rounded
+{
+  margin-top: 1px;
+  color: var(--green);
+  font-size: 16px;
+}
+.selected-times span:last-child
+{
+  line-height: 1.45;
+}
+.selected-times.empty
+{
+  border-style: dashed;
+  color: #758279;
+  background: #fafcf9;
+}
+.availability-note
+{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  color: #728177;
+  font-size: 10px;
+  font-weight: 700;
+}
+.availability-note .material-symbols-rounded
+{
+  color: #bb6a44;
+  font-size: 14px;
+}

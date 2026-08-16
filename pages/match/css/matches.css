@@ -1,0 +1,410 @@
+.match-head {
+  padding: 17px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 17px;
+  color: white;
+  background: var(--deep);
+}
+
+.match-head::after {
+  content: "";
+  width: 245px;
+  height: 245px;
+  position: absolute;
+  right: -98px;
+  top: -167px;
+  border: 1px solid rgba(204,246,69,.36);
+  border-radius: 50%;
+  box-shadow: 0 0 0 27px rgba(204,246,69,.05);
+}
+
+.match-head > * {
+  position: relative;
+  z-index: 1;
+}
+
+.match-head h2 {
+  margin: 0;
+  font: 800 17px "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -.4px;
+}
+
+.match-head p {
+  margin: 5px 0 0;
+  color: #b9cbbf;
+  font-size: 11px;
+}
+
+.sort-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid rgba(255,255,255,.23);
+  border-radius: 8px;
+  color: #eff7f1;
+  background: rgba(255,255,255,.08);
+}
+
+.sort-control .material-symbols-rounded {
+  font-size: 16px;
+}
+
+.sort-control select {
+  max-width: 156px;
+  padding: 3px 16px 3px 0;
+  border: 0;
+  outline: 0;
+  color: #eff7f1;
+  background: transparent;
+  font: 700 10px "DM Sans",sans-serif;
+  cursor: pointer;
+}
+
+.sort-control option {
+  color: var(--ink);
+  background: #fff;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.smart-pick {
+  margin: 14px 0;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #d5eadb;
+  border-radius: 14px;
+  background: #f0faef;
+}
+
+.smart-icon {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: #19412e;
+  background: var(--lime);
+}
+
+.smart-icon .material-symbols-rounded {
+  font-size: 20px;
+}
+
+.smart-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.smart-copy h3 {
+  margin: 0;
+  font: 800 12px "Plus Jakarta Sans",sans-serif;
+}
+
+.smart-copy p {
+  margin: 3px 0 0;
+  color: #66806e;
+  font-size: 10px;
+}
+
+.smart-copy b {
+  color: var(--green);
+}
+
+.smart-link {
+  padding: 0;
+  border: 0;
+  color: var(--green);
+  background: transparent;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 12px;
+}
+
+.match-card {
+  min-height: 247px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  transition: transform .2s,box-shadow .2s;
+}
+
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(29,82,49,.08);
+}
+
+.card-top {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+}
+
+.sport-mark {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  color: var(--green);
+  background: #edf8ef;
+  font-size: 20px;
+}
+
+.sport-mark.badminton {
+  color: #e66e30;
+  background: #fff0e8;
+}
+
+.sport-mark.pickleball {
+  color: #4777c3;
+  background: #edf3ff;
+}
+
+.sport-mark.basketball {
+  color: #b36524;
+  background: #fff3db;
+}
+
+.match-score {
+  padding: 5px 7px;
+  border-radius: 7px;
+  color: #53695c;
+  background: #f3f6f3;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.match-score strong {
+  color: var(--green);
+}
+
+.match-card h3 {
+  margin: 11px 0 0;
+  font: 800 14px "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -.35px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 7px;
+}
+
+.tag {
+  padding: 4px 6px;
+  border-radius: 5px;
+  color: #8b611a;
+  background: #fff2d5;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.tag.gray {
+  color: #66756c;
+  background: #f1f4f1;
+}
+
+.card-info {
+  display: grid;
+  gap: 5px;
+  margin-top: 11px;
+  color: #6b796f;
+  font-size: 10px;
+}
+
+.card-info div {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card-info .material-symbols-rounded {
+  color: #829087;
+  font-size: 14px;
+}
+
+.card-cost {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  color: #356b50;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.card-cost .material-symbols-rounded {
+  color: var(--green);
+  font-size: 14px;
+}
+
+.card-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid #eef1ed;
+}
+
+.members {
+  display: flex;
+  align-items: center;
+}
+
+.member {
+  width: 25px;
+  height: 25px;
+  margin-right: -6px;
+  display: grid;
+  place-items: center;
+  border: 2px solid white;
+  border-radius: 50%;
+  color: white;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.member.one {
+  background: #d78c68;
+}
+
+.member.two {
+  background: #6680ba;
+}
+
+.member.three {
+  background: #c7a85f;
+}
+
+.member.four {
+  background: #559480;
+}
+
+.members .member {
+  margin-left: 0;
+}
+
+.members > span:last-child {
+  margin-left: 12px;
+  color: #78867d;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.view-details {
+  padding: 8px 3px;
+  border: 0;
+  color: #587368;
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.view-details:hover {
+  color: var(--green);
+}
+
+.join {
+  padding: 8px 10px;
+  border: 1px solid #d4e4d8;
+  border-radius: 8px;
+  color: var(--green);
+  background: #fff;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.join:hover {
+  color: white;
+  border-color: var(--green);
+  background: var(--green);
+}
+
+.result-note {
+  margin: 10px 0 0;
+  color: #728178;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.empty {
+  display: none;
+  padding: 32px;
+  border: 1px dashed #cad6cc;
+  border-radius: 14px;
+  color: #738078;
+  text-align: center;
+  font-size: 13px;
+}
+
+.empty .material-symbols-rounded {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--green);
+  font-size: 28px;
+}
+
+.empty.show {
+  display: block;
+}
+
+.toast {
+  position: fixed;
+  z-index: 40;
+  left: 50%;
+  bottom: 25px;
+  max-width: calc(100% - 32px);
+  padding: 13px 17px;
+  border-radius: 12px;
+  color: #fff;
+  background: #18392a;
+  box-shadow: 0 13px 30px rgba(0,0,0,.18);
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translate(-50%,120px);
+  transition: .3s;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%,0);
+}

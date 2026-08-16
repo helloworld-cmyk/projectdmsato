@@ -1,0 +1,91 @@
+.play-stats {
+  padding:16px;
+  border:1px solid #dceade;
+  border-radius:18px;
+  background:#f7fcf8
+}
+.play-stats-head {
+  display:flex;
+  align-items:start;
+  justify-content:space-between;
+  gap:12px
+}
+.play-stats h3 {
+  margin:0;
+  font:800 15px "Plus Jakarta Sans",sans-serif
+}
+.play-stats p {
+  margin:4px 0 0;
+  color:#6f7d74;
+  font-size:10px
+}
+.streak {
+  padding:7px 9px;
+  border-radius:9px;
+  color:#755712;
+  background:#fff1af;
+  font-size:10px;
+  font-weight:800;
+  white-space:nowrap
+}
+.play-stat-row {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:7px;
+  margin-top:13px
+}
+.play-stat {
+  padding:9px;
+  border:1px solid #e0ece1;
+  border-radius:10px;
+  background:#fff
+}
+.play-stat strong {
+  display:block;
+  color:var(--green);
+  font:800 17px "Plus Jakarta Sans",sans-serif
+}
+.play-stat span {
+  display:block;
+  margin-top:3px;
+  color:#7a887f;
+  font-size:9px;
+  font-weight:700
+}
+.badge-row {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:11px
+}
+.profile-badge {
+  padding:6px 8px;
+  border-radius:999px;
+  color:#35644a;
+  background:#e6f7e9;
+  font-size:9px;
+  font-weight:800
+}
+.journey-mini {
+  margin-top:8px;
+  padding:8px 9px;
+  border-radius:9px;
+  color:#627168;
+  background:#f7faf6;
+  font-size:9px;
+  font-weight:700
+}
+.journey-mini strong {
+  color:var(--green)
+}
+@media(max-width:760px) {
+  .play-stat-row {
+    gap:5px
+  }
+  .play-stat {
+    padding:8px
+  }
+  .play-stat strong {
+    font-size:15px
+  }
+}

@@ -1,0 +1,164 @@
+.saved-section {
+  border-color:#dceade;
+  background:#fbfefb
+}
+.saved-section .section-title {
+  margin-bottom:5px
+}
+.saved-section .section-title h3 {
+  display:flex;
+  align-items:center;
+  gap:6px
+}
+.saved-section .section-title h3::before {
+  content:'bookmark';
+  font-family:'Material Symbols Rounded';
+  font-size:18px;
+  font-variation-settings:"FILL" 1,"wght" 550,"GRAD" 0,"opsz" 24;
+  color:var(--green)
+}
+.saved-section .activity {
+  border-color:#dfece1
+}
+.saved-section .activity-icon {
+  background:#eff9f1
+}
+.saved-section .saved-hint {
+  margin:0 0 12px;
+  color:#738178;
+  font-size:11px
+}
+.saved-section .saved-empty {
+  padding:17px 8px;
+  color:#718077;
+  text-align:center;
+  font-size:11px
+}
+.saved-section .saved-empty .material-symbols-rounded {
+  display:block;
+  margin-bottom:5px;
+  color:#9aaba0;
+  font-size:25px
+}
+.reputation-card {
+  padding:17px;
+  border-color:#dceade;
+  background:#fbfefb
+}
+.reputation-card-head {
+  display:flex;
+  align-items:start;
+  justify-content:space-between;
+  gap:12px
+}
+.reputation-card h3 {
+  margin:0;
+  font:800 15px "Plus Jakarta Sans",sans-serif
+}
+.reputation-card p {
+  margin:4px 0 0;
+  color:var(--muted);
+  font-size:10px
+}
+.reputation-score {
+  padding:8px 10px;
+  border-radius:10px;
+  color:#21402f;
+  background:#e6f7e9;
+  text-align:right
+}
+.reputation-score strong {
+  display:block;
+  color:var(--green);
+  font:800 19px "Plus Jakarta Sans",sans-serif
+}
+.reputation-score span {
+  display:block;
+  margin-top:2px;
+  color:#6f8075;
+  font-size:9px;
+  font-weight:700
+}
+.reputation-highlights {
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:13px
+}
+.reputation-highlight {
+  padding:6px 8px;
+  border-radius:999px;
+  color:#35644a;
+  background:#e6f7e9;
+  font-size:9px;
+  font-weight:800
+}
+.reputation-alert {
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:9px;
+  color:#934d37;
+  background:#fff0eb;
+  font-size:10px;
+  font-weight:800
+}
+.reputation-alert .material-symbols-rounded {
+  margin-right:3px;
+  font-size:14px
+}
+.reputation-reviews {
+  display:grid;
+  gap:8px;
+  margin-top:13px
+}
+.reputation-review {
+  padding:10px;
+  border:1px solid #e4ece4;
+  border-radius:10px;
+  background:#fff
+}
+.reputation-review-head {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px
+}
+.reputation-review-head strong {
+  color:#294033;
+  font-size:10px
+}
+.reputation-review-head time {
+  color:#89968e;
+  font-size:9px
+}
+.reputation-review-rating {
+  color:#a87318;
+  font-size:12px;
+  letter-spacing:1px
+}
+.reputation-review-copy {
+  margin-top:4px;
+  color:#66766b;
+  font-size:10px;
+  line-height:1.4
+}
+.reputation-empty {
+  padding:13px 5px;
+  color:#7b8a81;
+  font-size:10px;
+  text-align:center
+}
+.reputation-empty .material-symbols-rounded {
+  display:block;
+  margin-bottom:5px;
+  color:#9aaba0;
+  font-size:24px
+}
+@media(max-width:760px) {
+  .reputation-card-head {
+    align-items:center
+  }
+  .reputation-score strong {
+    font-size:17px
+  }
+}

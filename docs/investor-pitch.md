@@ -177,11 +177,11 @@ Chiến lược giữ giao dịch trong nền tảng là kết hợp **giá tr�
 Mở `index.html` trong trình duyệt (không cần cài đặt). Toàn bộ dữ liệu được lưu trên trình duyệt (localStorage), có thể thao tác trực tiếp:
 
 1. **Trang chủ (index.html):** Tìm trận, xem kèo nổi bật, đặt sân nhanh, xem danh mục voucher và sao chép mã ưu đãi `MATCH20`; biểu tượng chuông mở trung tâm thông báo.
-2. **Tìm trận (match.html):** Lọc môn / thời gian / trình độ / khoảng cách, sắp xếp, xem "Điểm phù hợp", lưu kèo, bật "Báo tôi khi có kèo", tạo kèo mới, xin vào kèo, xem chi tiết & bản đồ. Sau khi xin vào, màn hình đội hiển thị tiến độ, lời chào và link mời; phòng chat chỉ xuất hiện sau khi yêu cầu được duyệt.
-3. **Đặt sân (booking.html):** Lọc sân theo môn / giờ / bán kính, chọn ngày / sân / khung giờ, xem trạng thái khung giờ thời gian thực, chọn voucher theo điều kiện và giữ chỗ 10 phút. Nếu hết hạn, có thể đặt lại sân.
-4. **Rủ đội & chia tiền (invite.html):** Sao chép hoặc chia sẻ link mời, thêm người chơi, chia đều / tùy chỉnh với kiểm tra tổng khớp đơn, theo dõi tiến độ thu tiền, thanh toán qua VietQR/MoMo/VNPay, dùng điểm thành viên, xem hành trình 5 bước, đánh giá và chơi lại sau trận.
-5. **Cá nhân (profile.html):** Chỉnh hồ sơ & sở thích, xem kèo đã lưu, theo dõi kèo, bấm "Giả lập duyệt" để mô phỏng chủ kèo chấp nhận, mở chat đội, xem lịch sân, thống kê trận / đánh giá / streak / huy hiệu, nhật ký điểm thành viên, hủy hoặc đặt lại lịch, đặt lại dữ liệu demo.
-6. **Liên lạc (contact.html):** Xem inbox các phòng chat đã được duyệt, tìm kiếm theo tên kèo, xem tin nhắn cuối và badge chưa đọc; chọn phòng để chat với đội.
+2. **Tìm trận (match/):** Lọc môn / thời gian / trình độ / khoảng cách, sắp xếp, xem "Điểm phù hợp", lưu kèo, bật "Báo tôi khi có kèo", tạo kèo mới, xin vào kèo, xem chi tiết & bản đồ. Sau khi xin vào, màn hình đội hiển thị tiến độ, lời chào và link mời; phòng chat chỉ xuất hiện sau khi yêu cầu được duyệt.
+3. **Đặt sân (booking/):** Lọc sân theo môn / giờ / bán kính, chọn ngày / sân / khung giờ, xem trạng thái khung giờ thời gian thực, chọn voucher theo điều kiện và giữ chỗ 10 phút. Nếu hết hạn, có thể đặt lại sân.
+4. **Rủ đội & chia tiền (invite/):** Sao chép hoặc chia sẻ link mời, thêm người chơi, chia đều / tùy chỉnh với kiểm tra tổng khớp đơn, theo dõi tiến độ thu tiền, thanh toán qua VietQR/MoMo/VNPay, dùng điểm thành viên, xem hành trình 5 bước, đánh giá và chơi lại sau trận.
+5. **Cá nhân (profile/):** Chỉnh hồ sơ & sở thích, xem kèo đã lưu, theo dõi kèo, bấm "Giả lập duyệt" để mô phỏng chủ kèo chấp nhận, mở chat đội, xem lịch sân, thống kê trận / đánh giá / streak / huy hiệu, nhật ký điểm thành viên, hủy hoặc đặt lại lịch, đặt lại dữ liệu demo.
+6. **Liên lạc (contact/):** Xem inbox các phòng chat đã được duyệt, tìm kiếm theo tên kèo, xem tin nhắn cuối và badge chưa đọc; chọn phòng để chat với đội.
 
 ---
 

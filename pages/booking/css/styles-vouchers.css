@@ -1,0 +1,225 @@
+.voucher-selector
+{
+  position: relative;
+  margin-top: 15px;
+  padding: 12px;
+  border: 1px solid #d9e7da;
+  border-radius: 12px;
+  background: #f8fcf7;
+}
+.voucher-selector-head
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.voucher-selector-copy
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.voucher-selector-copy > .material-symbols-rounded
+{
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #987017;
+  background: #fff1bd;
+  font-size: 16px;
+}
+.voucher-selector-copy small
+{
+  display: block;
+  color: #819087;
+  font-size: 9px;
+  font-weight: 700;
+}
+.voucher-selector-copy strong
+{
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  color: #294033;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.voucher-change
+{
+  padding: 7px 8px;
+  border: 1px solid #cbdccc;
+  border-radius: 8px;
+  color: var(--green);
+  background: white;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.voucher-picker
+{
+  display: none;
+  gap: 7px;
+  max-height: 252px;
+  overflow: auto;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #d6e5d7;
+}
+.voucher-picker.show
+{
+  display: grid;
+}
+.voucher-option
+{
+  display: grid;
+  grid-template-columns: minmax(0,1fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 9px;
+  border: 1px solid #e0e9e1;
+  border-radius: 9px;
+  color: #284433;
+  background: white;
+  text-align: left;
+}
+.voucher-option:hover,
+.voucher-option.selected
+{
+  border-color: #a6cfb2;
+  background: #eff9f1;
+}
+.voucher-option.locked
+{
+  color: #98a49c;
+  background: #f5f7f4;
+  cursor: not-allowed;
+}
+.voucher-option strong
+{
+  display: block;
+  font-size: 10px;
+}
+.voucher-option small
+{
+  display: block;
+  margin-top: 3px;
+  color: #7c8c81;
+  font-size: 9px;
+}
+.voucher-option.locked small
+{
+  color: #b0745d;
+}
+.voucher-option b
+{
+  color: var(--green);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.voucher-option.locked b
+{
+  color: #a5afa8;
+}
+.booking-line
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 16px 0 0;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.booking-line div
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.booking-line .material-symbols-rounded
+{
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #a97610;
+  background: #fff3ca;
+  font-size: 17px;
+}
+.booking-line small
+{
+  display: block;
+  color: #819087;
+  font-size: 10px;
+  font-weight: 600;
+}
+.booking-line strong
+{
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+}
+.booking-line b
+{
+  color: var(--green);
+  font-size: 13px;
+}
+.total
+{
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin-top: 13px;
+}
+.total span
+{
+  color: #6d7b72;
+  font-size: 11px;
+  font-weight: 700;
+}
+.total strong
+{
+  display: block;
+  margin-top: 3px;
+  font: 800 21px "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -.7px;
+}
+.pay
+{
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px;
+  border: 0;
+  border-radius: 10px;
+  color: #183b2a;
+  background: var(--lime);
+  font-size: 12px;
+  font-weight: 800;
+}
+.pay:disabled
+{
+  color: #8a968e;
+  background: #e5e9e4;
+  cursor: not-allowed;
+}
+.secure
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 9px;
+  color: #849188;
+  font-size: 10px;
+  font-weight: 600;
+}
+.secure .material-symbols-rounded
+{
+  font-size: 13px;
+}

@@ -1,0 +1,254 @@
+.page-intro
+{
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  margin: 20px 0 22px;
+}
+.eyebrow
+{
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+.page-intro h1
+{
+  margin: 7px 0 0;
+  font: 800 clamp(28px,3vw,40px)/1.15 "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -1.8px;
+}
+.page-intro p
+{
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+.steps
+{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.step
+{
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #8c988f;
+  font-size: 11px;
+  font-weight: 700;
+}
+.step b
+{
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #8c988f;
+  background: #e8ece7;
+  font-size: 11px;
+}
+.step.active
+{
+  color: var(--green);
+}
+.step.active b
+{
+  color: #19402e;
+  background: var(--lime);
+}
+.step-line
+{
+  width: 28px;
+  height: 1px;
+  background: #dce2dc;
+}
+.layout
+{
+  display: grid;
+  grid-template-columns: minmax(0,1fr) 358px;
+  gap: 28px;
+  align-items: start;
+}
+.searchbar
+{
+  padding: 9px;
+  display: grid;
+  grid-template-columns: 1.1fr .9fr .8fr auto;
+  gap: 4px;
+  border: 1px solid #e1e8e1;
+  border-radius: 17px;
+  background: white;
+  box-shadow: 0 10px 25px rgba(28,50,37,.05);
+}
+.query
+{
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  color: var(--ink);
+  background: white;
+  text-align: left;
+}
+.query:last-of-type
+{
+  border: 0;
+}
+.query-icon
+{
+  width: 33px;
+  height: 33px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--green);
+  background: #eff7ef;
+}
+.query-icon .material-symbols-rounded
+{
+  font-size: 19px;
+}
+.query small
+{
+  display: block;
+  color: #829087;
+  font-size: 10px;
+  font-weight: 700;
+}
+.query strong
+{
+  display: block;
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.search-go
+{
+  width: 48px;
+  border: 0;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--green);
+}
+.search-go .material-symbols-rounded
+{
+  font-size: 23px;
+}
+.court-browser
+{
+  display: grid;
+  grid-template-columns: 252px minmax(0,1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 23px;
+}
+.filter-panel
+{
+  position: sticky;
+  top: 99px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  background: #fff;
+}
+.filter-head
+{
+  padding: 16px 16px 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+.filter-head h2
+{
+  margin: 0;
+  font: 800 14px "Plus Jakarta Sans",sans-serif;
+}
+.reset
+{
+  min-height: 0;
+  border: 0;
+  padding: 0;
+  color: var(--green);
+  background: transparent;
+  font-size: 10px;
+  font-weight: 800;
+}
+.filter-group
+{
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+}
+.filter-group:last-child
+{
+  border: 0;
+}
+.filter-label
+{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: #607066;
+  font-size: 11px;
+  font-weight: 800;
+}
+.filter-label .material-symbols-rounded
+{
+  color: var(--green);
+  font-size: 16px;
+}
+.chips
+{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip
+{
+  min-height: 0;
+  padding: 7px 9px;
+  border: 1px solid #e2e8e2;
+  border-radius: 8px;
+  color: #6d7a72;
+  background: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+.chip.active
+{
+  border-color: #b7ddc4;
+  color: var(--green);
+  background: #effaf1;
+}
+.area-bar
+{
+  margin: 0 0 14px;
+}
+.area-bar h2
+{
+  margin: 0;
+  font: 800 20px "Plus Jakarta Sans",sans-serif;
+  letter-spacing: -.7px;
+}
+.area-bar h2 span
+{
+  color: var(--green);
+}
+.court-result-note
+{
+  margin: 11px 0 -2px;
+  color: #738078;
+  font-size: 11px;
+  font-weight: 600;
+}

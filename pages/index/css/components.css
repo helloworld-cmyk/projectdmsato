@@ -1,0 +1,24 @@
+.toast {
+  position: fixed;
+  z-index: 50;
+  left: 50%;
+  bottom: 26px;
+  max-width: calc(100% - 32px);
+  padding: 13px 17px;
+  border-radius: 12px;
+  color: white;
+  background: #18392a;
+  box-shadow: 0 13px 30px rgba(0,0,0,.18);
+  font-size: 13px;
+  font-weight: 700;
+  transform: translate(-50%, 120px);
+  opacity: 0;
+  transition: transform .3s, opacity .3s;
+}
+.toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+.mobile-nav {
+  display: none;
+}
