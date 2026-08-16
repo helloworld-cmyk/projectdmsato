@@ -4,7 +4,7 @@ export const BOOKING_ROSTER_MIGRATION_VERSION = 1;
 
 export const joinRuleDefaults = () => ({
   requirePaymentBeforeJoin: false,
-  autoApprove: false,
+  autoApprove: true,
   criteria: {
     levelMatch: false,
     minRating: 0,

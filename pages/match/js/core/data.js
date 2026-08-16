@@ -75,7 +75,7 @@ export function decorateMatches(items) {
     match.deposit = Math.ceil(match.share / 2 / 1000) * 1000;
     match.joinRules = {
       requirePaymentBeforeJoin: false,
-      autoApprove: false,
+      autoApprove: true,
       criteria: {
         levelMatch: false,
         minRating: 0,

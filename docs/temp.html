@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kèo card preview — bg ảnh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #1f8a4c;
+      --lime: #ccf645;
+      --deep: #123a2a;
+      --line: #e3e8e3;
+      --ink: #18251e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      padding: 24px;
+      background: #f7f8f4;
+      font-family: "DM Sans", sans-serif;
+    }
+    .preview-note {
+      color: #728178;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .match-card {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      min-height: 300px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      border-radius: 16px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #fff;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, .18);
+    }
+    .match-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(10, 25, 18, .55) 0%,
+        rgba(10, 25, 18, .28) 45%,
+        rgba(10, 25, 18, .82) 100%
+      );
+      z-index: 0;
+    }
+    .match-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    .card-top {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .sport-mark {
+      width: 39px;
+      height: 39px;
+      display: grid;
+      place-items: center;
+      border-radius: 11px;
+      color: var(--green);
+      background: #edf8ef;
+      font-size: 20px;
+    }
+    .match-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 5px 7px;
+      border: 0;
+      border-radius: 7px;
+      color: #eaf5ee;
+      background: rgba(0, 0, 0, .38);
+      backdrop-filter: blur(6px);
+      font: 800 10px "DM Sans", sans-serif;
+      cursor: pointer;
+    }
+    .match-score strong { color: var(--lime); }
+    .match-score .material-symbols-rounded { font-size: 13px; }
+    .match-card h3 {
+      margin: 11px 0 0;
+      font: 800 15px "Plus Jakarta Sans", sans-serif;
+      letter-spacing: -.35px;
+      text-shadow: 0 1px 6px rgba(0, 0, 0, .35);
+    }
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .tag {
+      padding: 4px 6px;
+      border-radius: 5px;
+      color: #8b611a;
+      background: #fff2d5;
+      font-size: 9px;
+      font-weight: 800;
+    }
+    .tag.gray {
+      color: #eaf1ec;
+      background: rgba(0, 0, 0, .3);
+      backdrop-filter: blur(4px);
+    }
+    .match-reasons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+    .match-reasons span {
+      padding: 4px 7px;
+      border-radius: 6px;
+      color: #d9f7e4;
+      background: rgba(31, 138, 76, .5);
+      backdrop-filter: blur(4px);
+      font-size: 9px;
+      font-weight: 700;
+    }
+    .card-info {
+      display: grid;
+      gap: 5px;
+      margin-top: 12px;
+      color: #e4eee7;
+      font-size: 10px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, .4);
+    }
+    .card-info div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .card-info .material-symbols-rounded {
+      color: #b9d9c6;
+      font-size: 14px;
+    }
+    .card-cost {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 8px;
+      color: var(--lime);
+      font-size: 10px;
+      font-weight: 800;
+    }
+    .card-cost .material-symbols-rounded {
+      color: var(--lime);
+      font-size: 14px;
+    }
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 9px;
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, .22);
+    }
+    .members {
+      display: flex;
+      align-items: center;
+    }
+    .member {
+      width: 25px;
+      height: 25px;
+      margin-right: -6px;
+      display: grid;
+      place-items: center;
+      border: 2px solid rgba(255, 255, 255, .85);
+      border-radius: 50%;
+      color: white;
+      font-size: 8px;
+      font-weight: 800;
+    }
+    .member.one { background: #d78c68; }
+    .member.two { background: #6680ba; }
+    .member.three { background: #c7a85f; }
+    .members > span:last-child {
+      margin-left: 12px;
+      color: #e2ece5;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .card-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .view-details {
+      padding: 8px 3px;
+      border: 0;
+      color: #eaf2ed;
+      background: transparent;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .join {
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, .35);
+      border-radius: 8px;
+      color: #fff;
+      background: rgba(31, 138, 76, .85);
+      backdrop-filter: blur(4px);
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .sport-switch {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .sport-switch button {
+      padding: 7px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      background: #fff;
+      font: 700 11px "DM Sans", sans-serif;
+      cursor: pointer;
+    }
+    .sport-switch button.active {
+      color: #fff;
+      border-color: var(--green);
+      background: var(--green);
+    }
+  </style>
+</head>
+<body>
+  <p class="preview-note">Preview thẻ kèo — bấm nút bên dưới để đổi môn &amp; ảnh nền</p>
+  <div class="sport-switch">
+    <button class="active" data-sport="football">⚽ Bóng đá</button>
+    <button data-sport="badminton">🏸 Cầu lông</button>
+    <button data-sport="pickleball">🎾 Pickleball</button>
+    <button data-sport="basketball">🏀 Bóng rổ</button>
+  </div>
+  <article class="match-card" id="card">
+    <div class="card-top">
+      <span class="sport-mark">⚽</span>
+      <button class="match-score" type="button">
+        <strong>97%</strong> hợp với bạn
+        <span class="material-symbols-rounded">info</span>
+      </button>
+    </div>
+    <h3>FC Văn Quán · hôm nay</h3>
+    <div class="tags">
+      <span class="tag">MỚI CHƠI</span>
+      <span class="tag gray">Sân 5/7 người</span>
+    </div>
+    <div class="match-reasons">
+      <span>Cách bạn 1,2 km</span>
+      <span>Đúng môn bạn yêu thích</span>
+    </div>
+    <div class="card-info">
+      <div>
+        <span class="material-symbols-rounded">schedule</span>
+        06:00 — 07:30, hôm nay
+      </div>
+      <div>
+        <span class="material-symbols-rounded">location_on</span>
+        Sân bóng Văn Quán, Văn Quán · 1,2 km
+      </div>
+    </div>
+    <div class="card-cost">
+      <span class="material-symbols-rounded">payments</span>
+      84.000đ/người · còn 2 chỗ
+    </div>
+    <div class="card-bottom">
+      <div class="members">
+        <span class="member one">NA</span>
+        <span class="member two">MK</span>
+        <span class="member three">TV</span>
+        <span>3/5 người</span>
+      </div>
+      <div class="card-actions">
+        <button class="view-details" type="button">Xem kèo</button>
+        <button class="join" type="button">Mời thêm</button>
+      </div>
+    </div>
+  </article>
+  <script>
+    const images = {
+      football: 'https://images.unsplash.com/photo-1550413231-202a9d53a331?auto=format&fit=crop&w=1200&q=80',
+      badminton: 'https://images.unsplash.com/photo-1720515226352-b0b1dec6813b?auto=format&fit=crop&w=1200&q=80',
+      pickleball: 'https://images.unsplash.com/photo-1737229495515-53f1eaee5c16?auto=format&fit=crop&w=1200&q=80',
+      basketball: 'https://images.unsplash.com/photo-1752166672322-f9ea3086684e?auto=format&fit=crop&w=1200&q=80'
+    };
+    const emojis = { football: '⚽', badminton: '🏸', pickleball: '🎾', basketball: '🏀' };
+    const card = document.getElementById('card');
+    document.querySelectorAll('.sport-switch button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.sport-switch .active').classList.remove('active');
+        btn.classList.add('active');
+        const sport = btn.dataset.sport;
+        card.style.backgroundImage = `url('${images[sport]}')`;
+        card.querySelector('.sport-mark').textContent = emojis[sport];
+      });
+    });
+    card.style.backgroundImage = `url('${images.football}')`;
+  </script>
+</body>
+</html>

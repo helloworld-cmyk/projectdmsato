@@ -221,6 +221,8 @@ export function initCreateFlow() {
     document.querySelector('#create-approval-criteria').hidden =
       !document.querySelector('#create-auto-approve').checked;
   });
+  document.querySelector('#create-approval-criteria').hidden =
+    !document.querySelector('#create-auto-approve').checked;
   dom.createFormElement.addEventListener('submit', submitCreateForm);
 }
 

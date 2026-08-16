@@ -14,17 +14,18 @@
 .match-reasons {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 4px;
   margin-top: 8px;
 }
 
 .match-reasons span {
-  padding: 4px 6px;
-  border-radius: 999px;
-  color: #37644b;
-  background: #eff9f1;
+  padding: 4px 7px;
+  border-radius: 6px;
+  color: #d9f7e4;
+  background: rgba(31, 138, 76, .5);
+  backdrop-filter: blur(4px);
   font-size: 9px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .match-reasons span:nth-child(n+3) {
@@ -32,8 +33,8 @@
 }
 
 .match-card.is-saved {
-  border-color: #c6e8cf;
-  box-shadow: 0 0 0 2px rgba(204,246,69,.18);
+  border: 1px solid rgba(255, 255, 255, .65);
+  box-shadow: 0 0 0 2px rgba(204, 246, 69, .25);
 }
 
 .save-match {

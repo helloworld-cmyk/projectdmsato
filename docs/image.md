@@ -2,7 +2,6 @@
 
   Bóng đá
 
-  https://images.unsplash.com/photo-1550413231-202a9d53a331?auto=format&fit=crop&w=1200&q=80
   https://images.unsplash.com/photo-1556962021-9d0303621643?auto=format&fit=crop&w=1200&q=80
   https://images.unsplash.com/photo-1634114441919-7636abb21cae?auto=format&fit=crop&w=1200&q=80
   https://images.unsplash.com/photo-1755993071218-91e315259902?auto=format&fit=crop&w=1200&q=80

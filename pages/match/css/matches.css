@@ -146,15 +146,38 @@
   gap: 12px;
 }
 
-.match-card {
-  min-height: 247px;
+.match-grid .match-card {
+  position: relative;
+  min-height: 300px;
   padding: 15px;
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--line);
   border-radius: 16px;
-  background: #fff;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #fff;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .18);
   transition: transform .2s,box-shadow .2s;
+}
+
+.match-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 25, 18, .55) 0%,
+    rgba(10, 25, 18, .28) 45%,
+    rgba(10, 25, 18, .82) 100%
+  );
+  z-index: 0;
+}
+
+.match-card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .match-card:hover {
@@ -194,23 +217,29 @@
   background: #fff3db;
 }
 
-.match-score {
+.match-grid .match-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
   padding: 5px 7px;
+  border: 0;
   border-radius: 7px;
-  color: #53695c;
-  background: #f3f6f3;
-  font-size: 10px;
-  font-weight: 800;
+  color: #eaf5ee;
+  background: rgba(0, 0, 0, .38);
+  backdrop-filter: blur(6px);
+  font: 800 10px "DM Sans",sans-serif;
+  cursor: pointer;
 }
 
 .match-score strong {
-  color: var(--green);
+  color: var(--lime);
 }
 
-.match-card h3 {
+.match-grid .match-card h3 {
   margin: 11px 0 0;
-  font: 800 14px "Plus Jakarta Sans",sans-serif;
+  font: 800 15px "Plus Jakarta Sans",sans-serif;
   letter-spacing: -.35px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, .35);
 }
 
 .tags {
@@ -220,7 +249,7 @@
   margin-top: 7px;
 }
 
-.tag {
+.match-grid .tag {
   padding: 4px 6px;
   border-radius: 5px;
   color: #8b611a;
@@ -230,16 +259,18 @@
 }
 
 .tag.gray {
-  color: #66756c;
-  background: #f1f4f1;
+  color: #eaf1ec;
+  background: rgba(0, 0, 0, .3);
+  backdrop-filter: blur(4px);
 }
 
-.card-info {
+.match-grid .card-info {
   display: grid;
   gap: 5px;
-  margin-top: 11px;
-  color: #6b796f;
+  margin-top: 12px;
+  color: #e4eee7;
   font-size: 10px;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .4);
 }
 
 .card-info div {
@@ -249,33 +280,33 @@
 }
 
 .card-info .material-symbols-rounded {
-  color: #829087;
+  color: #b9d9c6;
   font-size: 14px;
 }
 
-.card-cost {
+.match-grid .card-cost {
   display: flex;
   align-items: center;
   gap: 5px;
   margin-top: 8px;
-  color: #356b50;
+  color: var(--lime);
   font-size: 10px;
   font-weight: 800;
 }
 
 .card-cost .material-symbols-rounded {
-  color: var(--green);
+  color: var(--lime);
   font-size: 14px;
 }
 
-.card-bottom {
+.match-grid .card-bottom {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 9px;
   margin-top: auto;
   padding-top: 12px;
-  border-top: 1px solid #eef1ed;
+  border-top: 1px solid rgba(255, 255, 255, .22);
 }
 
 .members {
@@ -289,7 +320,7 @@
   margin-right: -6px;
   display: grid;
   place-items: center;
-  border: 2px solid white;
+  border: 2px solid rgba(255, 255, 255, .85);
   border-radius: 50%;
   color: white;
   font-size: 8px;
@@ -318,7 +349,7 @@
 
 .members > span:last-child {
   margin-left: 12px;
-  color: #78867d;
+  color: #e2ece5;
   font-size: 10px;
   font-weight: 700;
 }
@@ -332,34 +363,41 @@
 .view-details {
   padding: 8px 3px;
   border: 0;
-  color: #587368;
+  color: #eaf2ed;
   background: transparent;
   font-size: 10px;
   font-weight: 800;
 }
 
 .view-details:hover {
-  color: var(--green);
+  color: var(--lime);
 }
 
 .join {
   padding: 8px 10px;
-  border: 1px solid #d4e4d8;
+  border: 1px solid rgba(255, 255, 255, .35);
   border-radius: 8px;
-  color: var(--green);
-  background: #fff;
+  color: #fff;
+  background: rgba(31, 138, 76, .85);
+  backdrop-filter: blur(4px);
   font-size: 10px;
   font-weight: 800;
 }
 
 .join:hover {
-  color: white;
-  border-color: var(--green);
+  color: #fff;
+  border-color: rgba(255, 255, 255, .65);
   background: var(--green);
 }
 
+.join:disabled {
+  color: rgba(255, 255, 255, .85);
+  background: rgba(0, 0, 0, .3);
+  border-color: rgba(255, 255, 255, .25);
+}
+
 .result-note {
-  margin: 10px 0 0;
+  margin: 10px 0 20px;
   color: #728178;
   font-size: 11px;
   font-weight: 600;
