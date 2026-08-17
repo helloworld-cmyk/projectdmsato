@@ -1,3 +1,5 @@
+import { addSelfToRoster } from "../services/roster.js";
+
 export const createChatApi = (context) => {
     const {
       WALLET_PAYMENT_METHOD,
@@ -126,6 +128,15 @@ getApplications: () => clone(state.applications),
           : "Đã hủy yêu cầu vào kèo";
       addNotification(label, application.match.name, "match");
       if (nextStatus === "accepted" || nextStatus === "paid") {
+        const live = state.matches.find((match) => match.id === application.matchId);
+        const records = [live, application.match].filter(Boolean);
+        records.forEach((record) => addSelfToRoster(record, state.profile, {
+          paid: application.paymentStatus === "paid" || nextStatus === "paid",
+          joinStatus: "approved",
+          role: nextStatus === "paid"
+            ? "Đã vào kèo · Đã thanh toán"
+            : "Đã vào kèo",
+        }));
         ensureChatRoom(application.matchId, application.match);
         addNotification(
           "Phòng chat đã mở",
@@ -173,6 +184,15 @@ getApplications: () => clone(state.applications),
       application.status = paymentFirst && !application.autoApproved ? "pending" : "paid";
       application.paymentStatus = "paid";
       application.paymentMethod = method;
+      if (application.status === "paid") {
+        const live = state.matches.find((match) => match.id === application.matchId);
+        const records = [live, application.match].filter(Boolean);
+        records.forEach((record) => addSelfToRoster(record, state.profile, {
+          paid: true,
+          joinStatus: "approved",
+          role: "Đã vào kèo · Đã thanh toán",
+        }));
+      }
       application.payment = {
         subtotal,
         paidAmount: loyaltyPayment.paidAmount,

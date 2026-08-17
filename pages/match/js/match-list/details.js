@@ -48,7 +48,7 @@ export function openDetails(item) {
     + encodeURIComponent(`${item.venue}, ${item.address}`);
   const application = applicationFor(item.id);
   const detailAction = item.custom
-    ? '<button class="join" disabled>Kèo của bạn</button>'
+    ? `<a class="join" href="../invite/?match=${encodeURIComponent(item.id)}">Rủ đội &amp; chia tiền</a>`
     : application && ['accepted', 'payment_pending'].includes(application.status)
       ? `<button class="join" data-detail-payment="${safe(application.id)}">
           Thanh toán cọc

@@ -1,3 +1,5 @@
+import { addSelfToRoster, normaliseMatchPlayer } from "../services/roster.js";
+
 export const createMatchesApi = (context) => {
     const {
       now,
@@ -5,7 +7,10 @@ export const createMatchesApi = (context) => {
       clone,
       initials,
       integer,
+      amount,
+      subjectKey,
       stableSubjectId,
+      WALLET_PAYMENT_METHOD,
       normaliseJoinRules,
       approvalCheck,
       state,
@@ -14,8 +19,19 @@ export const createMatchesApi = (context) => {
       upsertJourney,
       findJourney,
       ensureChatRoom,
-      matchInsight
+      matchInsight,
+      money,
+      previewPoints,
+      settleLoyalty,
+      debitWallet
     } = context;
+    const syncSelfRoster = (matchId, application, options) => {
+      const records = [];
+      const live = state.matches.find((match) => match.id === matchId);
+      if (live) records.push(live);
+      if (application && application.match) records.push(application.match);
+      records.forEach((record) => addSelfToRoster(record, state.profile, options));
+    };
     return {
 createMatch: (input) => {
       const profile = state.profile;
@@ -75,11 +91,97 @@ createMatch: (input) => {
       return clone(match);
     },
     updateMatchRules: (matchId, rules) => {
-      const match = state.matches.find((item) => item.id === matchId);
+      const match = resolveMatchRecord(matchId);
       if (!match) return null;
       match.joinRules = normaliseJoinRules(rules);
       match.updatedAt = now();
       save("match-rules-updated");
+      return clone(match);
+    },
+    resolveMatchRecord: (matchId) => {
+      const custom = state.matches.find((match) => match.id === matchId);
+      if (custom) return custom;
+      const application = state.applications.find((item) => (
+        item.matchId === matchId && item.status !== "cancelled"
+      ));
+      return (application && application.match) || null;
+    },
+    addMatchPlayer: (matchId, playerInput = {}) => {
+      const match = resolveMatchRecord(matchId);
+      if (!match || match.status === "cancelled") return null;
+      const participants = Array.isArray(match.participants) ? match.participants : [];
+      const capacity = Math.max(2, Number(match.capacity) || participants.length + 1);
+      if (participants.length >= capacity) return null;
+      const player = normaliseMatchPlayer({ ...playerInput });
+      if (
+        !player
+        || participants.some((item) => subjectKey(item.name) === subjectKey(player.name))
+      ) return null;
+      match.participants = [...participants, player];
+      match.joined = match.participants.length;
+      match.available = Math.max(0, capacity - match.participants.length);
+      match.updatedAt = now();
+      save("match-player-added");
+      return clone(match);
+    },
+    saveMatchSplit: (matchId, split) => {
+      const match = resolveMatchRecord(matchId);
+      if (!match || match.status === "cancelled") return null;
+      match.split = clone(split);
+      match.updatedAt = now();
+      save("match-split-updated");
+      return clone(match);
+    },
+    payForMatchOwner: (matchId, method = "VietQR", requestedPoints = 0) => {
+      const match = resolveMatchRecord(matchId);
+      if (!match || match.status === "cancelled") return null;
+      const participants = Array.isArray(match.participants) ? match.participants : [];
+      const owner = participants.find((player) => player.role === "Chủ kèo")
+        || participants[0];
+      if (!owner || owner.payment === "Đã thanh toán" || owner.paid) return null;
+      const share = amount(match.share || Math.ceil(
+        (Number(match.fee) || 0) / Math.max(1, Number(match.capacity) || 1) / 1000,
+      ) * 1000);
+      const walletPayment = method === WALLET_PAYMENT_METHOD;
+      const preview = previewPoints(share, requestedPoints);
+      if (!preview.isValid || (walletPayment && preview.paidAmount > state.wallet.balance)) {
+        return null;
+      }
+      const loyaltyPayment = settleLoyalty({
+        subtotal: share,
+        requestedPoints,
+        sourceType: "match",
+        sourceId: match.id,
+        label: `phần chủ kèo ${match.name}`,
+      });
+      if (!loyaltyPayment) return null;
+      const walletPaymentDetail = walletPayment
+        ? debitWallet({
+          amount: loyaltyPayment.paidAmount,
+          sourceType: "match",
+          sourceId: match.id,
+          label: `phần chủ kèo ${match.name}`,
+        })
+        : null;
+      if (walletPayment && !walletPaymentDetail) return null;
+      owner.payment = "Đã thanh toán";
+      owner.paid = true;
+      match.payment = {
+        subtotal: share,
+        paidAmount: loyaltyPayment.paidAmount,
+        redeemedPoints: loyaltyPayment.points,
+        discount: loyaltyPayment.discount,
+        earnedPoints: loyaltyPayment.earnedPoints,
+        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
+      };
+      match.updatedAt = now();
+      addNotification(
+        "Thanh toán phần chủ kèo thành công",
+        `Bạn đã thanh toán ${money(loyaltyPayment.paidAmount)} qua ${method} `
+          + `cho ${match.name}.`,
+        "payment",
+      );
+      save("match-owner-paid");
       return clone(match);
     },
     getMatchApproval: (match, candidate = state.profile) => clone(approvalCheck(match, candidate)),
@@ -238,6 +340,15 @@ createMatch: (input) => {
         { matchId: match.id, matchName: match.name },
       );
       state.applications.unshift(application);
+      if (status === "accepted" || status === "payment_pending") {
+        syncSelfRoster(match.id, application, {
+          paid: application.paymentStatus === "paid",
+          joinStatus: status === "accepted" ? "approved" : "payment_pending",
+          role: status === "accepted"
+            ? "Đã vào kèo"
+            : "Đã vào kèo · Chờ thanh toán cọc",
+        });
+      }
       ensureChatRoom(application.matchId, application.match);
       addNotification(
         status === "accepted" || status === "payment_pending"
@@ -282,6 +393,17 @@ createMatch: (input) => {
         application.autoApproved = true;
         application.approvalDueAt = null;
         application.updatedAt = now();
+        syncSelfRoster(application.matchId, application, {
+          paid: application.paymentStatus === "paid",
+          joinStatus: application.status === "accepted"
+            ? "approved"
+            : application.status === "paid" ? "approved" : "payment_pending",
+          role: application.status === "paid"
+            ? "Đã vào kèo · Đã thanh toán"
+            : application.status === "accepted"
+              ? "Đã vào kèo"
+              : "Đã vào kèo · Chờ thanh toán cọc",
+        });
         upsertJourney(
           "match",
           application.id,

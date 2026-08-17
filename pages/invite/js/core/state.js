@@ -1,4 +1,5 @@
 import '../../../../js/app-state/index.js';
+import { subjectKey } from '../../../../js/app-state/core/utils.js';
 
 export const store = window.MatchUpStore;
 export const query = new URLSearchParams(location.search);
@@ -7,35 +8,65 @@ export const requestedBooking = query.get('booking');
 export const requestedMatch = query.get('match');
 
 export const matchApplication = requestedMatch
-  ? store.getApplications().find(item => item.matchId === requestedMatch)
+  ? store.getApplications().find(item => (
+    item.matchId === requestedMatch && item.status !== 'cancelled'
+  ))
   : null;
-export const matchInvite = requestedMatch
+export let matchInvite = requestedMatch
   ? (matchApplication && matchApplication.match)
-    || store.getCustomMatches().find(item => item.id === requestedMatch)
+    || store.resolveMatchRecord(requestedMatch)
   : null;
 export const matchInviteMode = Boolean(matchInvite);
 
-export const matchInvitePlayers = matchInvite
-  ? [...(matchInvite.participants || [])]
-  : [];
-
-if (matchInvite && matchApplication
-  && !matchInvitePlayers.some(player => player.name === profile.name)) {
-  matchInvitePlayers.push({
-    id: store.getSubjectId('player', profile.name),
-    name: profile.name,
-    initials: profile.initials,
-    role: matchApplication.status === 'paid'
-      ? 'Bạn · Đã vào kèo'
-      : 'Bạn · Đã được duyệt',
-    paid: matchApplication.status === 'paid',
-    joinStatus: 'approved'
+function buildSplitPlayers(match) {
+  const participants = [...(Array.isArray(match.participants) ? match.participants : [])];
+  const saved = match.split && Array.isArray(match.split.players)
+    ? match.split.players
+    : [];
+  const amountByKey = new Map(
+    saved.map(player => [subjectKey(player.name), Number(player.amount) || 0])
+  );
+  const paidByKey = new Map(
+    saved.map(player => [subjectKey(player.name), Boolean(player.paid)])
+  );
+  if (
+    matchApplication
+    && !participants.some(player => subjectKey(player.name) === subjectKey(profile.name))
+  ) {
+    participants.push({
+      id: store.getSubjectId('player', profile.name),
+      name: profile.name,
+      initials: profile.initials,
+      role: matchApplication.status === 'paid'
+        ? 'Bạn · Đã vào kèo'
+        : matchApplication.status === 'accepted'
+          || matchApplication.status === 'payment_pending'
+          ? 'Bạn · Đã được duyệt'
+          : 'Bạn · Đang chờ duyệt',
+      paid: matchApplication.status === 'paid',
+      payment: matchApplication.status === 'paid' ? 'Đã thanh toán' : 'Chờ thanh toán',
+      joinStatus: 'approved',
+      tone: '#d78c68'
+    });
+  }
+  return participants.map(player => {
+    const key = subjectKey(player.name);
+    return {
+      ...player,
+      amount: amountByKey.get(key) || 0,
+      paid: paidByKey.has(key)
+        ? paidByKey.get(key)
+        : Boolean(player.paid) || player.payment === 'Đã thanh toán',
+      joinStatus: player.joinStatus || 'approved'
+    };
   });
 }
 
-function createMatchInviteBooking(match) {
+function buildMatchInviteBooking(match) {
+  const players = buildSplitPlayers(match);
   return {
     id: `match-invite-${match.id}`,
+    matchId: match.id,
     status: 'confirmed',
     court: match.venue || 'Sân MatchUp',
     courtId: match.venue,
@@ -44,10 +75,7 @@ function createMatchInviteBooking(match) {
     duration: 90,
     total: Number(match.fee || 0),
     subtotal: Number(match.fee || 0),
-    teamSize: Math.max(
-      1,
-      Number(match.capacity) || (matchInvitePlayers.length + 1)
-    ),
+    teamSize: Math.max(1, Number(match.capacity) || players.length + 1),
     ownerPaid: false,
     joinRules: match.joinRules || {
       requirePaymentBeforeJoin: false,
@@ -58,12 +86,30 @@ function createMatchInviteBooking(match) {
         minCompletedMatches: 0
       }
     },
-    split: { mode: 'equal', players: matchInvitePlayers }
+    split: {
+      mode: match.split && match.split.mode === 'custom' ? 'custom' : 'equal',
+      players
+    }
   };
 }
 
+export function refreshMatchInvite() {
+  if (!requestedMatch) return false;
+  const record = store.resolveMatchRecord(requestedMatch);
+  if (!record) {
+    matchInvite = null;
+    return false;
+  }
+  matchInvite = record;
+  state.booking = buildMatchInviteBooking(record);
+  state.total = state.booking.total;
+  state.splitMode = state.booking.split.mode;
+  state.splitPlayers = state.booking.split.players;
+  return true;
+}
+
 const initialBooking = matchInviteMode
-  ? createMatchInviteBooking(matchInvite)
+  ? buildMatchInviteBooking(matchInvite)
   : requestedBooking
     ? store.getBooking(requestedBooking)
     : store.getLatestBooking();
@@ -94,6 +140,13 @@ export const state = {
   playerRatings: {},
   playerTags: {}
 };
+
+export function ownSplitPlayer() {
+  const profileKey = subjectKey(profile.name);
+  return state.splitPlayers.find(player => (
+    subjectKey(player.name) === profileKey
+  )) || state.splitPlayers[0] || null;
+}
 
 export function syncBookingRoster(updated) {
   if (!updated) return;

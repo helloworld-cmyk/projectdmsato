@@ -308,7 +308,7 @@ function renderMatchCard(item) {
     )
     : 0;
   const joinLabel = item.custom
-    ? 'Kèo của bạn'
+    ? 'Mời thêm'
     : joinedApplication
       ? 'Mời thêm'
       : paymentReady
@@ -327,11 +327,11 @@ function renderMatchCard(item) {
                 ? 'Đã vào kèo'
                 : 'Không được duyệt'
           : 'Xin vào';
-  const disabled = item.custom || (!paymentReady && !joinedApplication && !!application);
+  const disabled = !item.custom && !paymentReady && !joinedApplication && !!application;
   const paymentAttribute = paymentReady
     ? ` data-payment-application="${safe(application.id)}"`
     : '';
-  const inviteAttribute = joinedApplication
+  const inviteAttribute = (item.custom || joinedApplication)
     ? ` data-invite-match="${safe(item.id)}"`
     : '';
   const participants = item.participants.slice(0, 3).map((player, index) => (

@@ -39,11 +39,14 @@ export function renderApplications() {
     let actions = '';
     if (item.status === 'payment_pending') {
       actions = `
+        <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
         <button class="action primary" data-app-action="paid" data-id="${item.id}">Thanh toán cọc</button>
         <button class="action" data-app-action="cancelled" data-id="${item.id}">Hủy</button>
       `;
     } else if (item.status === 'pending') {
-      actions = `<span class="action" aria-disabled="true">${item.match.joinRules?.autoApprove
+      actions = `
+        <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
+        <span class="action" aria-disabled="true">${item.match.joinRules?.autoApprove
         && item.approvalEligible
         ? `Đang kiểm tra và tự duyệt sau ${pendingSeconds} giây`
         : item.approvalEligible
@@ -51,12 +54,14 @@ export function renderApplications() {
           : 'Chưa đủ tiêu chí tham gia'}</span>`;
     } else if (item.status === 'accepted') {
       actions = `
+        <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
         <button class="action primary" data-chat-match="${item.matchId}">Mở chat</button>
         <button class="action" data-app-action="paid" data-id="${item.id}">Thanh toán cọc</button>
         <button class="action" data-app-action="cancelled" data-id="${item.id}">Hủy</button>
       `;
     } else if (item.status === 'paid') {
       actions = `
+        <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
         <button class="action primary" data-chat-match="${item.matchId}">Mở chat</button>
         <a class="action" href="../match/?application=${encodeURIComponent(item.id)}&finish=1">Kết trận & đánh giá</a>
       `;

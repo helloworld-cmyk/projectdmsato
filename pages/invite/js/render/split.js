@@ -2,7 +2,8 @@ import {
   matchInviteMode,
   profile,
   state,
-  store
+  store,
+  ownSplitPlayer
 } from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
 import {
@@ -10,9 +11,11 @@ import {
   defaultJoinRules,
   equalise,
   isBalanced,
+  matchModePayableSubtotal,
   totalSplit
 } from '../booking/booking.js';
 import { format, safe } from '../core/utils.js';
+import { subjectKey } from '../../../../js/app-state/core/utils.js';
 
 const inactiveStatuses = ['pending', 'payment_pending', 'rejected'];
 
@@ -90,7 +93,8 @@ export function renderSplit() {
     ? `${state.total ? paidAmount / state.total * 100 : 0}%`
     : `${maxPlayers ? activeCount / maxPlayers * 100 : 0}%`;
 
-  const ownAmount = state.splitPlayers[0].amount;
+  const own = ownSplitPlayer();
+  const ownAmount = own ? own.amount : state.splitPlayers[0].amount;
   if (matchInviteMode) {
     $('#progress-title').textContent = requirePayment
       ? `${paidCount}/${rosterPlayers.length} người đã thanh toán`
@@ -115,20 +119,20 @@ function renderPlayer(player, index) {
     : `<span class="amount">${format(player.amount)}</span>`;
   const joinStatus = player.joinStatus || 'approved';
   const paid = Boolean(player.paid);
-  const isOwner = index === 0;
-  const joinLabel = playerJoinLabel(isOwner, paid, joinStatus);
+  const isSelf = subjectKey(player.name) === subjectKey(profile.name);
+  const joinLabel = playerJoinLabel(isSelf, paid, joinStatus);
   const statusClass = paid
     ? 'done'
     : joinStatus === 'payment_pending'
       ? 'waiting'
       : joinStatus === 'pending' ? 'review' : '';
-  const statusNote = playerStatusNote(isOwner, paid, joinStatus);
+  const statusNote = playerStatusNote(isSelf, paid, joinStatus);
   const meetsCriteria = !String(player.approvalNote || '').startsWith('Còn thiếu:');
   const canApprove = joinStatus === 'pending'
     && (!requirePayment || paid)
     && meetsCriteria;
   const actions = playerActions(player, canApprove);
-  const ownerLabel = index === 0
+  const ownerLabel = isSelf
     ? ' <span style="color:#79867e;font-size:9px">(bạn)</span>'
     : '';
   const icon = paid ? 'check_circle' : joinStatus === 'pending' ? 'schedule' : 'payments';
@@ -180,10 +184,14 @@ function playerActions(player, canApprove) {
 
 function renderPaymentButton(ownAmount, balanced) {
   const paymentButton = $('#open-payment');
+  const own = ownSplitPlayer();
   const unavailable = state.splitMode === 'custom' && !balanced
     || state.booking && ['expired', 'cancelled'].includes(state.booking.status);
   paymentButton.disabled = unavailable;
-  if (state.splitPlayers[0].paid) {
+  const payableLabel = matchInviteMode
+    ? format(matchModePayableSubtotal())
+    : format(ownAmount);
+  if (own && own.paid) {
     paymentButton.innerHTML = '<span class="material-symbols-rounded">check_circle</span>'
       + 'Phần của bạn đã thanh toán';
   } else if (unavailable) {
@@ -194,6 +202,6 @@ function renderPaymentButton(ownAmount, balanced) {
       + label;
   } else {
     paymentButton.innerHTML = '<span class="material-symbols-rounded">lock</span>'
-      + `Thanh toán <span id="pay-button-amount">${format(ownAmount)}</span>`;
+      + `Thanh toán <span id="pay-button-amount">${payableLabel}</span>`;
   }
 }

@@ -1,6 +1,10 @@
 import {
+  matchApplication,
+  matchInvite,
+  matchInviteMode,
   state,
-  store
+  store,
+  refreshMatchInvite
 } from '../core/state.js';
 import { $ } from '../core/dom.js';
 import { showToast } from '../core/toast.js';
@@ -90,6 +94,13 @@ export function isBalanced() {
 
 export function saveSplit() {
   if (!state.booking) return;
+  if (matchInviteMode) {
+    store.saveMatchSplit(matchInvite.id, {
+      mode: state.splitMode,
+      players: state.splitPlayers
+    });
+    return;
+  }
   const updated = store.saveBookingSplit(state.booking.id, {
     mode: state.splitMode,
     players: state.splitPlayers
@@ -97,11 +108,21 @@ export function saveSplit() {
   if (updated) state.booking = updated;
 }
 
+export function matchModePayableSubtotal() {
+  if (!matchInviteMode || !matchInvite) return 0;
+  if (matchApplication && matchApplication.paymentStatus !== 'paid') {
+    return Number(matchInvite.deposit || matchInvite.share / 2) || 0;
+  }
+  return Number(matchInvite.share || 0) || 0;
+}
+
 export function scheduleSharedPlayer(onUpdate) {
   if (!state.booking) return;
   clearTimeout(shareJoinTimer);
   shareJoinTimer = setTimeout(() => {
-    const latest = store.getBooking(state.booking.id) || state.booking;
+    const latest = matchInviteMode
+      ? state.booking
+      : store.getBooking(state.booking.id) || state.booking;
     const existingNames = new Set(
       (latest.split && latest.split.players || []).map(player => (
         String(player.name || '').trim().toLocaleLowerCase()
@@ -116,19 +137,30 @@ export function scheduleSharedPlayer(onUpdate) {
       return;
     }
 
-    const updated = store.addBookingPlayer(latest.id, {
-      ...candidate,
-      role: 'Đã tham gia qua link'
-    });
+    let updated = null;
+    if (matchInviteMode) {
+      updated = store.addMatchPlayer(matchInvite.id, {
+        ...candidate,
+        role: 'Đã tham gia qua link'
+      });
+      if (updated) refreshMatchInvite();
+    } else {
+      updated = store.addBookingPlayer(latest.id, {
+        ...candidate,
+        role: 'Đã tham gia qua link'
+      });
+      if (updated) {
+        state.booking = updated;
+        state.total = updated.total;
+        state.splitMode = updated.split && updated.split.mode || 'equal';
+        state.splitPlayers = updated.split && updated.split.players || state.splitPlayers;
+      }
+    }
     if (!updated) {
       showToast('Kèo đã đủ người hoặc không còn nhận thêm thành viên.');
       return;
     }
 
-    state.booking = updated;
-    state.total = updated.total;
-    state.splitMode = updated.split && updated.split.mode || 'equal';
-    state.splitPlayers = updated.split && updated.split.players || state.splitPlayers;
     onUpdate();
     showToast(`${candidate.name} vừa vào kèo sau khi nhận link.`);
   }, 1000);
@@ -142,6 +174,10 @@ export function timeRemainingLabel() {
 
 export function refreshBookingFromStore() {
   if (!state.booking) return;
+  if (matchInviteMode) {
+    refreshMatchInvite();
+    return;
+  }
   const updated = store.getBooking(state.booking.id);
   if (!updated) return;
   state.booking = updated;

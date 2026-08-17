@@ -1,7 +1,9 @@
 import {
+  matchInvite,
   matchInviteMode,
   state,
   store,
+  refreshMatchInvite,
   syncBookingRoster
 } from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
@@ -48,13 +50,18 @@ function initBookingRulesEvents() {
   });
   $('#booking-rules-form').addEventListener('submit', event => {
     event.preventDefault();
-    if (!state.booking || matchInviteMode) return;
-    const updated = store.updateBookingRules(
-      state.booking.id,
-      collectJoinRules()
-    );
-    if (!updated) return;
-    state.booking = updated;
+    if (!state.booking) return;
+    if (matchInviteMode) {
+      if (!store.updateMatchRules(matchInvite.id, collectJoinRules())) return;
+      refreshMatchInvite();
+    } else {
+      const updated = store.updateBookingRules(
+        state.booking.id,
+        collectJoinRules()
+      );
+      if (!updated) return;
+      state.booking = updated;
+    }
     renderAll();
     showToast('Đã lưu quy tắc tham gia cho kèo.');
   });
@@ -111,18 +118,19 @@ function addPlayer() {
   const initials = trimmed.split(/\s+/).slice(-2)
     .map(part => part[0]).join('').toUpperCase();
   if (matchInviteMode) {
-    state.splitPlayers.push({
+    const updated = store.addMatchPlayer(matchInvite.id, {
       id: store.getSubjectId('player', trimmed),
       name: trimmed,
       initials,
-      role: 'Đã mời · Chờ tham gia',
-      amount: 0,
-      paid: false,
-      joinStatus: 'approved'
+      role: 'Đã mời · Chờ tham gia'
     });
-    equalise();
+    if (!updated) {
+      showToast('Người chơi này đã có trong kèo hoặc kèo đã đủ người.');
+      return;
+    }
+    refreshMatchInvite();
     renderAll();
-    showToast(`Đã thêm ${trimmed} vào danh sách mời.`);
+    showToast(`Đã thêm ${trimmed} vào kèo — hãy gửi link để họ xác nhận.`);
     return;
   }
   const updated = store.addBookingPlayer(state.booking.id, {
@@ -149,7 +157,7 @@ function initShareEvents() {
       $('#share-link').select();
       showToast('Hãy sao chép link mời này để gửi cho đội nhé.');
     }
-    if (!matchInviteMode) scheduleSharedPlayer(renderAll);
+    scheduleSharedPlayer(renderAll);
   });
   $('#share-link-button').addEventListener('click', shareLink);
 }
@@ -178,7 +186,7 @@ async function shareLink() {
       shared = true;
     }
   }
-  if (shared && !matchInviteMode) scheduleSharedPlayer(renderAll);
+  if (shared) scheduleSharedPlayer(renderAll);
 }
 
 function initJourneyEvents() {

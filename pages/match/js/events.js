@@ -129,6 +129,12 @@ function initTeamEvents() {
       showToast('Thanh toán sẽ mở sau khi chủ kèo duyệt yêu cầu.');
       return;
     }
+    if (event.target.closest('#team-invite')) {
+      if (teamMatch) {
+        location.href = `../invite/?match=${encodeURIComponent(teamMatch.id)}`;
+      }
+      return;
+    }
     if (event.target.closest('#team-finish')) {
       if (teamApplication) {
         location.href = `./?application=${encodeURIComponent(

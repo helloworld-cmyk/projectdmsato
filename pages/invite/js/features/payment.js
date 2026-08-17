@@ -1,19 +1,40 @@
-import { state, store } from '../core/state.js';
+import {
+  matchApplication,
+  matchInvite,
+  matchInviteMode,
+  profile,
+  state,
+  store,
+  ownSplitPlayer,
+  refreshMatchInvite
+} from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
-import { isBalanced } from '../booking/booking.js';
+import { isBalanced, matchModePayableSubtotal } from '../booking/booking.js';
 import { format } from '../core/utils.js';
 import { showToast } from '../core/toast.js';
 import { renderAll } from '../render/index.js';
+import { subjectKey } from '../../../../js/app-state/core/utils.js';
 
 const paymentModal = $('#payment-modal');
 
+function isCustomOwner() {
+  if (!matchInvite || !matchInvite.custom) return false;
+  const participants = Array.isArray(matchInvite.participants)
+    ? matchInvite.participants
+    : [];
+  const first = participants[0];
+  return Boolean(first && subjectKey(first.name) === subjectKey(profile.name));
+}
+
 export function renderBookingPayment() {
-  const preview = state.booking
-    ? store.previewBookingPoints(
-      state.booking.id,
-      state.requestedBookingPoints
-    )
-    : store.previewPoints(state.total, state.requestedBookingPoints);
+  const preview = matchInviteMode
+    ? store.previewPoints(matchModePayableSubtotal(), state.requestedBookingPoints)
+    : state.booking
+      ? store.previewBookingPoints(
+        state.booking.id,
+        state.requestedBookingPoints
+      )
+      : store.previewPoints(state.total, state.requestedBookingPoints);
   if (!preview) return;
   state.requestedBookingPoints = preview.points;
   $('#booking-points').value = preview.points || '';
@@ -43,7 +64,8 @@ export function renderBookingPayment() {
 }
 
 export function openPayment() {
-  if (state.splitPlayers[0].paid) {
+  const own = ownSplitPlayer();
+  if (own && own.paid) {
     showToast('Phần của bạn đã được thanh toán.');
     return;
   }
@@ -64,9 +86,49 @@ export function closePayment() {
   paymentModal.classList.remove('show');
 }
 
+function confirmMatchPayment() {
+  let result = null;
+  if (
+    matchApplication
+    && ['accepted', 'payment_pending'].includes(matchApplication.status)
+    && matchApplication.paymentStatus !== 'paid'
+  ) {
+    result = store.payForApplication(
+      matchApplication.id,
+      state.selectedMethod,
+      state.requestedBookingPoints
+    );
+  } else if (matchInvite && matchInvite.custom && isCustomOwner()) {
+    result = store.payForMatchOwner(
+      matchInvite.id,
+      state.selectedMethod,
+      state.requestedBookingPoints
+    );
+  } else {
+    showToast('Kèo này chưa có khoản thanh toán dành cho bạn.');
+    return;
+  }
+  if (!result) {
+    showToast(state.selectedMethod === 'Ví MatchUp'
+      ? 'Số dư ví không đủ hoặc trạng thái kèo đã thay đổi.'
+      : 'Số điểm hoặc trạng thái kèo đã thay đổi. Hãy thử lại.');
+    renderBookingPayment();
+    return;
+  }
+  refreshMatchInvite();
+  closePayment();
+  renderAll();
+  showToast(`Thanh toán thành công qua ${state.selectedMethod}, tích `
+    + `${result.payment && result.payment.earnedPoints || 0} điểm.`);
+}
+
 function confirmPayment() {
   if (state.splitMode === 'custom' && !isBalanced()) {
     showToast('Tổng phần tiền chưa khớp, chưa thể thanh toán.');
+    return;
+  }
+  if (matchInviteMode) {
+    confirmMatchPayment();
     return;
   }
   const result = state.booking
@@ -106,9 +168,11 @@ export function initPaymentEvents() {
     renderBookingPayment();
   });
   $('#booking-use-max').addEventListener('click', () => {
-    const preview = state.booking
-      ? store.previewBookingPoints(state.booking.id, 0)
-      : store.previewPoints(state.total, 0);
+    const preview = matchInviteMode
+      ? store.previewPoints(matchModePayableSubtotal(), 0)
+      : state.booking
+        ? store.previewBookingPoints(state.booking.id, 0)
+        : store.previewPoints(state.total, 0);
     state.requestedBookingPoints = preview ? preview.maxPoints : 0;
     renderBookingPayment();
   });
