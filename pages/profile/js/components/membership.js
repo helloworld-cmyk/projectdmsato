@@ -3,7 +3,12 @@ import { escape } from '../utils.js';
 
 const benefits = [
   { icon: 'all_inclusive', title: 'Xin vào kèo không giới hạn', copy: 'Miễn phí 5 trận/tháng, Premium thoải mái tìm kèo.' },
-  { icon: 'sell', title: 'Ưu đãi đặt sân độc quyền', copy: 'Voucher Premium riêng cho thành viên khi đặt sân.' },
+  { icon: 'sell', title: 'Ưu đãi đặt sân độc quyền', copy: 'Voucher PREMIUM60 và 30.000đ mỗi tháng cho thành viên.' },
+  { icon: 'timer', title: 'Giữ chỗ sân lâu hơn', copy: 'Giữ sân tới 30 phút thay vì 10 phút để kịp mời đội.' },
+  { icon: 'card_membership', title: 'Tích điểm x2', copy: 'Nhân đôi điểm thành viên khi thanh toán qua MatchUp.' },
+  { icon: 'bookmark', title: 'Lưu kèo không giới hạn', copy: 'Gói miễn phí lưu tối đa 10 kèo, Premium lưu thoải mái.' },
+  { icon: 'star', title: 'Kèo nổi bật', copy: 'Kèo do bạn tạo được gắn huy hiệu và lên đầu danh sách.' },
+  { icon: 'forum', title: 'Chat không giới hạn', copy: 'Gói miễn phí giữ 3 phòng chat, Premium giữ không giới hạn.' },
   { icon: 'tune', title: 'Bộ lọc & gợi ý nâng cao', copy: 'Lọc theo chất lượng đội và mở rộng bán kính 20 km.' },
   { icon: 'workspace_premium', title: 'Huy hiệu Premium', copy: 'Nổi bật trong danh sách thành viên, ưu tiên khi duyệt.' },
 ];

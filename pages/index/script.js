@@ -21,7 +21,7 @@ function syncPremiumBanner() {
   premiumBanner.classList.toggle('active', premium);
   document.querySelector('#premium-banner-text').textContent = premium
     ? 'Bạn đang là thành viên Premium — cảm ơn đã đồng hành cùng MatchUp!'
-    : 'Xin vào kèo không giới hạn, ưu đãi đặt sân độc quyền và bộ lọc nâng cao.';
+    : 'Xin vào kèo không giới hạn, voucher 30.000đ mỗi tháng, giữ sân 30 phút, tích điểm x2 và kèo nổi bật.';
   premiumBannerCta.textContent = premium ? 'Quản lý gói' : 'Nâng cấp · 60.000đ/tháng';
 }
 

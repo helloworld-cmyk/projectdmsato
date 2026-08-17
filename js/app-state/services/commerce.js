@@ -1,10 +1,12 @@
 import {
   LOYALTY_POLICY,
+  LOYALTY_PREMIUM_MULTIPLIER,
   SPORT_LABELS,
   VOUCHER_CATALOG,
   WALLET_PAYMENT_METHOD,
 } from "../core/constants.js";
 import { amount as toAmount } from "../core/utils.js";
+import { premiumActive } from "./premium.js";
 
 export const equalBookingPlayers = (players, total) => {
   if (!players.length) return [];
@@ -94,12 +96,22 @@ export const createCommerceService = ({
       return "Voucher đã hết hạn";
     }
     if (voucher.requiresPremium) {
-      const membership = state.membership || {};
-      const premiumActive = membership.plan
-        && membership.expiresAt
-        && new Date(membership.expiresAt).getTime() > now();
-      if (!premiumActive) return "Dành riêng cho thành viên Premium";
+      const premiumActiveNow = premiumActive(state.membership || {}, now());
+      if (!premiumActiveNow) return "Dành riêng cho thành viên Premium";
     }
+    if (
+      voucher.monthly
+      && state.bookings.some((booking) => {
+        const usedThisMonth = (
+          booking.voucher
+          && booking.voucher.code === voucher.code
+          && booking.createdAt
+          && new Date(booking.createdAt).getFullYear() === new Date(now()).getFullYear()
+          && new Date(booking.createdAt).getMonth() === new Date(now()).getMonth()
+        );
+        return usedThisMonth;
+      })
+    ) return "Đã dùng voucher trong tháng này";
     if (voucher.requiresFirstBooking && !context.isFirstBooking) {
       return "Chỉ áp dụng cho lần đặt sân đầu tiên";
     }
@@ -292,7 +304,12 @@ export const createCommerceService = ({
         description: `Đổi ${preview.points} điểm giảm ${money(preview.discount)} · ${label}`,
       });
     }
-    const earnedPoints = Math.floor(preview.paidAmount / LOYALTY_POLICY.earnPerAmount);
+    const multiplier = premiumActive(state.membership || {}, now())
+      ? LOYALTY_PREMIUM_MULTIPLIER
+      : 1;
+    const earnedPoints = Math.floor(
+      preview.paidAmount / LOYALTY_POLICY.earnPerAmount,
+    ) * multiplier;
     if (earnedPoints) {
       addLoyaltyTransaction({
         type: "earn",
@@ -300,7 +317,8 @@ export const createCommerceService = ({
         sourceType,
         sourceId,
         amount: preview.paidAmount,
-        description: `Tích ${earnedPoints} điểm từ ${label}`,
+        description: `Tích ${earnedPoints} điểm từ ${label}`
+          + (multiplier > 1 ? " · x2 Premium" : ""),
       });
     }
     return { ...preview, earnedPoints };

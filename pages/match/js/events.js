@@ -81,7 +81,15 @@ function initDetailsEvents() {
     const saveButton = event.target.closest('[data-save-match]');
     if (saveButton) {
       const item = findMatch(saveButton.dataset.saveMatch);
-      const saved = store.toggleSavedMatch(item.id, item.name, item);
+      const result = store.toggleSavedMatch(item.id, item.name, item);
+      if (result.blocked) {
+        showToast(`Gói miễn phí chỉ lưu được ${result.limit} kèo.`);
+        openPremiumUpsell(
+          `Gói miễn phí chỉ lưu được ${result.limit} kèo — nâng cấp Premium để lưu không giới hạn!`,
+        );
+        return;
+      }
+      const saved = result.saved;
       saveButton.classList.toggle('saved', saved);
       saveButton.innerHTML = `
         <span class="material-symbols-rounded">

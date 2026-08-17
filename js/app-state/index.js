@@ -58,6 +58,7 @@ const chat = createChatService({
   id: utils.id,
   clone: utils.clone,
   save: stateStore.save,
+  addNotification: stateStore.addNotification,
 });
 const commerce = createCommerceService({
   state: stateStore.state,

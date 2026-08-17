@@ -3,6 +3,13 @@ import { amount as toAmount } from "../core/utils.js";
 
 export const membershipDefaults = () => ({ plan: null, startedAt: null, expiresAt: null });
 
+export const premiumActive = (membership, at) => Boolean(
+  membership
+  && membership.plan
+  && membership.expiresAt
+  && new Date(membership.expiresAt).getTime() > at,
+);
+
 export const createPremiumService = ({
   state,
   now,
@@ -23,11 +30,7 @@ export const createPremiumService = ({
   );
   const isPremium = () => {
     const membership = state.membership || membershipDefaults();
-    return Boolean(
-      membership.plan
-      && membership.expiresAt
-      && new Date(membership.expiresAt).getTime() > now(),
-    );
+    return premiumActive(membership, now());
   };
   const premiumInfo = () => {
     const membership = state.membership || membershipDefaults();

@@ -8,7 +8,7 @@ export function openPremiumUpsell(message) {
       </button>
       <span class="premium-upsell-icon material-symbols-rounded">workspace_premium</span>
       <h3>${message || 'Tính năng này dành cho thành viên Premium'}</h3>
-      <p>Nâng cấp Premium 60.000đ/tháng để xin vào kèo không giới hạn, dùng bộ lọc nâng cao và nhận ưu đãi đặt sân độc quyền.</p>
+      <p>Nâng cấp Premium 60.000đ/tháng để xin vào kèo không giới hạn, giữ sân 30 phút, tích điểm x2, dùng voucher 30.000đ mỗi tháng và chat không giới hạn.</p>
       <button class="premium-upsell-cta" type="button">Nâng cấp Premium · 60.000đ/tháng</button>
       <span class="premium-upsell-close-text" role="button">Để sau</span>
     </div>

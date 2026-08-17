@@ -40,6 +40,7 @@ export const createDefaultState = ({ demoReputationReviews }) => ({
   matches: [],
   applications: [],
   chatRooms: {},
+  chatRoomEvictedIds: [],
   bookings: [],
   bookingRosterMigrationVersion: BOOKING_ROSTER_MIGRATION_VERSION,
   savedMatches: [],
@@ -123,6 +124,9 @@ export const createStateStore = ({ demoReputationReviews, seedMissingDemoReputat
     saved.matches = Array.isArray(saved.matches) ? saved.matches : [];
     saved.applications = Array.isArray(saved.applications) ? saved.applications : [];
     saved.chatRooms = saved.chatRooms && typeof saved.chatRooms === "object" ? saved.chatRooms : {};
+    saved.chatRoomEvictedIds = Array.isArray(saved.chatRoomEvictedIds)
+      ? saved.chatRoomEvictedIds
+      : [];
     Object.values(saved.chatRooms).forEach((room) => {
       const messages = Array.isArray(room.messages) ? room.messages : [];
       if (

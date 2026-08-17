@@ -104,6 +104,7 @@ export function insightFor(item) {
 }
 
 function compareMatches(a, b) {
+  if (a.featured !== b.featured) return Number(Boolean(b.featured)) - Number(Boolean(a.featured));
   if (state.sort === 'distance') return a.distance - b.distance || b.score - a.score;
   if (state.sort === 'time') return a.timeOrder - b.timeOrder || a.distance - b.distance;
   if (state.sort === 'price') return a.share - b.share || a.distance - b.distance;
@@ -361,6 +362,7 @@ function renderMatchCard(item) {
       style="background-image:url('${cardImageFor(item)}')">
       <div class="card-top">
         <span class="sport-mark ${sportClass(item.sport)}">${item.emoji}</span>
+        ${item.featured ? '<span class="featured-badge"><span class="material-symbols-rounded">workspace_premium</span> Nổi bật</span>' : ''}
         <button class="match-score" data-insight-id="${item.id}"
           aria-label="Vì sao kèo này hợp với bạn">
           <strong>${insight.score}%</strong> hợp với bạn

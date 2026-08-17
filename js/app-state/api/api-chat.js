@@ -37,6 +37,13 @@ getApplications: () => clone(state.applications),
         };
       }
       const room = ensureChatRoom(matchId, application.match);
+      if (!room) {
+        return {
+          allowed: false,
+          status: application.status,
+          reason: "Phòng chat cũ nhất đã bị đóng vì giới hạn gói miễn phí. Nâng cấp Premium để giữ không giới hạn.",
+        };
+      }
       return clone({
         allowed: true,
         status: application.status,
@@ -46,9 +53,13 @@ getApplications: () => clone(state.applications),
       });
     },
     getChatRooms: () => clone(state.applications
-      .filter((application) => ["accepted", "paid"].includes(application.status))
+      .filter((application) => (
+        ["accepted", "paid"].includes(application.status)
+        && !state.chatRoomEvictedIds.includes(application.matchId)
+      ))
       .map((application) => {
         const room = ensureChatRoom(application.matchId, application.match);
+        if (!room) return null;
         const messages = Array.isArray(room.messages) ? room.messages : [];
         const lastMessage = messages
           .filter((message) => message.kind !== "system")
@@ -63,6 +74,7 @@ getApplications: () => clone(state.applications),
           updatedAt: lastMessage ? lastMessage.createdAt : room.createdAt,
         };
       })
+      .filter(Boolean)
       .sort((a, b) => Number(b.updatedAt) - Number(a.updatedAt))),
     markChatRead: (matchId) => {
       const room = state.chatRooms[matchId];
@@ -83,6 +95,7 @@ getApplications: () => clone(state.applications),
       const cleanText = String(text || "").trim().slice(0, 500);
       if (!application || !cleanText) return null;
       const room = ensureChatRoom(matchId, application.match);
+      if (!room) return null;
       const profile = state.profile;
       const message = {
         id: id("message"),

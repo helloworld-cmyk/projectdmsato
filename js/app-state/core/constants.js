@@ -7,6 +7,11 @@ export const LOYALTY_POLICY = Object.freeze({
 });
 export const WALLET_PAYMENT_METHOD = "Ví MatchUp";
 export const FREE_MATCH_LIMIT = 5;
+export const FREE_SAVED_MATCH_LIMIT = 10;
+export const FREE_CHAT_ROOM_LIMIT = 3;
+export const FREE_HOLD_MINUTES = 10;
+export const PREMIUM_HOLD_MINUTES = 30;
+export const LOYALTY_PREMIUM_MULTIPLIER = 2;
 export const PREMIUM_PLANS = Object.freeze([
   {
     id: "monthly",
@@ -37,6 +42,36 @@ export const PREMIUM_BENEFITS = Object.freeze([
     icon: "sell",
     title: "Ưu đãi đặt sân độc quyền",
     description: "Voucher Premium riêng cho thành viên khi đặt sân.",
+  },
+  {
+    icon: "timer",
+    title: "Giữ chỗ sân lâu hơn",
+    description: "Giữ sân tới 30 phút thay vì 10 phút để kịp mời đội.",
+  },
+  {
+    icon: "card_membership",
+    title: "Tích điểm x2",
+    description: "Nhân đôi điểm thành viên khi thanh toán qua MatchUp.",
+  },
+  {
+    icon: "bookmark",
+    title: "Lưu kèo không giới hạn",
+    description: "Gói miễn phí lưu tối đa 10 kèo, Premium lưu thoải mái.",
+  },
+  {
+    icon: "calendar_month",
+    title: "Voucher 30.000đ mỗi tháng",
+    description: "Ưu đãi đặt sân quay vòng hằng tháng cho thành viên.",
+  },
+  {
+    icon: "star",
+    title: "Kèo nổi bật",
+    description: "Kèo do bạn tạo được gắn huy hiệu và lên đầu danh sách.",
+  },
+  {
+    icon: "forum",
+    title: "Chat không giới hạn",
+    description: "Gói miễn phí giữ 3 phòng chat, Premium giữ không giới hạn.",
   },
   {
     icon: "tune",
@@ -183,5 +218,23 @@ export const VOUCHER_CATALOG = Object.freeze([
       minSpend: 200000,
       requiresPremium: true,
       priority: 0,
+    },
+    {
+      id: "premium30",
+      code: "PREMIUM30",
+      category: "premium",
+      categoryLabel: "Premium",
+      icon: "calendar_month",
+      tone: "gold",
+      title: "Giảm 30.000đ mỗi tháng",
+      description: "Voucher quay vòng hằng tháng cho thành viên Premium",
+      condition: "Đơn từ 150.000đ · 1 lần/tháng",
+      expires: "Quay vòng mỗi tháng",
+      discountType: "fixed",
+      discountValue: 30000,
+      minSpend: 150000,
+      requiresPremium: true,
+      monthly: true,
+      priority: 1,
     },
 ]);

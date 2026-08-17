@@ -1,3 +1,5 @@
+import { FREE_HOLD_MINUTES, PREMIUM_HOLD_MINUTES } from "../core/constants.js";
+
 export const createBookingsApi = (context) => {
     const {
       EVENT_NAME,
@@ -30,6 +32,7 @@ export const createBookingsApi = (context) => {
       splitProportionally,
       applyBookingDiscount,
       expireBookings,
+      isPremium,
       getBooking
     } = context;
     return {
@@ -80,7 +83,8 @@ createBooking: (input) => {
           discountLabel: appliedVoucher.discountLabel,
         } : null,
         status: "held",
-        holdExpiresAt: now() + 10 * 60 * 1000,
+        holdMinutes: isPremium() ? PREMIUM_HOLD_MINUTES : FREE_HOLD_MINUTES,
+        holdExpiresAt: now() + (isPremium() ? PREMIUM_HOLD_MINUTES : FREE_HOLD_MINUTES) * 60 * 1000,
         createdAt: now(),
         updatedAt: now(),
         ownerPaid: false,
@@ -108,8 +112,9 @@ createBooking: (input) => {
       const voucherNote = booking.voucher
         ? ` Đã dùng ${booking.voucher.code}, giảm ${money(booking.voucher.discount)}.`
         : "";
+      const holdMinutes = isPremium() ? PREMIUM_HOLD_MINUTES : FREE_HOLD_MINUTES;
       addNotification(
-        "Đã giữ sân trong 10 phút",
+        `Đã giữ sân trong ${holdMinutes} phút`,
         `${booking.court} · ${booking.date}, ${booking.time}.${voucherNote}`
           + " Hãy xác nhận hoặc mời đội.",
         "booking",

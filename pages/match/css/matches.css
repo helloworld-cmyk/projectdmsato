@@ -217,6 +217,22 @@
   background: #fff3db;
 }
 
+.featured-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border-radius: 7px;
+  color: #7a5b00;
+  background: rgba(255, 215, 64, .92);
+  font: 800 10px "DM Sans", sans-serif;
+  line-height: 1;
+}
+
+.featured-badge .material-symbols-rounded {
+  font-size: 12px;
+}
+
 .match-grid .match-score {
   display: inline-flex;
   align-items: center;

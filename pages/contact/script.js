@@ -447,6 +447,20 @@ const render = () => {
   renderList();
   renderConversation();
   startPendingGreeting(findRoom(selectedRoomId));
+  syncPremiumBanner();
+};
+
+const syncPremiumBanner = () => {
+  const banner = document.querySelector('#chat-premium-banner');
+  if (!banner) return;
+  const liveCount = (store?.getChatRooms?.() || []).length;
+  const show = !store.isPremium() && liveCount >= 3;
+  banner.hidden = !show;
+  if (show) {
+    banner.querySelector('small').textContent =
+      `Phòng mới sẽ tự động đóng phòng cũ nhất (đã giữ ${liveCount}/3). `
+      + 'Nâng cấp Premium để giữ không giới hạn.';
+  }
 };
 
 const sendMessage = (text, options = {}) => {

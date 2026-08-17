@@ -11,7 +11,10 @@ function activeBookings() {
 }
 
 function bookingStatusLabel(booking) {
-  if (booking.status === 'held') return 'Đang giữ sân · còn 10 phút';
+  if (booking.status === 'held') {
+    const minutes = booking.holdMinutes || (store.isPremium() ? 30 : 10);
+    return `Đang giữ sân · còn ${minutes} phút`;
+  }
   return booking.ownerPaid ? 'Đã thanh toán' : 'Đã xác nhận';
 }
 

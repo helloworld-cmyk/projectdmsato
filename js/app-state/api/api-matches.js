@@ -1,4 +1,5 @@
 import { addSelfToRoster, normaliseMatchPlayer } from "../services/roster.js";
+import { FREE_SAVED_MATCH_LIMIT } from "../core/constants.js";
 import { matchCurrentShare } from "../core/utils.js";
 
 export const createMatchesApi = (context) => {
@@ -25,6 +26,7 @@ export const createMatchesApi = (context) => {
       settleLoyalty,
       debitWallet,
       canJoinMatch,
+      isPremium,
     } = context;
     const syncSelfRoster = (matchId, application, options) => {
       const records = [];
@@ -71,6 +73,7 @@ createMatch: (input) => {
         deposit: Math.ceil((Number(input.fee) || 360000) / capacity / 2000) * 1000,
         paymentMethod: "Thanh toán qua Ví MatchUp",
         creatorName: profile.name,
+        featured: isPremium(),
         joinRules: normaliseJoinRules(input.joinRules),
         status: "open",
         createdAt: now(),
@@ -186,6 +189,13 @@ createMatch: (input) => {
     toggleSavedMatch: (matchId, label = "kèo này", details = null) => {
       const index = state.savedMatches.indexOf(matchId);
       const saved = index === -1;
+      if (saved && !isPremium() && state.savedMatches.length >= FREE_SAVED_MATCH_LIMIT) {
+        return {
+          saved: false,
+          blocked: true,
+          limit: FREE_SAVED_MATCH_LIMIT,
+        };
+      }
       if (saved) {
         state.savedMatches.unshift(matchId);
         if (details && typeof details === "object") {
@@ -201,7 +211,7 @@ createMatch: (input) => {
         : `${label} đã được bỏ khỏi danh sách lưu.`;
       addNotification(title, message, "match");
       save(saved ? "match-saved" : "match-unsaved");
-      return saved;
+      return { saved, blocked: false };
     },
     getSavedMatches: () => clone(state.savedMatches),
     getSavedMatchRecords: () => clone(state.savedMatches.map((matchId) => (

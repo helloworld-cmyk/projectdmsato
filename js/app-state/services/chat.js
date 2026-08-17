@@ -1,4 +1,7 @@
-export const createChatService = ({ state, now, id, clone, save }) => {
+import { FREE_CHAT_ROOM_LIMIT } from "../core/constants.js";
+import { premiumActive } from "./premium.js";
+
+export const createChatService = ({ state, now, id, clone, save, addNotification }) => {
   const chatApplication = (matchId) => state.applications.find((application) => (
     application.matchId === matchId
     && ["accepted", "paid"].includes(application.status)
@@ -45,15 +48,39 @@ export const createChatService = ({ state, now, id, clone, save }) => {
   };
   const ensureChatRoom = (matchId, match) => {
     if (!matchId || !match) return null;
+    if (!state.chatRooms[matchId] && state.chatRoomEvictedIds.includes(matchId)) {
+      return null;
+    }
     const application = state.applications.find((item) => (
       item.matchId === matchId
       && !["declined", "cancelled"].includes(item.status)
     ));
     const isPending = application && application.status === "pending";
     if (!state.chatRooms[matchId]) {
+      const roomIds = Object.keys(state.chatRooms);
+      const premium = premiumActive(state.membership || {}, now());
+      if (!premium && roomIds.length >= FREE_CHAT_ROOM_LIMIT) {
+        const oldestId = roomIds
+          .map((roomId) => ({ roomId, createdAt: Number(state.chatRooms[roomId].createdAt) || 0 }))
+          .sort((a, b) => a.createdAt - b.createdAt)[0].roomId;
+        const oldestRoom = state.chatRooms[oldestId];
+        const oldestName = (oldestRoom && oldestRoom.matchName) || "phòng chat cũ nhất";
+        delete state.chatRooms[oldestId];
+        if (oldestRoom && oldestRoom.matchId && !state.chatRoomEvictedIds.includes(oldestRoom.matchId)) {
+          state.chatRoomEvictedIds.push(oldestRoom.matchId);
+        }
+        addNotification(
+          "Phòng chat cũ nhất đã bị đóng",
+          `Gói miễn phí chỉ giữ ${FREE_CHAT_ROOM_LIMIT} phòng chat cùng lúc. `
+            + `“${oldestName}” đã đóng để mở phòng mới. Nâng cấp Premium để giữ không giới hạn.`,
+          "premium",
+        );
+        save("chat-room-evicted");
+      }
       state.chatRooms[matchId] = {
         id: `chat-${matchId}`,
         matchId,
+        matchName: match.name || null,
         createdAt: now(),
         unreadCount: 1,
         messages: [
@@ -93,6 +120,7 @@ export const createChatService = ({ state, now, id, clone, save }) => {
     const reply = application ? createChatAutoReply(application.match, text) : null;
     if (!reply) return null;
     const room = ensureChatRoom(matchId, application.match);
+    if (!room) return null;
     room.messages.push(reply);
     room.messages = room.messages.slice(-100);
     save("chat-auto-reply");
