@@ -420,6 +420,10 @@
   line-height: 1.5;
 }
 
+.refund-note[hidden] {
+  display: none;
+}
+
 .refund-note .material-symbols-rounded {
   font-size: 15px;
   flex: none;

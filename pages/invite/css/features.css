@@ -358,8 +358,7 @@
 }
 
 .match-invite-mode #journey-card,
-.match-invite-mode .join-rules-card,
-.match-invite-mode .payment-card {
+.match-invite-mode .join-rules-card {
   display: none;
 }
 

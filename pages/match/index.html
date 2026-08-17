@@ -285,7 +285,7 @@
               </div>
             </div>
             <p class="hint">
-              Tính từ vị trí mock
+              Tính từ vị trí của bạn
               <strong data-user-location>
                 Chưa bật vị trí
               </strong>
@@ -899,6 +899,38 @@
         Cá nhân
       </a>
     </nav>
+    <div
+      class="host-approved-banner"
+      id="host-approved-banner"
+      role="status"
+      aria-live="polite"
+    >
+      <span class="host-approved-icon">
+        <span class="material-symbols-rounded">
+          celebration
+        </span>
+      </span>
+      <div class="host-approved-copy">
+        <strong>
+          Chủ kèo đã chấp nhận bạn!
+        </strong>
+        <span id="host-approved-message">
+        </span>
+      </div>
+      <button class="host-approved-action" id="host-approved-action" type="button">
+        Xem kèo ngay
+      </button>
+      <button
+        class="host-approved-close"
+        id="close-host-approved"
+        type="button"
+        aria-label="Đóng thông báo"
+      >
+        <span class="material-symbols-rounded">
+          close
+        </span>
+      </button>
+    </div>
     <div class="toast" role="status" aria-live="polite">
     </div>
     <script src="../../js/location.js">

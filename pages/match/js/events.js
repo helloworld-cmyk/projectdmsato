@@ -25,7 +25,7 @@ export function requestToJoin(matchId) {
     return;
   }
   renderMatches();
-  if (['accepted', 'payment_pending'].includes(application.status)) {
+  if (application.status === 'payment_pending') {
     openJoinPayment(application.id);
   } else {
     openTeamMoment(item, application);

@@ -301,13 +301,14 @@ function renderMatchCard(item) {
   const insight = insightFor(item);
   const saved = store.isMatchSaved(item.id);
   const paymentReady = application
-    && ['accepted', 'payment_pending'].includes(application.status)
-    && item.joinRules?.requirePaymentBeforeJoin;
+    && application.paymentStatus !== 'paid'
+    && ['accepted', 'payment_pending'].includes(application.status);
   const joinedApplication = application
     && ['accepted', 'paid'].includes(application.status)
     && !paymentReady;
+  const awaitingApproval = item.joinRules?.autoApprove || item.demoHostApproval;
   const pendingSeconds = application && application.status === 'pending'
-    && item.joinRules?.autoApprove
+    && awaitingApproval
     && application.approvalEligible
     ? Math.max(
       0,
@@ -324,7 +325,7 @@ function renderMatchCard(item) {
             ? application.status === 'pending' && application.paymentStatus === 'paid'
             ? 'Đã thanh toán · chờ duyệt'
             : application.status === 'pending'
-              ? item.joinRules?.autoApprove
+              ? awaitingApproval
                 && application.approvalEligible
                 ? `Đã gửi · ${pendingSeconds}s`
                 : application.approvalEligible
@@ -347,6 +348,14 @@ function renderMatchCard(item) {
   const reasons = insight.reasons.slice(0, 2).map(reason => (
     `<span>${safe(reason)}</span>`
   )).join('');
+  const ruleTags = `
+    <span class="tag ${item.joinRules?.autoApprove ? 'auto' : 'manual'}">
+      ${item.joinRules?.autoApprove ? '⚡ Tự động duyệt' : '⏳ Chờ chủ kèo duyệt'}
+    </span>
+    <span class="tag ${item.joinRules?.requirePaymentBeforeJoin ? 'payfirst' : 'gray'}">
+      ${item.joinRules?.requirePaymentBeforeJoin ? '💳 Đóng tiền trước' : '💳 Thanh toán sau'}
+    </span>
+  `;
 
   return `
     <article class="match-card ${saved ? 'is-saved' : ''}" data-id="${item.id}"
@@ -363,6 +372,7 @@ function renderMatchCard(item) {
       <div class="tags">
         <span class="tag">${safe(item.level).toUpperCase()}</span>
         <span class="tag gray">${safe(item.format)}</span>
+        ${ruleTags}
       </div>
       <div class="match-reasons">${reasons}</div>
       <div class="card-info">

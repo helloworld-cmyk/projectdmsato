@@ -1,10 +1,10 @@
 (() => {
   const mockLocation = {
-    district: "Long Biên",
+    district: "Hai Bà Trưng",
     city: "Hà Nội",
-    label: "Long Biên, Hà Nội",
-    latitude: 20.9712,
-    longitude: 105.7785,
+    label: "ĐHBKHN, Quận Hai Bà Trưng, Hà Nội",
+    latitude: 20.9984,
+    longitude: 105.8436,
   };
 
   window.MatchUpLocation = mockLocation;
@@ -121,8 +121,8 @@
           Để gợi ý sân và kèo gần bạn nhất, MatchUp cần vị trí của bạn.
         </p>
         <small>
-          Đây là bản demo: sau khi đồng ý, vị trí sẽ được mock ở Long Biên,
-          Hà Nội.
+          Sau khi đồng ý, MatchUp sẽ dùng vị trí của bạn để gợi ý sân
+          và kèo gần nhất.
         </small>
         <div class="mock-location-actions">
           <button type="button" data-location-later>Để sau</button>

@@ -98,13 +98,11 @@ export function renderSplit() {
   const ownAmount = own ? own.amount : state.splitPlayers[0].amount;
   const refund = matchInviteMode ? refundForSelf() : 0;
   const refundNote = $('#refund-note');
-  if (refund > 0) {
-    refundNote.hidden = false;
-    $('#refund-note-text').textContent =
-      `Bạn sẽ được hoàn ${format(refund)} đồng do đã có thêm người vào kèo.`;
-  } else {
-    refundNote.hidden = true;
-  }
+  const refundMessage = refund > 0
+    ? `Bạn sẽ được hoàn ${format(refund)} đồng do đã có thêm người vào kèo.`
+    : '';
+  $('#refund-note-text').textContent = refundMessage;
+  refundNote.hidden = !refundMessage;
   if (matchInviteMode) {
     $('#progress-title').textContent = requirePayment
       ? `${paidCount}/${rosterPlayers.length} người đã thanh toán`

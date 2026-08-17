@@ -1,6 +1,8 @@
 import {
+  matchApplication,
   matchInvite,
   matchInviteMode,
+  ownSplitPlayer,
   profile,
   state,
   store
@@ -9,6 +11,7 @@ import { $ } from '../core/dom.js';
 import { format } from '../core/utils.js';
 import { timeRemainingLabel } from '../booking/booking.js';
 import { renderJourney } from '../features/journey.js';
+import { subjectKey } from '../../../../js/app-state/core/utils.js';
 
 export function renderBooking() {
   if (!state.booking) {
@@ -114,4 +117,23 @@ function renderMatchInvite() {
     + 'ngay sau khi họ tham gia.';
   $('#confirm-booking').hidden = true;
   $('#journey-card').style.display = 'none';
+
+  const own = ownSplitPlayer();
+  const paidShare = own && own.paid
+    || matchApplication && matchApplication.paymentStatus === 'paid';
+  const canPayApplication = Boolean(
+    matchApplication
+    && ['accepted', 'payment_pending'].includes(matchApplication.status)
+    && !paidShare
+  );
+  const owner = matchInvite.custom
+    ? (matchInvite.participants || [])[0]
+    : null;
+  const canPayOwner = Boolean(
+    owner && !paidShare
+    && subjectKey(owner.name) === subjectKey(profile.name)
+  );
+  $('.payment-card').style.display = canPayApplication || canPayOwner
+    ? ''
+    : 'none';
 }

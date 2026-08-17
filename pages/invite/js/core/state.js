@@ -58,11 +58,22 @@ function buildSplitPlayers(match) {
     return {
       ...player,
       amount: amountByKey.get(key) || 0,
-      paid: paidByKey.has(key)
-        ? paidByKey.get(key)
-        : Boolean(player.paid) || player.payment === 'Đã thanh toán',
-      paidAmount: isSelf && matchApplication && matchApplication.payment
-        ? Number(matchApplication.payment.paidAmount) || 0
+      paid: isSelf
+        ? Boolean(
+          player.paid
+          || player.payment === 'Đã thanh toán'
+          || (matchApplication && matchApplication.status === 'paid')
+        )
+        : paidByKey.has(key)
+          ? paidByKey.get(key)
+          : Boolean(player.paid) || player.payment === 'Đã thanh toán',
+      paidAmount: isSelf
+        ? Number(
+          (matchApplication && matchApplication.payment
+            && matchApplication.payment.paidAmount)
+          || (match.payment && match.payment.paidAmount)
+          || player.paidAmount
+        ) || 0
         : Number(player.paidAmount) || 0,
       joinStatus: player.joinStatus || 'approved'
     };

@@ -446,3 +446,128 @@
   opacity: 1;
   transform: translate(-50%,0);
 }
+
+.tag.auto {
+  color: #eafff1;
+  background: rgba(18, 137, 74, .88);
+}
+
+.tag.manual {
+  color: #f0f2ff;
+  background: rgba(92, 100, 205, .88);
+}
+
+.tag.payfirst {
+  color: #fff;
+  background: rgba(209, 87, 51, .9);
+}
+
+.host-approved-banner {
+  position: fixed;
+  z-index: 100;
+  top: 14px;
+  left: 50%;
+  width: min(720px, calc(100% - 24px));
+  display: none;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(120deg, #35c46f, #168a4f 62%, #0e6b3c);
+  box-shadow: 0 18px 44px rgba(14, 92, 52, .38), inset 0 1px 0 rgba(255, 255, 255, .25);
+  transform: translateX(-50%);
+}
+
+.host-approved-banner.show {
+  display: flex;
+  animation: host-approved-in .5s cubic-bezier(.2, 1.4, .4, 1);
+}
+
+.host-approved-icon {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #127e43;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .18);
+}
+
+.host-approved-icon .material-symbols-rounded {
+  font-size: 24px;
+}
+
+.host-approved-copy {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.host-approved-copy strong {
+  font: 800 15px "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -.2px;
+}
+
+.host-approved-copy span {
+  overflow: hidden;
+  color: #e3f6ea;
+  font-size: 11px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.host-approved-action {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 10px;
+  color: #0e6b3c;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.host-approved-action:hover {
+  background: #eafff1;
+}
+
+.host-approved-close {
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, .16);
+  cursor: pointer;
+}
+
+.host-approved-close:hover {
+  background: rgba(0, 0, 0, .3);
+}
+
+.host-approved-close .material-symbols-rounded {
+  font-size: 17px;
+}
+
+@keyframes host-approved-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -130%);
+  }
+  62% {
+    opacity: 1;
+    transform: translate(-50%, 8px);
+  }
+  100% {
+    transform: translate(-50%, 0);
+  }
+}

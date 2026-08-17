@@ -123,7 +123,7 @@ export const sportCatalog = {
     label: 'Cầu lông',
     format: 'Đánh đôi nam nữ',
     venues: [
-      'Cầu lông Long Biên',
+      'Cầu lông Hai Bà Trưng',
       'Nhà thi đấu Văn Quán',
       'Cầu lông Mỗ Lao',
       'Cầu lông La Khê',
@@ -153,7 +153,7 @@ export const sportCatalog = {
       'Khu đô thị Văn Phú, Hà Nội'
     ],
     teams: [
-      'Long Biên Smash',
+      'Hai Bà Trưng Smash',
       'Văn Quán Smash',
       'Mỗ Lao Badminton',
       'La Khê Friendly',

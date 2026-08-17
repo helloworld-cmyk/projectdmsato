@@ -73,18 +73,22 @@ export function decorateMatches(items) {
     match.available = capacity - joined;
     match.share = Math.ceil(match.fee / capacity / 1000) * 1000;
     match.deposit = Math.ceil(match.share / 2 / 1000) * 1000;
+    const autoApprove = index % 2 === 0;
     match.joinRules = {
-      requirePaymentBeforeJoin: false,
-      autoApprove: true,
+      requirePaymentBeforeJoin: autoApprove,
+      autoApprove,
       criteria: {
         levelMatch: false,
         minRating: 0,
         minCompletedMatches: 0
       }
     };
-    match.paymentMethod = index % 2 === 0
+    match.demoHostApproval = !autoApprove;
+    match.paymentMethod = match.joinRules.requirePaymentBeforeJoin
       ? 'Thanh toán qua Ví MatchUp'
-      : 'Thanh toán cho chủ kèo sau khi được duyệt';
+      : index % 2 === 0
+        ? 'Thanh toán qua Ví MatchUp'
+        : 'Thanh toán cho chủ kèo sau khi được duyệt';
     match.participants = Array.from({ length: joined }, (_, playerIndex) => {
       const player = playerPool[(index + playerIndex) % playerPool.length];
       const paid = playerIndex === 0 || (playerIndex + index) % 3 !== 0;

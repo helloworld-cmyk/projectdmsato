@@ -18,7 +18,7 @@ const copy = application.status === 'payment_pending'
         + 'Thanh toán sẽ mở lại ngay khi chủ kèo duyệt.'
       : application.status === 'accepted'
         ? 'Bạn đã được chủ kèo nhận vào. '
-          + 'Hãy thanh toán để giữ chỗ trong đội!'
+          + 'Thanh toán phần của bạn để khóa chỗ trong đội!'
         : 'Bạn đã hoàn tất thanh toán phần của mình. '
           + 'Sau trận, hãy đánh giá đội nhé!';
   document.querySelector('#team-moment-copy').textContent = copy;

@@ -125,9 +125,11 @@ export function matchModePayableSubtotal() {
 
 export function refundForSelf() {
   const own = ownSplitPlayer();
-  const paid = Number(own && own.paidAmount) || 0;
-  if (!paid || paid <= Number(own && own.amount) || 0) return 0;
-  return paid - Number(own && own.amount) || 0;
+  if (!own || !own.paid) return 0;
+  const paid = Number(own.paidAmount) || 0;
+  const amount = Number(own.amount) || 0;
+  if (!paid || paid <= amount) return 0;
+  return paid - amount;
 }
 
 export function notifyRefund() {
