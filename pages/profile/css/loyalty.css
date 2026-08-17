@@ -246,3 +246,242 @@
     margin:18px auto;
   }
 }
+
+/* --- MatchUp Premium --- */
+.premium-card {
+  padding:17px;
+  border:1px solid #e7dcb8;
+  background:linear-gradient(135deg,#fffdf5 0%,#fff8e1 100%)
+}
+.premium-card-top {
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+.premium-card-icon {
+  width:38px;
+  height:38px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  color:#fff;
+  background:linear-gradient(135deg,#f5b301,#c97d00);
+  font-size:21px
+}
+.premium-card-top h3 {
+  margin:0;
+  font:800 15px "Plus Jakarta Sans",sans-serif
+}
+.premium-card-top p {
+  margin:3px 0 0;
+  color:#8a7a4e;
+  font-size:10px
+}
+.premium-card-status {
+  margin-top:13px
+}
+.premium-status-free {
+  display:grid;
+  gap:3px;
+  padding:10px 12px;
+  border-radius:10px;
+  color:#7a5c14;
+  background:#fff3c9
+}
+.premium-status-free strong {
+  font-size:11px;
+  font-weight:800
+}
+.premium-status-free span {
+  color:#a0853c;
+  font-size:10px
+}
+.premium-status-active {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 12px;
+  border-radius:10px;
+  color:#173c2c;
+  background:linear-gradient(135deg,#e9f7d9,#d8f0c4)
+}
+.premium-status-active .material-symbols-rounded {
+  color:#6aa521;
+  font-size:22px
+}
+.premium-status-active strong {
+  display:block;
+  font-size:11px;
+  font-weight:800
+}
+.premium-status-active small {
+  display:block;
+  margin-top:2px;
+  color:#5c7a4d;
+  font-size:9px
+}
+.premium-benefits {
+  display:grid;
+  gap:7px;
+  margin-top:12px
+}
+.premium-benefit {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 10px;
+  border:1px solid #f0e3bb;
+  border-radius:10px;
+  background:#fffdf4
+}
+.premium-benefit .material-symbols-rounded {
+  color:#c98a00;
+  font-size:17px
+}
+.premium-benefit strong {
+  display:block;
+  color:#4d3c12;
+  font-size:10px
+}
+.premium-benefit small {
+  display:block;
+  margin-top:2px;
+  color:#9a8550;
+  font-size:9px
+}
+.premium-actions {
+  display:flex;
+  gap:8px;
+  margin-top:13px
+}
+.premium-upgrade-btn {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:10px;
+  border:1px solid #e3c77b;
+  border-radius:10px;
+  color:#6b4d06;
+  background:#fff4d2;
+  font-size:10px;
+  font-weight:800;
+  cursor:pointer
+}
+.premium-upgrade-btn.primary {
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow:0 6px 16px rgba(201,125,0,.25)
+}
+.premium-upgrade-btn.primary .material-symbols-rounded {
+  font-size:15px
+}
+.premium-cancel-btn {
+  padding:10px 12px;
+  border:0;
+  border-radius:10px;
+  color:#8b6f3a;
+  background:transparent;
+  font-size:10px;
+  font-weight:700;
+  cursor:pointer
+}
+.profile-premium-badge {
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  margin-left:7px;
+  padding:3px 7px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,#f5b301,#c97d00);
+  font-size:9px;
+  font-weight:800;
+  vertical-align:middle
+}
+.profile-premium-badge .material-symbols-rounded {
+  font-size:11px
+}
+.premium-plans {
+  display:grid;
+  gap:8px;
+  margin-top:15px
+}
+.premium-plan {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border:1px solid #e9e3d0;
+  border-radius:12px;
+  background:#fff;
+  text-align:left;
+  cursor:pointer
+}
+.premium-plan.selected {
+  border-color:#e0b64c;
+  background:#fffaf0;
+  box-shadow:0 0 0 1px #e0b64c
+}
+.premium-plan-radio {
+  width:15px;
+  height:15px;
+  border:2px solid #d8d2bd;
+  border-radius:50%
+}
+.premium-plan.selected .premium-plan-radio {
+  border-color:#c98d0a;
+  background:radial-gradient(circle,#c98d0a 40%,#fff 45%)
+}
+.premium-plan-copy strong {
+  display:block;
+  color:#3d3418;
+  font-size:11px
+}
+.premium-plan-copy small {
+  display:block;
+  margin-top:3px;
+  color:#8d7f58;
+  font-size:9px;
+  line-height:1.4
+}
+.premium-plan em {
+  padding:4px 7px;
+  border-radius:999px;
+  color:#8a5c00;
+  background:#ffe9b3;
+  font-size:8px;
+  font-style:normal;
+  font-weight:800;
+  white-space:nowrap
+}
+.premium-modal-note {
+  margin-top:11px;
+  padding:8px 10px;
+  border-radius:9px;
+  color:#8a7a4e;
+  background:#faf6e8;
+  font-size:9px
+}
+.premium-confirm {
+  width:100%;
+  margin-top:13px;
+  padding:12px;
+  border:0;
+  border-radius:10px;
+  color:#fff;
+  background:linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow:0 8px 20px rgba(201,125,0,.28);
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer
+}
+.premium-confirm:disabled {
+  color:#a08a5a;
+  background:#f0e8d2;
+  box-shadow:none;
+  cursor:not-allowed
+}

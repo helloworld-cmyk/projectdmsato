@@ -321,7 +321,7 @@ createBooking: (input) => {
       const players = booking.split && Array.isArray(booking.split.players)
         ? booking.split.players
         : [];
-      if (!players.length || players.some((player) => player.paid)) return null;
+      if (!players.length) return null;
       const currentSplitTotal = players.reduce((sum, player) => sum + amount(player.amount), 0);
       if (booking.split.mode === "custom" && currentSplitTotal !== subtotal) return null;
       const previewSplit = booking.split.mode === "custom"

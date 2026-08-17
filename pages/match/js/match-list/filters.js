@@ -32,6 +32,7 @@ import {
   slotMinutes
 } from '../core/utils.js';
 import { showToast } from '../core/toast.js';
+import { openPremiumUpsell } from '../core/premium-upsell.js';
 
 let timeFilter;
 
@@ -394,10 +395,13 @@ export function renderMatches() {
       || (state.time.startsWith('date:')
         ? item.dateKey === state.time.slice(5)
         : item.timeKey === state.time);
+    const qualityMatch = state.quality !== 'trusted'
+      || insightFor(item).host.reliability >= 90;
     return (state.sport === 'all' || item.sport === state.sport)
       && matchesDate
       && timeRangeMatches(item)
       && (state.level === 'all' || item.level === state.level)
+      && qualityMatch
       && item.share >= state.priceMin
       && item.share <= state.priceMax
       && item.distance >= state.distanceMin
@@ -501,6 +505,24 @@ export function initFilters() {
       renderMatches();
     });
   });
+
+  document.querySelectorAll('.chip[data-premium-filter="quality"]').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const value = chip.dataset.value;
+      if (value === 'trusted' && !store.isPremium()) {
+        showToast('Bộ lọc Chất lượng đội dành riêng cho thành viên Premium.');
+        openPremiumUpsell();
+        return;
+      }
+      state.quality = value;
+      chip.closest('.filter-group').querySelectorAll('.chip').forEach(item => {
+        item.classList.remove('active');
+      });
+      chip.classList.add('active');
+      renderMatches();
+    });
+  });
+
   dom.distanceMinInput.addEventListener('input', event => {
     updateDistanceFromInput('min', event.target.value);
   });
@@ -520,6 +542,7 @@ export function initFilters() {
       time: 'all',
       timeRange: 'all',
       level: 'all',
+      quality: 'all',
       priceMin: PRICE_MIN,
       priceMax: PRICE_MAX,
       distanceMin: DISTANCE_MIN,
@@ -531,6 +554,9 @@ export function initFilters() {
     syncDistanceRange();
     syncPrice();
     document.querySelectorAll('.chip[data-filter]').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.value === 'all');
+    });
+    document.querySelectorAll('.chip[data-premium-filter]').forEach(chip => {
       chip.classList.toggle('active', chip.dataset.value === 'all');
     });
     renderMatches();

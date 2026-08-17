@@ -12,6 +12,26 @@ function showToast(message) {
 
 const store = window.MatchUpStore;
 
+const premiumBanner = document.querySelector('#premium-banner');
+const premiumBannerCta = document.querySelector('#premium-banner-cta');
+
+function syncPremiumBanner() {
+  if (!premiumBanner) return;
+  const premium = store.isPremium();
+  premiumBanner.classList.toggle('active', premium);
+  document.querySelector('#premium-banner-text').textContent = premium
+    ? 'Bạn đang là thành viên Premium — cảm ơn đã đồng hành cùng MatchUp!'
+    : 'Xin vào kèo không giới hạn, ưu đãi đặt sân độc quyền và bộ lọc nâng cao.';
+  premiumBannerCta.textContent = premium ? 'Quản lý gói' : 'Nâng cấp · 60.000đ/tháng';
+}
+
+premiumBannerCta?.addEventListener('click', () => {
+  location.href = 'pages/profile/?premium=1';
+});
+
+syncPremiumBanner();
+document.addEventListener('matchup:state-change', syncPremiumBanner);
+
 const voucherGrid = document.querySelector('#voucher-grid');
 const voucherCount = document.querySelector('#voucher-count');
 const escapeHtml = (value) => String(value ?? '').replace(
@@ -26,13 +46,17 @@ const escapeHtml = (value) => String(value ?? '').replace(
 );
 
 const renderVouchers = (filter = 'all') => {
+  const premium = store.isPremium();
   const vouchers = store.getVouchers().filter(
     (voucher) => filter === 'all' || voucher.category === filter
   );
   voucherCount.textContent = vouchers.length;
   voucherGrid.innerHTML = vouchers.length
-    ? vouchers.map((voucher, index) => `<article class="voucher-card
+    ? vouchers.map((voucher, index) => {
+      const premiumLocked = voucher.requiresPremium && !premium;
+      return `<article class="voucher-card
       tone-${escapeHtml(voucher.tone)}
+      ${premiumLocked ? 'premium-locked' : ''}
       ${index === 0 && filter === 'all' ? 'featured' : ''}">
         <div class="voucher-card-top">
           <span class="voucher-tag">
@@ -58,7 +82,12 @@ const renderVouchers = (filter = 'all') => {
           </span>
         </div>
         <div class="voucher-actions">
-          <button
+          ${premiumLocked
+            ? `<button class="voucher-upgrade" type="button" data-voucher-upgrade="${escapeHtml(voucher.id)}">
+              <span class="material-symbols-rounded">workspace_premium</span>
+              Nâng cấp Premium
+            </button>`
+            : `<button
             class="copy-code"
             type="button"
             data-voucher-copy="${escapeHtml(voucher.code)}"
@@ -70,9 +99,10 @@ const renderVouchers = (filter = 'all') => {
           >
             Dùng ngay
             <span class="material-symbols-rounded">arrow_forward</span>
-          </a>
+          </a>`}
         </div>
-      </article>`).join('')
+      </article>`;
+    }).join('')
     : '<div class="voucher-empty">Chưa có voucher trong nhóm này.</div>';
 };
 
@@ -89,6 +119,13 @@ document.querySelectorAll('[data-voucher-filter]').forEach((tab) => {
 });
 
 voucherGrid.addEventListener('click', async (event) => {
+  const upgradeButton = event.target.closest('[data-voucher-upgrade]');
+  if (upgradeButton) {
+    showToast('Voucher này dành riêng cho thành viên Premium.');
+    location.href = 'pages/profile/?premium=1';
+    return;
+  }
+
   const copyButton = event.target.closest('[data-voucher-copy]');
   if (copyButton) {
     const code = copyButton.dataset.voucherCopy;

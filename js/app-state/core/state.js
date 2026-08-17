@@ -17,6 +17,7 @@ import { DEMO_REPUTATION_SEED_VERSION } from "../services/reputation.js";
 
 export const loyaltyDefaults = () => ({ balance: 0, transactions: [] });
 export const walletDefaults = () => ({ balance: 0, transactions: [] });
+export const membershipDefaults = () => ({ plan: null, startedAt: null, expiresAt: null });
 
 export const createDefaultState = ({ demoReputationReviews }) => ({
   profile: {
@@ -50,6 +51,7 @@ export const createDefaultState = ({ demoReputationReviews }) => ({
   waitlists: [],
   loyalty: loyaltyDefaults(),
   wallet: walletDefaults(),
+  membership: membershipDefaults(),
   notifications: [
     {
       id: id("notice"),
@@ -105,6 +107,19 @@ export const createStateStore = ({ demoReputationReviews, seedMissingDemoReputat
       balance: amount(wallet.balance),
       transactions: Array.isArray(wallet.transactions) ? wallet.transactions.slice(0, 50) : [],
     };
+    const membership = saved && saved.membership && typeof saved.membership === "object"
+      ? saved.membership
+      : membershipDefaults();
+    const membershipExpired = membership.plan
+      && membership.expiresAt
+      && new Date(membership.expiresAt).getTime() <= now();
+    saved.membership = membershipExpired
+      ? membershipDefaults()
+      : {
+        plan: membership.plan || null,
+        startedAt: membership.startedAt || null,
+        expiresAt: membership.expiresAt || null,
+      };
     saved.matches = Array.isArray(saved.matches) ? saved.matches : [];
     saved.applications = Array.isArray(saved.applications) ? saved.applications : [];
     saved.chatRooms = saved.chatRooms && typeof saved.chatRooms === "object" ? saved.chatRooms : {};

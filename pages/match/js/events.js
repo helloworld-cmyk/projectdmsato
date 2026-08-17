@@ -11,11 +11,19 @@ import { closeTeamMoment, getTeamState, openTeamMoment } from './modals/team.js'
 import { closeCreateFlow, openCreateFlow, renderCreateFlow } from './create/create.js';
 import { openMatchFeedback } from './modals/feedback.js';
 import { showToast } from './core/toast.js';
+import { openPremiumUpsell } from './core/premium-upsell.js';
 
 export function requestToJoin(matchId) {
   const item = findMatch(matchId);
   if (!item || item.custom) return;
   const application = store.applyToMatch(item);
+  if (application && application.ok === false && application.reason === 'limit') {
+    showToast(`Gói miễn phí đã dùng hết ${application.limit} lượt xin vào kèo trong tháng này.`);
+    openPremiumUpsell(
+      `Bạn đã dùng hết ${application.usage}/${application.limit} lượt trong tháng`
+    );
+    return;
+  }
   renderMatches();
   if (['accepted', 'payment_pending'].includes(application.status)) {
     openJoinPayment(application.id);

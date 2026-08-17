@@ -1,6 +1,21 @@
 export function injectCards() {
   const content = document.querySelector('.content');
-  
+
+  content.insertAdjacentHTML('afterbegin', `
+    <article class="card premium-card" id="premium-card">
+      <div class="premium-card-top">
+        <span class="premium-card-icon material-symbols-rounded">workspace_premium</span>
+        <div>
+          <h3>MatchUp Premium</h3>
+          <p>Xin vào kèo không giới hạn, ưu đãi đặt sân độc quyền.</p>
+        </div>
+      </div>
+      <div class="premium-card-status" id="premium-status"></div>
+      <div class="premium-benefits" id="premium-benefits"></div>
+      <div class="premium-actions" id="premium-actions"></div>
+    </article>
+  `);
+
   content.insertAdjacentHTML('afterbegin', `
     <article class="card loyalty-card" id="loyalty-card">
       <div class="loyalty-head">
@@ -124,6 +139,30 @@ export function injectModals() {
           <button class="wallet-preset" type="button" data-wallet-preset="500000">500.000đ</button>
         </div>
         <button class="wallet-confirm" id="confirm-wallet-topup" type="button">Nạp 100.000đ vào ví</button>
+      </div>
+    </div>
+  `);
+document.body.insertAdjacentHTML('beforeend', `
+    <div class="loyalty-modal-layer" id="premium-upgrade-modal" role="dialog" aria-modal="true" aria-labelledby="premium-upgrade-title">
+      <div class="loyalty-modal premium-modal">
+        <div class="loyalty-modal-top">
+          <div>
+            <h2 id="premium-upgrade-title">Nâng cấp MatchUp Premium</h2>
+            <p>Xin vào kèo không giới hạn và tận hưởng ưu đãi độc quyền.</p>
+          </div>
+          <button class="loyalty-close" id="close-premium-upgrade" aria-label="Đóng"><span class="material-symbols-rounded">close</span></button>
+        </div>
+        <div class="premium-plans" id="premium-plans"></div>
+        <div class="wallet-payment-methods">
+          <button class="wallet-payment-method" type="button" data-premium-method="Ví MatchUp">
+            <span class="material-symbols-rounded">account_balance_wallet</span>Ví MatchUp<small id="premium-wallet-balance">Số dư 0đ</small>
+          </button>
+          <button class="wallet-payment-method" type="button" data-premium-method="VietQR">
+            <span class="material-symbols-rounded">qr_code_2</span>VietQR<small>Chuyển khoản ngân hàng</small>
+          </button>
+        </div>
+        <p class="premium-modal-note">Thanh toán được mô phỏng để bạn thử nghiệm luồng nâng cấp.</p>
+        <button class="premium-confirm" id="confirm-premium-upgrade" type="button">Nâng cấp</button>
       </div>
     </div>
   `);

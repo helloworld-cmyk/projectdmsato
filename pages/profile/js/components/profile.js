@@ -3,8 +3,12 @@ import { escape } from '../utils.js';
 
 export function renderProfile() {
   const profile = store.getProfile();
+  const premium = store.isPremium();
   
-  document.querySelector('#profile-name').textContent = profile.name;
+  document.querySelector('#profile-name').innerHTML = `
+    ${escape(profile.name)}
+    ${premium ? '<span class="profile-premium-badge" title="Thành viên MatchUp Premium"><span class="material-symbols-rounded">workspace_premium</span> Premium</span>' : ''}
+  `;
   document.querySelector('#profile-initials').textContent = profile.initials;
   document.querySelector('#profile-name-input').value = profile.name;
   document.querySelector('#profile-level').value = profile.level;

@@ -1,4 +1,5 @@
 import { store } from './state.js';
+import { renderMembership } from './components/membership.js';
 import { renderLoyalty } from './components/loyalty.js';
 import { renderWallet } from './components/wallet.js';
 import { renderPlayStats } from './components/playStats.js';
@@ -31,6 +32,7 @@ export function render() {
 
 export function renderAll() {
   renderProfile();
+  renderMembership();
   renderLoyalty();
   renderWallet();
   renderPlayStats();

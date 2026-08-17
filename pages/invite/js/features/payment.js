@@ -26,15 +26,61 @@ function isCustomOwner() {
   return Boolean(first && subjectKey(first.name) === subjectKey(profile.name));
 }
 
+function currentPreview() {
+  if (matchInviteMode) {
+    return store.previewPoints(matchModePayableSubtotal(), state.requestedBookingPoints);
+  }
+  if (state.booking) {
+    return store.previewBookingPoints(state.booking.id, state.requestedBookingPoints);
+  }
+  return store.previewPoints(state.total, state.requestedBookingPoints);
+}
+
+function payableOf(preview) {
+  return preview && (preview.ownerAmount === undefined
+    ? preview.paidAmount
+    : preview.ownerAmount) || 0;
+}
+
+function bookingPaymentFailure() {
+  if (state.booking && ['expired', 'cancelled'].includes(state.booking.status)) {
+    return 'Lịch sân không còn hiệu lực (đã hết hạn hoặc đã bị hủy).';
+  }
+  if (state.booking && state.booking.ownerPaid) {
+    return 'Lịch sân này đã được thanh toán rồi.';
+  }
+  const preview = currentPreview();
+  if (state.selectedMethod === 'Ví MatchUp'
+    && store.getWallet().balance < payableOf(preview)) {
+    return 'Số dư ví MatchUp không đủ để thanh toán.';
+  }
+  if (preview && state.requestedBookingPoints > preview.maxPoints) {
+    return 'Số điểm yêu cầu vượt mức cho phép.';
+  }
+  return 'Trạng thái lịch sân đã thay đổi. Hãy thử lại.';
+}
+
+function matchPaymentFailure() {
+  const own = ownSplitPlayer();
+  if (own && own.paid) {
+    return 'Phần của bạn đã được thanh toán rồi.';
+  }
+  if (matchInvite && matchInvite.status === 'cancelled') {
+    return 'Kèo đã bị hủy, không thể thanh toán.';
+  }
+  const preview = currentPreview();
+  if (state.selectedMethod === 'Ví MatchUp'
+    && store.getWallet().balance < payableOf(preview)) {
+    return 'Số dư ví MatchUp không đủ để thanh toán.';
+  }
+  if (preview && state.requestedBookingPoints > preview.maxPoints) {
+    return 'Số điểm yêu cầu vượt mức cho phép.';
+  }
+  return 'Trạng thái kèo đã thay đổi. Hãy thử lại.';
+}
+
 export function renderBookingPayment() {
-  const preview = matchInviteMode
-    ? store.previewPoints(matchModePayableSubtotal(), state.requestedBookingPoints)
-    : state.booking
-      ? store.previewBookingPoints(
-        state.booking.id,
-        state.requestedBookingPoints
-      )
-      : store.previewPoints(state.total, state.requestedBookingPoints);
+  const preview = currentPreview();
   if (!preview) return;
   state.requestedBookingPoints = preview.points;
   $('#booking-points').value = preview.points || '';
@@ -109,9 +155,7 @@ function confirmMatchPayment() {
     return;
   }
   if (!result) {
-    showToast(state.selectedMethod === 'Ví MatchUp'
-      ? 'Số dư ví không đủ hoặc trạng thái kèo đã thay đổi.'
-      : 'Số điểm hoặc trạng thái kèo đã thay đổi. Hãy thử lại.');
+    showToast(matchPaymentFailure());
     renderBookingPayment();
     return;
   }
@@ -139,9 +183,7 @@ function confirmPayment() {
     )
     : null;
   if (!result) {
-    showToast(state.selectedMethod === 'Ví MatchUp'
-      ? 'Số dư ví không đủ hoặc trạng thái lịch đã thay đổi.'
-      : 'Số điểm hoặc trạng thái lịch sân đã thay đổi. Hãy thử lại.');
+    showToast(bookingPaymentFailure());
     renderBookingPayment();
     return;
   }

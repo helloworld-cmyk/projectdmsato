@@ -1,6 +1,9 @@
 import {
   EVENT_NAME,
+  FREE_MATCH_LIMIT,
   LOYALTY_POLICY,
+  PREMIUM_BENEFITS,
+  PREMIUM_PLANS,
   SPORT_LABELS,
   STORAGE_KEY,
   VOUCHER_CATALOG,
@@ -17,12 +20,14 @@ import {
 import { createApprovalCheck, joinRuleDefaults, normaliseJoinRules, BOOKING_ROSTER_MIGRATION_VERSION } from "./services/rules.js";
 import { createChatService } from "./services/chat.js";
 import { createCommerceService } from "./services/commerce.js";
+import { createPremiumService } from "./services/premium.js";
 import { createMatchInsightService } from "./services/insights.js";
 import { createGeneralApi } from "./api/api-general.js";
 import { createProfileApi } from "./api/api-profile.js";
 import { createMatchesApi } from "./api/api-matches.js";
 import { createChatApi } from "./api/api-chat.js";
 import { createBookingsApi } from "./api/api-bookings.js";
+import { createPremiumApi } from "./api/api-premium.js";
 
 const demoReputationReviews = () => createDemoReputationReviews({
   now: utils.now,
@@ -64,6 +69,15 @@ const commerce = createCommerceService({
   upsertJourney: stateStore.upsertJourney,
   save: stateStore.save,
 });
+const premium = createPremiumService({
+  state: stateStore.state,
+  now: utils.now,
+  clone: utils.clone,
+  amount: utils.amount,
+  debitWallet: commerce.debitWallet,
+  addNotification: stateStore.addNotification,
+  save: stateStore.save,
+});
 const insights = createMatchInsightService({
   state: stateStore.state,
   reputationFromReviews: reputation.reputationFromReviews,
@@ -77,6 +91,9 @@ const context = {
   WALLET_PAYMENT_METHOD,
   SPORT_LABELS,
   VOUCHER_CATALOG,
+  FREE_MATCH_LIMIT,
+  PREMIUM_PLANS,
+  PREMIUM_BENEFITS,
   ...utils,
   ...stateStore,
   ...reputation,
@@ -87,6 +104,7 @@ const context = {
   approvalCheck,
   ...chat,
   ...commerce,
+  ...premium,
   matchInsight: insights.matchInsight,
 };
 
@@ -96,6 +114,7 @@ export const store = {
   ...createMatchesApi(context),
   ...createChatApi(context),
   ...createBookingsApi(context),
+  ...createPremiumApi(context),
 };
 
 window.MatchUpStore = store;

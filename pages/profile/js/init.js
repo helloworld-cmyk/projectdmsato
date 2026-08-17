@@ -3,6 +3,7 @@ import { initToast, showToast } from './toast.js';
 import { initDOM } from './dom.js';
 import { initApplicationPaymentModal } from './modals/applicationPayment.js';
 import { initWalletTopupModal } from './modals/walletTopup.js';
+import { initPremiumUpgradeModal } from './modals/premiumUpgrade.js';
 import { initEventListeners } from './events.js';
 import { startAutoSync } from './autoSync.js';
 import { renderAll, render } from './render.js';
@@ -20,6 +21,7 @@ initDOM();
 // Initialize modals
 initApplicationPaymentModal();
 initWalletTopupModal();
+initPremiumUpgradeModal();
 
 // Initialize event listeners
 initEventListeners();
@@ -41,6 +43,11 @@ window.__requestedPayment = requestedPayment;
 
 // Open requested application after initial render
 setTimeout(() => {
+  if (profileQuery.get('premium') === '1') {
+    import('./modals/premiumUpgrade.js').then(module => module.openPremiumUpgrade());
+    return;
+  }
+
   if (!requestedApplicationId) return;
   
   const application = store.getApplications().find(item => item.id === requestedApplicationId);

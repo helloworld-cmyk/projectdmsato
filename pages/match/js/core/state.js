@@ -18,6 +18,7 @@ export const state = {
     : requestedTimeScope,
   timeRange: requestedTimeRange,
   level: 'all',
+  quality: 'all',
   priceMin: PRICE_MIN,
   priceMax: PRICE_MAX,
   distanceMin: DISTANCE_MIN,

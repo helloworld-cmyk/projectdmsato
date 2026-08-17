@@ -1,0 +1,94 @@
+.premium-upsell-layer {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(18,36,26,.45);
+  animation: premium-upsell-fade .18s ease;
+}
+@keyframes premium-upsell-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.premium-upsell {
+  position: relative;
+  width: min(390px,100%);
+  padding: 26px 22px 20px;
+  border-radius: 19px;
+  background: linear-gradient(160deg,#fffdf5 0%,#fff6dd 100%);
+  box-shadow: 0 22px 60px rgba(90,60,5,.28);
+  text-align: center;
+  animation: premium-upsell-pop .22s ease;
+}
+@keyframes premium-upsell-pop {
+  from { transform: translateY(14px) scale(.97); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+.premium-upsell-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 8px;
+  color: #8a6d2a;
+  background: rgba(255,255,255,.7);
+  cursor: pointer;
+}
+.premium-upsell-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 12px;
+  border-radius: 16px;
+  color: #fff;
+  background: linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow: 0 10px 24px rgba(201,125,0,.35);
+  font-size: 29px;
+}
+.premium-upsell h3 {
+  margin: 0;
+  color: #4d3c12;
+  font: 800 17px "Plus Jakarta Sans",sans-serif;
+}
+.premium-upsell p {
+  margin: 8px 0 0;
+  color: #8a7a4e;
+  font-size: 11px;
+  line-height: 1.55;
+}
+.premium-upsell-cta {
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: 0;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow: 0 8px 20px rgba(201,125,0,.28);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.premium-upsell-close-text {
+  display: inline-block;
+  margin-top: 11px;
+  color: #a0853c;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.premium-tag {
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: 999px;
+  color: #8a5c00;
+  background: #ffe9b3;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 800;
+}

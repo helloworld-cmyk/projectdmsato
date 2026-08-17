@@ -23,7 +23,8 @@ export const createMatchesApi = (context) => {
       money,
       previewPoints,
       settleLoyalty,
-      debitWallet
+      debitWallet,
+      canJoinMatch,
     } = context;
     const syncSelfRoster = (matchId, application, options) => {
       const records = [];
@@ -311,6 +312,16 @@ createMatch: (input) => {
         application.matchId === match.id && application.status !== "cancelled"
       ));
       if (existing) return clone(existing);
+      const joinCheck = canJoinMatch();
+      if (!joinCheck.allowed) {
+        return {
+          ok: false,
+          reason: "limit",
+          usage: joinCheck.usage,
+          limit: joinCheck.limit,
+          match: clone(match),
+        };
+      }
       const decision = approvalCheck(match, state.profile);
       const paymentFirst = decision.rules.requirePaymentBeforeJoin;
       const autoApproved = decision.rules.autoApprove && decision.eligible;

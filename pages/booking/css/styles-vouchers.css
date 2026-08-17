@@ -125,6 +125,18 @@
 {
   color: #a5afa8;
 }
+.voucher-premium-upgrade
+{
+  margin-top: 7px;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 7px;
+  color: #fff;
+  background: linear-gradient(135deg,#f5b301,#c97d00);
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+}
 .booking-line
 {
   display: flex;

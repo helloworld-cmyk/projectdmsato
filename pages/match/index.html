@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="../../css/ui-spacing.css" />
     <link rel="stylesheet" href="../../css/app-ui.css" />
     <link rel="stylesheet" href="css/overrides.css" />
+    <link rel="stylesheet" href="css/premium.css" />
     <link rel="stylesheet" href="css/reputation.css" />
     <link rel="stylesheet" href="../../css/time-filter.css" />
     <link rel="stylesheet" href="css/filters.css" />
@@ -117,13 +118,7 @@
           <h1>
             Kèo hợp gu, ở ngay gần bạn.
           </h1>
-          <p>
-            Dữ liệu mock được xếp theo môn, thời gian và bán kính từ
-            <strong data-user-location>
-              Chưa bật vị trí
-            </strong>
-            .
-          </p>
+          
         </div>
         <button class="create" id="open-modal">
           <span class="material-symbols-rounded">
@@ -224,6 +219,28 @@
                 Giỏi
               </button>
             </div>
+          </div>
+          <div class="filter-group premium-filter-group" id="quality-filter-group">
+            <div class="filter-label">
+              <span class="material-symbols-rounded">
+                workspace_premium
+              </span>
+              Chất lượng đội
+              <em class="premium-tag">
+                Premium
+              </em>
+            </div>
+            <div class="chips">
+              <button class="chip active" data-premium-filter="quality" data-value="all">
+                Tất cả
+              </button>
+              <button class="chip" data-premium-filter="quality" data-value="trusted">
+                🔥 Chủ kèo đáng tin cậy
+              </button>
+            </div>
+            <p class="hint" id="quality-filter-hint">
+              Chỉ hiển thị kèo từ chủ kèo có độ tin cậy cao.
+            </p>
           </div>
           <div class="filter-group">
             <div class="filter-label">

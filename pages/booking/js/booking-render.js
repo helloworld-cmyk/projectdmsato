@@ -55,16 +55,20 @@ export const renderVoucherPicker = (court) => {
   dom.voucherPicker.innerHTML = options.map((voucher) => {
     const eligible = voucher.eligible;
     const selected = active && active.id === voucher.id;
+    const premiumLocked = !eligible && voucher.requiresPremium;
     const classes = `voucher-option ${eligible ? '' : 'locked'} ${selected ? 'selected' : ''}`;
     const disabled = eligible ? '' : ' aria-disabled="true"';
     const description = eligible ? voucher.title : voucher.reason;
-    const discount = eligible ? `−${money(voucher.discount)}` : 'Khóa';
+    const discount = eligible ? `−${money(voucher.discount)}` : premiumLocked ? 'Premium' : 'Khóa';
+    const upgradeButton = premiumLocked
+      ? '<button class="voucher-premium-upgrade" type="button" data-voucher-premium="1">Nâng cấp Premium</button>'
+      : '';
 
     return [
       `<button class="${classes}" type="button" role="option"`,
       ` aria-selected="${selected}" data-voucher-id="${voucher.id}"${disabled}>`,
       `<span><strong>${voucher.code} · ${voucher.discountLabel}</strong>`,
-      `<small>${description}</small></span><b>${discount}</b></button>`,
+      `<small>${description}</small>${upgradeButton}</span><b>${discount}</b></button>`,
     ].join('');
   }).join('');
 };

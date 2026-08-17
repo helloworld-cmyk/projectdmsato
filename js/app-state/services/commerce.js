@@ -93,6 +93,13 @@ export const createCommerceService = ({
     if (voucher.expiresAt && new Date(voucher.expiresAt).getTime() < now()) {
       return "Voucher đã hết hạn";
     }
+    if (voucher.requiresPremium) {
+      const membership = state.membership || {};
+      const premiumActive = membership.plan
+        && membership.expiresAt
+        && new Date(membership.expiresAt).getTime() > now();
+      if (!premiumActive) return "Dành riêng cho thành viên Premium";
+    }
     if (voucher.requiresFirstBooking && !context.isFirstBooking) {
       return "Chỉ áp dụng cho lần đặt sân đầu tiên";
     }
@@ -284,7 +291,7 @@ export const createCommerceService = ({
     const players = booking.split && Array.isArray(booking.split.players)
       ? booking.split.players
       : [];
-    if (players.some((player) => player.paid)) return null;
+    if (!players.length) return null;
     const isEqual = !booking.split || booking.split.mode !== "custom";
     const nextPlayers = isEqual
       ? splitEqual(players, preview.paidAmount)

@@ -8,3 +8,79 @@
   font-size: 9px;
   font-weight: 800;
 }
+
+.premium-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 0 auto 26px;
+  padding: 16px 18px;
+  border: 1px solid #e7dcb8;
+  border-radius: 16px;
+  background: linear-gradient(135deg,#fffdf5 0%,#fff6dd 100%);
+}
+.premium-banner.active {
+  border-color: #d5e8c9;
+  background: linear-gradient(135deg,#f4fbf1 0%,#e9f7d9 100%);
+}
+.premium-banner-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  color: #fff;
+  background: linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow: 0 8px 18px rgba(201,125,0,.28);
+  font-size: 24px;
+}
+.premium-banner.active .premium-banner-icon {
+  background: linear-gradient(135deg,#8bc34a,#5f9e2f);
+  box-shadow: 0 8px 18px rgba(95,158,47,.25);
+}
+.premium-banner-copy {
+  flex: 1;
+  min-width: 0;
+}
+.premium-banner-copy h3 {
+  margin: 0;
+  color: #4d3c12;
+  font: 800 16px "Plus Jakarta Sans",sans-serif;
+}
+.premium-banner-copy p {
+  margin: 4px 0 0;
+  color: #8a7a4e;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.premium-banner.active .premium-banner-copy h3 {
+  color: #21402f;
+}
+.premium-banner.active .premium-banner-copy p {
+  color: #5c7a4d;
+}
+.premium-banner-cta {
+  flex-shrink: 0;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 11px;
+  color: #fff;
+  background: linear-gradient(135deg,#f5b301,#c97d00);
+  box-shadow: 0 8px 18px rgba(201,125,0,.25);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.premium-banner.active .premium-banner-cta {
+  color: #173c2c;
+  background: var(--lime);
+  box-shadow: none;
+}
+@media (max-width: 640px) {
+  .premium-banner {
+    flex-wrap: wrap;
+  }
+  .premium-banner-cta {
+    width: 100%;
+  }
+}

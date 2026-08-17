@@ -6,6 +6,49 @@ export const LOYALTY_POLICY = Object.freeze({
   maxDiscountRate: 0.5,
 });
 export const WALLET_PAYMENT_METHOD = "Ví MatchUp";
+export const FREE_MATCH_LIMIT = 5;
+export const PREMIUM_PLANS = Object.freeze([
+  {
+    id: "monthly",
+    label: "Premium Tháng",
+    price: 60000,
+    days: 30,
+    unitLabel: "tháng",
+    description: "Thanh toán hằng tháng, hủy bất cứ lúc nào",
+    badge: "Phổ biến nhất",
+  },
+  {
+    id: "yearly",
+    label: "Premium Năm",
+    price: 600000,
+    days: 365,
+    unitLabel: "năm",
+    description: "Tiết kiệm bằng 2 tháng phí so với trả theo tháng",
+    badge: "Tiết kiệm 17%",
+  },
+]);
+export const PREMIUM_BENEFITS = Object.freeze([
+  {
+    icon: "all_inclusive",
+    title: "Xin vào kèo không giới hạn",
+    description: "Miễn phí 5 trận/tháng, Premium thoải mái tìm kèo.",
+  },
+  {
+    icon: "sell",
+    title: "Ưu đãi đặt sân độc quyền",
+    description: "Voucher Premium riêng cho thành viên khi đặt sân.",
+  },
+  {
+    icon: "tune",
+    title: "Bộ lọc & gợi ý nâng cao",
+    description: "Lọc theo chất lượng đội và mở rộng bán kính 20 km.",
+  },
+  {
+    icon: "workspace_premium",
+    title: "Huy hiệu Premium",
+    description: "Nổi bật trong danh sách thành viên, ưu tiên khi duyệt.",
+  },
+]);
 export const SPORT_LABELS = Object.freeze({
   football: "bóng đá",
   badminton: "cầu lông",
@@ -122,5 +165,23 @@ export const VOUCHER_CATALOG = Object.freeze([
       minSpend: 180000,
       minTeamSize: 4,
       priority: 6,
+    },
+    {
+      id: "premium60",
+      code: "PREMIUM60",
+      category: "premium",
+      categoryLabel: "Premium",
+      icon: "workspace_premium",
+      tone: "gold",
+      title: "Premium giảm 60.000đ đặt sân",
+      description: "Ưu đãi độc quyền cho thành viên Premium",
+      condition: "Đơn từ 200.000đ",
+      expires: "Hết hạn 31/12",
+      expiresAt: "2026-12-31T23:59:59+07:00",
+      discountType: "fixed",
+      discountValue: 60000,
+      minSpend: 200000,
+      requiresPremium: true,
+      priority: 0,
     },
 ]);

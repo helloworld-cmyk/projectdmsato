@@ -192,6 +192,12 @@ const bindEventListeners = () => {
   });
 
   dom.voucherPicker.addEventListener('click', (event) => {
+    const upgradeButton = event.target.closest('[data-voucher-premium]');
+    if (upgradeButton) {
+      showToast('Voucher này dành riêng cho thành viên Premium.');
+      location.href = '../profile/?premium=1';
+      return;
+    }
     const option = event.target.closest('[data-voucher-id]');
     if (!option) return;
     if (option.getAttribute('aria-disabled') === 'true') {
