@@ -219,14 +219,11 @@ createBooking: (input) => {
       const booking = getBooking(bookingId);
       if (
         !booking
-        || booking.ownerPaid
         || ["expired", "cancelled"].includes(booking.status)
       ) return null;
       const players = booking.split && Array.isArray(booking.split.players)
         ? booking.split.players
         : [];
-      const maxPlayers = Math.max(1, integer(booking.teamSize) || 4);
-      if (players.length >= maxPlayers) return null;
       const player = normalisePlayer({
         ...playerInput,
         role: playerInput.role || "Đã được mời · Đang chờ tham gia",

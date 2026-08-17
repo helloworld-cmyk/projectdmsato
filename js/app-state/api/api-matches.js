@@ -93,7 +93,7 @@ createMatch: (input) => {
       );
       addNotification(
         "Đã đăng kèo mới",
-        `${match.name} đang chờ thêm ${match.available} người chơi.`,
+        `${match.name} — hãy mời bạn bè tham gia kèo.`,
         "match",
       );
       save("match-created");
@@ -112,8 +112,6 @@ createMatch: (input) => {
       const match = resolveMatchRecord(matchId);
       if (!match || match.status === "cancelled") return null;
       const participants = Array.isArray(match.participants) ? match.participants : [];
-      const capacity = Math.max(2, Number(match.capacity) || participants.length + 1);
-      if (participants.length >= capacity) return null;
       const player = normaliseMatchPlayer({ ...playerInput });
       if (
         !player
@@ -121,7 +119,6 @@ createMatch: (input) => {
       ) return null;
       match.participants = [...participants, player];
       match.joined = match.participants.length;
-      match.available = Math.max(0, capacity - match.participants.length);
       match.updatedAt = now();
       save("match-player-added");
       return clone(match);

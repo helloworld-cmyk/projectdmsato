@@ -7,7 +7,6 @@ import {
 } from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
 import {
-  bookingTeamSize,
   defaultJoinRules,
   equalise,
   isBalanced,
@@ -36,7 +35,6 @@ export function renderSplit() {
   }
   if (state.splitMode === 'equal') equalise();
 
-  const maxPlayers = bookingTeamSize();
   const activePlayers = state.splitPlayers.filter(player => (
     !inactiveStatuses.includes(player.joinStatus)
   ));
@@ -67,18 +65,17 @@ export function renderSplit() {
       : `Còn chênh lệch ${format(Math.abs(state.total - totalSplit()))}.`;
 
   const peopleStack = $('#people-stack');
-  peopleStack.setAttribute('aria-label', `${activeCount} trong ${maxPlayers} người chơi`);
+  peopleStack.setAttribute('aria-label', `${activeCount} người chơi`);
   peopleStack.innerHTML = state.splitPlayers.slice(0, 4)
     .map((player, index) => {
       const tone = ['', 'blue', 'yellow', ''][index] || '';
       return `<span class="mini-avatar ${tone}">${safe(player.initials || '')}</span>`;
-    }).join('') + `<b id="people-count">${activeCount}/${maxPlayers} người</b>`;
+    }).join('') + `<b id="people-count">${activeCount} người</b>`;
 
   $('#player-list').innerHTML = state.splitPlayers.map(renderPlayer).join('');
-  $('#add-player').style.display = activeCount < maxPlayers ? 'flex' : 'none';
   $('#progress-title').textContent = requirePayment
     ? `${paidCount}/${rosterPlayers.length} người đã thanh toán`
-    : `${activeCount}/${maxPlayers} người đã vào kèo`;
+    : `${activeCount} người đã vào kèo`;
   const paidAmount = rosterPlayers.reduce(
     (sum, player) => player.paid ? sum + Number(player.amount || 0) : sum,
     0
@@ -90,9 +87,10 @@ export function renderSplit() {
   $('.progress-card p').textContent = requirePayment
     ? 'Đội cần thanh toán đủ để sân được xác nhận.'
     : 'Đội không cần thanh toán trước để vào kèo.';
+  $('.progress-line').style.display = requirePayment ? '' : 'none';
   $('#progress-bar').style.width = requirePayment
     ? `${state.total ? paidAmount / state.total * 100 : 0}%`
-    : `${maxPlayers ? activeCount / maxPlayers * 100 : 0}%`;
+    : '0%';
 
   const own = ownSplitPlayer();
   const ownAmount = own ? own.amount : state.splitPlayers[0].amount;
@@ -106,7 +104,7 @@ export function renderSplit() {
   if (matchInviteMode) {
     $('#progress-title').textContent = requirePayment
       ? `${paidCount}/${rosterPlayers.length} người đã thanh toán`
-      : `${activeCount}/${maxPlayers} người đã vào kèo`;
+      : `${activeCount} người đã vào kèo`;
     $('.progress-card p').textContent = requirePayment
       ? 'Kèo yêu cầu thanh toán trước khi chốt chỗ trong đội.'
       : 'Kèo này không yêu cầu thanh toán trước khi vào đội.';

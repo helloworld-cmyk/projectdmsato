@@ -8,7 +8,6 @@ import {
 } from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
 import {
-  bookingTeamSize,
   collectJoinRules,
   equalise,
   notifyRefund,
@@ -34,6 +33,7 @@ export function initEvents() {
     refreshBookingFromStore();
     renderAll();
   });
+  setTimeout(() => scheduleSharedPlayer(renderAll), 1000);
 }
 
 function initSplitEvents() {
@@ -109,10 +109,6 @@ function handlePlayerAction(event) {
 }
 
 function addPlayer() {
-  if (state.splitPlayers.length >= bookingTeamSize()) {
-    showToast(`Kèo đã đủ ${bookingTeamSize()} người.`);
-    return;
-  }
   const name = window.prompt('Tên người bạn muốn thêm vào kèo:');
   if (!name || !name.trim()) return;
   const trimmed = name.trim();
@@ -126,7 +122,7 @@ function addPlayer() {
       role: 'Đã mời · Chờ tham gia'
     });
     if (!updated) {
-      showToast('Người chơi này đã có trong kèo hoặc kèo đã đủ người.');
+      showToast('Người chơi này đã có trong kèo rồi.');
       return;
     }
     refreshMatchInvite();
@@ -141,7 +137,7 @@ function addPlayer() {
     initials
   });
   if (!updated) {
-    showToast('Người chơi này đã có trong kèo hoặc kèo đã đủ người.');
+    showToast('Người chơi này đã có trong kèo rồi.');
     return;
   }
   syncBookingRoster(updated);

@@ -21,10 +21,6 @@ const shareJoinCandidates = [
 
 let shareJoinTimer = null;
 
-export function bookingTeamSize() {
-  return Math.max(1, Number(state.booking && state.booking.teamSize) || 4);
-}
-
 export function activePlayerCount() {
   const inactive = ['pending', 'payment_pending', 'rejected'];
   return state.splitPlayers.filter(player => !inactive.includes(player.joinStatus)).length;
@@ -157,7 +153,7 @@ export function scheduleSharedPlayer(onUpdate) {
     ));
 
     if (!candidate) {
-      showToast(`Kèo đã đủ ${bookingTeamSize()} người.`);
+      showToast('Đã mời hết người chơi trong danh sách gợi ý.');
       return;
     }
 
@@ -181,7 +177,11 @@ export function scheduleSharedPlayer(onUpdate) {
       }
     }
     if (!updated) {
-      showToast('Kèo đã đủ người hoặc không còn nhận thêm thành viên.');
+      const blocked = !matchInviteMode && latest
+        && ['expired', 'cancelled'].includes(latest.status);
+      showToast(blocked
+        ? 'Giữ chỗ đã hết hạn hoặc bị hủy, không thể thêm thành viên.'
+        : 'Người chơi này đã có trong kèo rồi.');
       return;
     }
 

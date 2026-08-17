@@ -18,8 +18,7 @@ export function showHostApprovedBanner(application) {
   if (!application || !application.match) return;
   const match = findMatch(application.matchId) || application.match;
   const paymentPending = application.status === 'payment_pending';
-  message.textContent = `${safe(match.name)} · ${safe(match.time)} · ${safe(match.venue)}`
-    + ` — còn ${match.available} chỗ.`;
+  message.textContent = `${safe(match.name)} · ${safe(match.time)} · ${safe(match.venue)}`;
   action.textContent = paymentPending
     ? 'Thanh toán để chốt chỗ'
     : 'Xem kèo ngay';

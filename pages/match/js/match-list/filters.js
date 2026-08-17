@@ -106,7 +106,6 @@ export function insightFor(item) {
 function compareMatches(a, b) {
   if (state.sort === 'distance') return a.distance - b.distance || b.score - a.score;
   if (state.sort === 'time') return a.timeOrder - b.timeOrder || a.distance - b.distance;
-  if (state.sort === 'spots') return b.available - a.available || a.distance - b.distance;
   if (state.sort === 'price') return a.share - b.share || a.distance - b.distance;
   return b.score - a.score || a.distance - b.distance;
 }
@@ -388,12 +387,12 @@ function renderMatchCard(item) {
       </div>
       <div class="card-cost">
         <span class="material-symbols-rounded">payments</span>
-        ${money(joinShareFor(item))}/người · còn ${item.available} chỗ
+        ${money(joinShareFor(item))}/người
       </div>
       <div class="card-bottom">
         <div class="members">
           ${participants}
-          <span>${item.participants.length}/${item.capacity} người</span>
+          <span>${item.participants.length} người</span>
         </div>
         <div class="card-actions">
           <button class="view-details" data-id="${item.id}">Xem kèo</button>

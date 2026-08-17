@@ -98,8 +98,7 @@ export function openDetails(item) {
         <p>${item.emoji} ${item.format} · ${item.time}</p>
         <div class="detail-meta">
           <span>${item.level}</span>
-          <span>${item.participants.length}/${item.capacity} người</span>
-          <span>Còn ${item.available} chỗ</span>
+          <span>${item.participants.length} người</span>
         </div>
       </div>
       <button class="close" id="close-details" aria-label="Đóng chi tiết kèo">

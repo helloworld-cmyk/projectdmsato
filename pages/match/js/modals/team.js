@@ -9,7 +9,6 @@ export function openTeamMoment(item, application) {
   setTeamState(item, application);
   const participants = item.participants || [];
   const joined = participants.length;
-  const capacity = item.capacity || joined + 1;
 const copy = application.status === 'payment_pending'
     ? 'Kèo này yêu cầu thanh toán trước khi được duyệt. '
       + 'Hãy thanh toán để gửi yêu cầu vào đội.'
@@ -29,12 +28,8 @@ const copy = application.status === 'payment_pending'
     ))
     .join('')
     + '<span class="member" style="color:#728178;background:#edf2ed">+</span>';
-  document.querySelector('#team-progress-bar').style.width =
-    `${Math.min(100, joined / capacity * 100)}%`;
-  document.querySelector('#team-progress-label').textContent = `${joined}/${capacity} người`;
-  document.querySelector('#team-progress-need').textContent = item.available === 1
-    ? 'Còn 1 chỗ'
-    : `Còn ${item.available} chỗ`;
+  document.querySelector('#team-progress').style.display = 'none';
+  document.querySelector('#team-progress-label').textContent = `${joined} người`;
   const paymentButton = document.querySelector('#team-payment');
   paymentButton.dataset.applicationId = application.id;
   paymentButton.disabled = !['accepted', 'payment_pending'].includes(application.status);

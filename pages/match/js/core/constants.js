@@ -67,7 +67,6 @@ export const sortDescriptions = {
   recommended: 'Đang ưu tiên độ phù hợp, sau đó là khoảng cách',
   distance: 'Đang xếp kèo gần vị trí hiện tại nhất',
   time: 'Đang xếp kèo có thời gian diễn ra sớm nhất',
-  spots: 'Đang xếp kèo còn nhiều chỗ trống nhất',
   price: 'Đang xếp kèo có phí tham gia thấp nhất'
 };
 

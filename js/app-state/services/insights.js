@@ -12,7 +12,6 @@ export const createMatchInsightService = ({ state, reputationFromReviews, hostFo
     if (nearby) reasons.push(`Cách bạn ${Number(match.distance).toFixed(1).replace(".", ",")} km`);
     if (timeMatch) reasons.push("Đúng khung giờ bạn thường rảnh");
     if (sportMatch) reasons.push("Đúng môn bạn yêu thích");
-    if (Number(match.available) === 1) reasons.push("Cần thêm đúng 1 người");
     if (!reasons.length) reasons.push("Đang được xếp theo sở thích của bạn");
     const baseScore = Number(match.score) || 78;
     const scoreBoost = (levelMatch ? 2 : 0) + (sportMatch ? 1 : 0);

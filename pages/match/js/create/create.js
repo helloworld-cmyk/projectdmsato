@@ -107,7 +107,6 @@ function selectCreateBooking(bookingId) {
   form.elements.timeKey.value = 'booking';
   form.elements.timeKey.disabled = true;
   form.elements.name.value = `${booking.court} · Kèo giao lưu`;
-  form.elements.capacity.value = booking.teamSize || 6;
   dom.createFormCard.hidden = false;
   renderCreateFlow();
   dom.createFormCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -176,7 +175,6 @@ function submitCreateForm(event) {
     bookingId: selectedBooking.id,
     area: currentLocationLabel(),
     address: `${venue}, ${currentLocationLabel()}`,
-    capacity: Number(form.get('capacity')),
     fee: Number(form.get('fee')),
     distance: Number(form.get('distance')),
     joinRules: {

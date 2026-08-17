@@ -1,6 +1,5 @@
 import { matchInviteMode, state, store } from '../core/state.js';
 import { $, $$ } from '../core/dom.js';
-import { activePlayerCount, bookingTeamSize } from '../booking/booking.js';
 
 export function journeyStatus() {
   if (!state.booking) return 'held';
@@ -10,9 +9,7 @@ export function journeyStatus() {
     return state.booking.status;
   }
   if (state.booking.ownerPaid) return 'paid';
-  if (state.booking.status === 'confirmed') {
-    return activePlayerCount() < bookingTeamSize() ? 'confirmed' : 'team';
-  }
+  if (state.booking.status === 'confirmed') return 'confirmed';
   return 'held';
 }
 

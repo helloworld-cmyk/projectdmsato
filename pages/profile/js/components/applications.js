@@ -15,7 +15,7 @@ export function renderApplications() {
       <div class="activity-icon">${getSportIcon(item.sport, item.emoji)}</div>
       <div class="activity-copy">
         <h4>${escape(item.name)}</h4>
-        <p>Chủ kèo · ${escape(item.time)} · ${escape(item.venue)} · còn ${item.available} chỗ</p>
+        <p>Chủ kèo · ${escape(item.time)} · ${escape(item.venue)}</p>
         <b class="status ${item.status || 'open'}">${getStatusCopy(item.status || 'open')}</b>
       </div>
       <div class="actions">
