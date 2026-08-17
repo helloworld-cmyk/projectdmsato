@@ -31,19 +31,20 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 - **Điểm phù hợp (Match Score):** Mỗi kèo hiển thị mức độ hợp gu với người dùng (ví dụ 96%) dựa trên **trình độ, môn yêu thích, bán kính, khung giờ rảnh** — người dùng hiểu rõ *vì sao* kèo này hợp với mình (cùng trình độ Khá, đúng môn, đúng giờ rảnh, cách 1,2 km).
 - **Hồ sơ cá nhân (Profile):** Người dùng khai báo trình độ (Mới chơi / Khá / Giỏi), bán kính tìm kèo, môn yêu thích, thời gian rảnh → gợi ý kèo ngày càng chính xác.
 - **Bộ lọc & sắp xếp đa chiều:** Theo môn thể thao (Bóng đá, Cầu lông, Pickleball, Bóng rổ), thời gian (hôm nay / mai / cuối tuần), trình độ, khoảng cách (thanh trượt 0–10 km), sắp xếp theo phù hợp nhất / gần nhất / sớm nhất / còn nhiều chỗ / phí thấp nhất.
-- **Tạo kèo 30 giây:** Chủ kèo điền môn, trình độ, giờ, số người, sân, tổng tiền → hệ thống tự tính **phí chia đều mỗi người** và **tiền cọc**.
+- **Tạo kèo 30 giây:** Chủ kèo điền môn, trình độ, giờ, số người, sân, tổng tiền → hệ thống tự tính **phí chia đều mỗi người** theo số thành viên hiện tại.
 - **Lưu kèo để xem lại:** Đánh dấu / bỏ đánh dấu ngay trong chi tiết kèo; danh sách kèo đã lưu được tổng hợp trong trang Cá nhân.
 - **Báo tôi khi có kèo:** Khi chưa có lựa chọn phù hợp, người dùng có thể lưu bộ lọc hiện tại vào danh sách theo dõi; hệ thống sẽ tạo thông báo khi có kèo mới khớp tiêu chí. Có thể mở rộng bán kính tìm kiếm ngay tại màn hình trống.
 
 ### 3.2. Luồng tham gia kèo minh bạch (Trust & Safety)
-- **Quy trình xin vào kèo:** Gửi yêu cầu → chủ kèo duyệt → thanh toán cọc → xác nhận chỗ. Trạng thái rõ ràng ở mọi bước (chờ duyệt / được nhận / đã đóng cọc).
+- **Quy trình xin vào kèo:** Gửi yêu cầu → chủ kèo duyệt → thanh toán đủ phần → xác nhận chỗ. Trạng thái rõ ràng ở mọi bước (chờ duyệt / được nhận / đã thanh toán).
+- **Chia tiền động & hoàn tiền tự động:** Phần của mỗi người = tổng tiền sân ÷ số người trong kèo; thanh toán một lần, không có cọc — khi có thêm người vào, chênh lệch được hoàn về ví và hiển thị thông báo "Bạn sẽ được hoàn X đồng".
 - **Khoảnh khắc sau khi xin vào:** Hiển thị ngay danh sách đội, tiến độ đủ người, lời chào nhanh và nút sao chép link mời thêm bạn; người chơi có thể chuẩn bị trước ngay cả khi còn chờ duyệt.
 - **Độ tin cậy của chủ kèo:** Hiển thị số trận đã tổ chức và tỷ lệ tin cậy — xây dựng lòng tin cho cộng đồng.
 - **Công khai trạng thái thanh toán:** Ai đã đóng tiền, ai chưa — hiển thị ngay trong chi tiết kèo.
 - **Thông tin kèo đầy đủ:** Địa chỉ chính xác, link Google Maps, khoảng cách thực tế từ vị trí người dùng, danh sách người tham gia.
 
 #### Chat đội sau khi được duyệt (Gated Team Chat)
-- **Mở đúng thời điểm:** Người chơi chỉ được đọc và gửi tin sau khi chủ kèo duyệt yêu cầu (`accepted`) hoặc sau khi đã đóng cọc (`paid`); yêu cầu đang chờ không thể chat.
+- **Mở đúng thời điểm:** Người chơi chỉ được đọc và gửi tin sau khi chủ kèo duyệt yêu cầu (`accepted`) hoặc sau khi đã thanh toán (`paid`); yêu cầu đang chờ không thể chat.
 - **Một phòng chat gắn với một kèo:** Tên kèo, giờ chơi, sân và phí/người được ghim trong phòng, giúp cả đội không phải lục lại tin nhắn rời rạc.
 - **Làm quen trước giờ ra sân:** Tin hệ thống, quick reply (chào đội / đến sớm / hỏi địa điểm) và danh sách thành viên giúp giảm hủy kèo phút chót, tăng cảm giác an toàn khi chơi với người mới.
 - **Nền tảng cho Trust & Safety:** Khi triển khai thật, phòng chat là nơi tích hợp thông báo, báo cáo/chặn người dùng, kiểm duyệt nội dung và lịch sử tương tác theo kèo.
@@ -59,7 +60,7 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 - **Link mời một chạm:** Tạo link chia sẻ cho kèo (chuyển tiếp qua Zalo / Messenger / email), ai có link đều có thể xem kèo và thanh toán phần của mình.
 - **Chia tiền linh hoạt:** Chia đều hoặc tùy chỉnh từng người, hệ thống kiểm tra tổng khớp đơn, tự cập nhật khi số người thay đổi.
 - **Theo dõi tiến độ thu tiền:** Thanh tiến độ "đã thu / còn thiếu", ai đã đóng, ai chưa — người tạo kèo không còn phải đuổi theo ai.
-- **Đa phương thức thanh toán:** VietQR, MoMo, VNPay (kèm modal chọn phương thức rõ ràng).
+- **Ví MatchUp & thanh toán tập trung:** Mọi khoản thanh toán đều qua Ví MatchUp (đặt sân, phần kèo, nạp tiền ví); nạp / rút tiền qua các cổng VNPay, MoMo, chuyển khoản ngân hàng.
 
 ### 3.5. Chương trình thành viên & Gamification (Retention)
 - **Điểm thành viên (Loyalty points):** 1 điểm / 1.000đ thực trả, quy đổi 1 điểm = 100đ, dùng tối đa 50% mỗi đơn — khuyến khích thanh toán trong nền tảng và giữ chân người dùng.
@@ -77,7 +78,7 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 - **Trang Cá nhân hợp nhất:** Theo dõi yêu cầu chờ duyệt, kèo đã xác nhận, lịch sân sắp tới, kèo đã lưu, lịch sử trận hoàn thành, đánh giá đã gửi và các lượt tìm kiếm đang theo dõi.
 - **Nhật ký điểm & danh tiếng:** Xem lịch sử cộng / đổi điểm thành viên, streak, huy hiệu và số liệu chơi ngay trong hồ sơ.
 - **Trung tâm thông báo:** Một biểu tượng chuông hiển thị thông báo chưa đọc cho các mốc quan trọng: tạo kèo, xin vào, được duyệt, mở chat, thanh toán và hết hạn giữ sân; người dùng có thể đánh dấu đã đọc.
-- **Tab Liên lạc / inbox đội:** Mỗi kèo đã được duyệt hoặc đã đóng cọc có một phòng chat riêng; inbox hiển thị tin nhắn cuối, thời gian, trạng thái và badge chưa đọc, hỗ trợ tìm kiếm theo tên kèo.
+- **Tab Liên lạc / inbox đội:** Mỗi kèo đã được duyệt hoặc đã thanh toán có một phòng chat riêng; inbox hiển thị tin nhắn cuối, thời gian, trạng thái và badge chưa đọc, hỗ trợ tìm kiếm theo tên kèo.
 - **Quản lý trạng thái:** Người dùng có thể hủy kèo / lịch sân trong demo, đặt lại lịch đã hết hạn và reset toàn bộ dữ liệu để trình diễn lại luồng sản phẩm.
 
 ---
@@ -102,9 +103,9 @@ MatchUp không chỉ là "Tinder cho thể thao" hay "Booking sân bóng" — m�
 |---|---|---|
 | Nhóm chat (Zalo, Messenger) | Phân mảnh, không tìm được người lạ, hủy kèo dễ | Ghép kèo thuật toán với điểm phù hợp minh bạch |
 | App đặt sân thuần túy | Chỉ giải quyết 1 nửa vòng đời | **Ghép đội + đặt sân + chia tiền + danh tiếng** trong một sản phẩm |
-| Chat nhóm đại chúng | Không gắn với trạng thái duyệt, cọc, sân và danh sách thành viên | Phòng chat riêng chỉ mở sau khi được duyệt, gắn trực tiếp với giao dịch và hành trình trận đấu |
+| Chat nhóm đại chúng | Không gắn với trạng thái duyệt, thanh toán, sân và danh sách thành viên | Phòng chat riêng chỉ mở sau khi được duyệt, gắn trực tiếp với giao dịch và hành trình trận đấu |
 | Đặt sân qua gọi điện / giấy | Thủ công, không dữ liệu | Giữ chỗ 10 phút, thanh toán số, báo cáo tự động |
-| Mạng xã hội thể thao | Thiếu giao dịch, thiếu tiện ích | Giao dịch khép kín: cọc, chia tiền, điểm thưởng |
+| Mạng xã hội thể thao | Thiếu giao dịch, thiếu tiện ích | Giao dịch khép kín: thanh toán, chia tiền, điểm thưởng |
 
 **Hào sâu chiến lược:** Mạng lưới hai phía (người chơi + chủ sân), dữ liệu hồ sơ & danh tiếng tích lũy, lịch sử tương tác theo kèo và hệ điểm thưởng gắn chặt người dùng với nền tảng.
 
@@ -118,12 +119,12 @@ MatchUp không mặc định rằng sân gần nhà luôn là lựa chọn tốt
 
 ### 6.2. Người dùng đã quen đặt một sân thì có liên hệ thẳng với chủ sân không?
 
-**Có thể — và đây là rủi ro mà MatchUp phải chủ động giải quyết.** Vì vậy, sản phẩm không chỉ bán một lượt đặt sân mà cung cấp toàn bộ vòng đời trận đấu: tìm người cùng chơi, mở kèo, duyệt thành viên, thu cọc, chia tiền, chat đội, nhắc lịch, đánh giá và đặt lại một chạm.
+**Có thể — và đây là rủi ro mà MatchUp phải chủ động giải quyết.** Vì vậy, sản phẩm không chỉ bán một lượt đặt sân mà cung cấp toàn bộ vòng đời trận đấu: tìm người cùng chơi, mở kèo, duyệt thành viên, thanh toán, chia tiền, chat đội, nhắc lịch, đánh giá và đặt lại một chạm.
 
 Với người đã có sân quen, MatchUp tạo lý do để họ vẫn đặt qua nền tảng:
 
 - Đặt lại đúng sân và khung giờ chỉ với một chạm, đồng thời tự mở lại kèo cho đội.
-- Theo dõi tiền cọc và phần thanh toán của từng thành viên, thay cho việc nhắn tin và thu tiền thủ công.
+- Theo dõi phần thanh toán của từng thành viên, thay cho việc nhắn tin và thu tiền thủ công.
 - Tích điểm, nhận ưu đãi, duy trì lịch sử trận đấu và danh tiếng cá nhân.
 - Có phòng chat, nhắc lịch và quy trình xử lý rõ ràng nếu thành viên hủy hoặc không thanh toán.
 
@@ -179,8 +180,8 @@ Mở `index.html` trong trình duyệt (không cần cài đặt). Toàn bộ d�
 1. **Trang chủ (index.html):** Tìm trận, xem kèo nổi bật, đặt sân nhanh, xem danh mục voucher và sao chép mã ưu đãi `MATCH20`; biểu tượng chuông mở trung tâm thông báo.
 2. **Tìm trận (match/):** Lọc môn / thời gian / trình độ / khoảng cách, sắp xếp, xem "Điểm phù hợp", lưu kèo, bật "Báo tôi khi có kèo", tạo kèo mới, xin vào kèo, xem chi tiết & bản đồ. Sau khi xin vào, màn hình đội hiển thị tiến độ, lời chào và link mời; phòng chat chỉ xuất hiện sau khi yêu cầu được duyệt.
 3. **Đặt sân (booking/):** Lọc sân theo môn / giờ / bán kính, chọn ngày / sân / khung giờ, xem trạng thái khung giờ thời gian thực, chọn voucher theo điều kiện và giữ chỗ 10 phút. Nếu hết hạn, có thể đặt lại sân.
-4. **Rủ đội & chia tiền (invite/):** Sao chép hoặc chia sẻ link mời, thêm người chơi, chia đều / tùy chỉnh với kiểm tra tổng khớp đơn, theo dõi tiến độ thu tiền, thanh toán qua VietQR/MoMo/VNPay, dùng điểm thành viên, xem hành trình 5 bước, đánh giá và chơi lại sau trận.
-5. **Cá nhân (profile/):** Chỉnh hồ sơ & sở thích, xem kèo đã lưu, theo dõi kèo, bấm "Giả lập duyệt" để mô phỏng chủ kèo chấp nhận, mở chat đội, xem lịch sân, thống kê trận / đánh giá / streak / huy hiệu, nhật ký điểm thành viên, hủy hoặc đặt lại lịch, đặt lại dữ liệu demo.
+4. **Rủ đội & chia tiền (invite/):** Sao chép hoặc chia sẻ link mời, thêm người chơi, chia đều / tùy chỉnh với kiểm tra tổng khớp đơn, theo dõi tiến độ thu tiền, thanh toán từ Ví MatchUp, dùng điểm thành viên, xem hành trình 5 bước, đánh giá và chơi lại sau trận.
+5. **Cá nhân (profile/):** Chỉnh hồ sơ & sở thích, xem kèo đã lưu, theo dõi kèo, bấm "Giả lập duyệt" để mô phỏng chủ kèo chấp nhận, mở chat đội, xem lịch sân, nạp / rút tiền Ví MatchUp qua VNPay / MoMo / chuyển khoản, thống kê trận / đánh giá / streak / huy hiệu, nhật ký điểm thành viên, hủy hoặc đặt lại lịch, đặt lại dữ liệu demo.
 6. **Liên lạc (contact/):** Xem inbox các phòng chat đã được duyệt, tìm kiếm theo tên kèo, xem tin nhắn cuối và badge chưa đọc; chọn phòng để chat với đội.
 
 ---

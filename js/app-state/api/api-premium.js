@@ -17,7 +17,7 @@ export const createPremiumApi = (context) => {
     getPremiumInfo: () => clone(premiumInfo()),
     getMatchesUsedThisMonth: () => matchesUsedThisMonth(),
     canJoinMatch: () => clone(canJoinMatch()),
-    upgradeToPremium: (planId, method) => safeClone(upgradeToPremium(planId, method)),
+    upgradeToPremium: (planId) => safeClone(upgradeToPremium(planId)),
     cancelPremium: () => safeClone(cancelPremium()),
   };
 };

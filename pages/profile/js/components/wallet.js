@@ -14,7 +14,7 @@ export function renderWallet() {
           <strong>${escape(item.description)}</strong>
           <small>${formatTransactionDate(item.createdAt)}${item.method ? ' · ' + escape(item.method) : ''}</small>
         </div>
-        <span class="wallet-amount ${item.type === 'topup' ? 'topup' : 'payment'}">
+        <span class="wallet-amount ${item.type === 'topup' ? 'topup' : item.type === 'withdraw' ? 'withdraw' : 'payment'}">
           ${item.amount > 0 ? '+' : '−'}${formatMoney(Math.abs(item.amount))}
         </span>
       </div>

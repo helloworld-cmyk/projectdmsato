@@ -179,7 +179,7 @@ export const createStateStore = ({ demoReputationReviews, seedMissingDemoReputat
           }
           if (player.joinStatus === "approved") {
             player.joinStatus = "payment_pending";
-            player.role = "Đã đủ điều kiện · Chờ thanh toán cọc";
+            player.role = "Đã đủ điều kiện · Chờ thanh toán";
           }
         });
       }

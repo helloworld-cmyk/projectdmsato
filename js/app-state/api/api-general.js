@@ -13,6 +13,7 @@ export const createGeneralApi = (context) => {
       previewVoucher,
       previewPoints,
       topUpWallet,
+      withdrawFromWallet,
       splitEqual,
       splitProportionally,
       expireBookings
@@ -23,6 +24,7 @@ export const createGeneralApi = (context) => {
     getLoyalty: () => clone({ ...state.loyalty, policy: LOYALTY_POLICY }),
     getWallet: () => clone({ ...state.wallet, paymentMethod: WALLET_PAYMENT_METHOD }),
     topUpWallet,
+    withdrawFromWallet,
     canPayWithWallet: (requiredAmount) => state.wallet.balance >= amount(requiredAmount),
     getVouchers: (context = {}) => clone(getVouchers(context)),
     getVoucher: (voucherId) => clone(VOUCHER_CATALOG.find((voucher) => (

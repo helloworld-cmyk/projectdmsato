@@ -12,6 +12,11 @@ export const initials = (name) => String(name || "Ngọc Anh")
   .toUpperCase();
 export const integer = (value) => Math.max(0, Math.floor(Number(value) || 0));
 export const amount = (value) => Math.max(0, Math.round(Number(value) || 0));
+export const matchCurrentShare = (match, participantCount) => {
+  const fee = Number(match && match.fee) || 0;
+  const count = Math.max(1, integer(participantCount));
+  return Math.floor(fee / count);
+};
 export const subjectKey = (value) => String(value || "")
   .normalize("NFD")
   .replace(/[\u0300-\u036f]/g, "")

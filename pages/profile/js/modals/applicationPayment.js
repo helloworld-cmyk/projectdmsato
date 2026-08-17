@@ -5,8 +5,6 @@ import {
   getApplicationSubtotal, 
   setRequestedApplicationPoints,
   getRequestedApplicationPoints,
-  setSelectedApplicationMethod,
-  getSelectedApplicationMethod,
   clearPayingApplicationId,
   setPayingApplicationId,
   notify
@@ -29,25 +27,18 @@ export function renderApplicationPayment() {
   document.querySelector('#application-paid-total').textContent = formatMoney(preview.paidAmount);
   
   const wallet = store.getWallet();
-  const method = getSelectedApplicationMethod();
-  const insufficient = method === 'Ví MatchUp' && wallet.balance < preview.paidAmount;
+  const insufficient = wallet.balance < preview.paidAmount;
   const button = document.querySelector('#confirm-application-payment');
   
   button.disabled = insufficient;
   button.textContent = insufficient 
     ? 'Ví không đủ số dư — hãy nạp thêm' 
-    : `Thanh toán ${formatMoney(preview.paidAmount)} qua ${method}`;
+    : `Thanh toán ${formatMoney(preview.paidAmount)} từ Ví MatchUp`;
 }
 
 export function openApplicationPayment(applicationId) {
   setPayingApplicationId(applicationId);
   setRequestedApplicationPoints(0);
-  setSelectedApplicationMethod('VietQR');
-  
-  document.querySelectorAll('[data-application-method]').forEach(button => {
-    button.classList.toggle('active', button.dataset.applicationMethod === 'VietQR');
-  });
-  
   renderApplicationPayment();
   document.querySelector('#application-payment-modal').classList.add('show');
 }
@@ -76,11 +67,9 @@ export function initApplicationPaymentModal() {
   // Payment method selection
   document.querySelectorAll('[data-application-method]').forEach(button => {
     button.addEventListener('click', () => {
-      setSelectedApplicationMethod(button.dataset.applicationMethod);
       document.querySelectorAll('[data-application-method]').forEach(item => {
         item.classList.toggle('active', item === button);
       });
-      renderApplicationPayment();
     });
   });
   
@@ -98,24 +87,20 @@ export function initApplicationPaymentModal() {
       return;
     }
     
-    const method = getSelectedApplicationMethod();
     const points = getRequestedApplicationPoints();
     const result = store.payForApplication(
       application.id, 
-      method, 
       points
     );
     
     if (!result) {
-      notify(method === 'Ví MatchUp' 
-        ? 'Số dư ví không đủ hoặc trạng thái kèo đã thay đổi.' 
-        : 'Số điểm hoặc trạng thái kèo đã thay đổi. Hãy thử lại.');
+      notify('Số dư ví không đủ hoặc trạng thái kèo đã thay đổi. Hãy thử lại.');
       renderApplicationPayment();
       return;
     }
     
     closeApplicationPayment();
     render();
-    notify(`Đã thanh toán cọc qua ${method}, tích ${result.payment.earnedPoints} điểm.`);
+    notify(`Đã thanh toán từ Ví MatchUp, tích ${result.payment.earnedPoints} điểm.`);
   });
 }

@@ -85,7 +85,7 @@ const demoRooms = [
         'Minh Khang',
         'MK',
         '#6680ba',
-        'Chuẩn kèo! Mọi người chuyển cọc trước 19:00 thứ Tư nhé, '
+        'Chuẩn kèo! Mọi người thanh toán trước 19:00 thứ Tư nhé, '
           + 'mình ghim thông tin ở trên rồi.',
         '18:18',
       ),
@@ -261,7 +261,7 @@ const liveRooms = () => (store?.getChatRooms?.() || []).map((room) => {
       match.share ? `${store.money(match.share)}/người` : '',
     ].filter(Boolean).join(' · '),
     tag: room.status === 'paid'
-      ? 'Đã đóng cọc'
+      ? 'Đã thanh toán'
       : room.status === 'pending'
         ? 'Đang chờ duyệt'
         : 'Đã được duyệt',

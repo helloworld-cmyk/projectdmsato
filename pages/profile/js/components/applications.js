@@ -40,7 +40,7 @@ export function renderApplications() {
     if (item.status === 'payment_pending') {
       actions = `
         <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
-        <button class="action primary" data-app-action="paid" data-id="${item.id}">Thanh toán cọc</button>
+        <button class="action primary" data-app-action="paid" data-id="${item.id}">Thanh toán</button>
         <button class="action" data-app-action="cancelled" data-id="${item.id}">Hủy</button>
       `;
     } else if (item.status === 'pending') {
@@ -56,7 +56,7 @@ export function renderApplications() {
       actions = `
         <a class="action" href="../invite/?match=${encodeURIComponent(item.matchId)}">Mời thêm</a>
         <button class="action primary" data-chat-match="${item.matchId}">Mở chat</button>
-        <button class="action" data-app-action="paid" data-id="${item.id}">Thanh toán cọc</button>
+        <button class="action" data-app-action="paid" data-id="${item.id}">Thanh toán</button>
         <button class="action" data-app-action="cancelled" data-id="${item.id}">Hủy</button>
       `;
     } else if (item.status === 'paid') {
@@ -105,7 +105,7 @@ export function renderApplications() {
       
       let message = '';
       if (!updatedApplication && action === 'accepted') {
-        message = 'Chưa thể duyệt: người chơi cần thanh toán cọc trước.';
+        message = 'Chưa thể duyệt: người chơi cần thanh toán trước.';
       } else if (action === 'accepted') {
         message = 'Bạn đã được nhận vào kèo.';
       } else if (action === 'declined') {

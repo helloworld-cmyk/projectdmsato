@@ -48,7 +48,6 @@ export const dom = {
 
 export let payingApplicationId = null;
 export let requestedJoinPoints = 0;
-export let selectedJoinMethod = 'VietQR';
 export let matchFeedbackRating = 5;
 export let matchFeedbackTags = new Set(['Đồng đội vui']);
 export let teamMatch = null;
@@ -60,10 +59,6 @@ export function setPayingApplicationId(value) {
 
 export function setRequestedJoinPoints(value) {
   requestedJoinPoints = Math.max(0, Math.floor(Number(value) || 0));
-}
-
-export function setSelectedJoinMethod(value) {
-  selectedJoinMethod = value;
 }
 
 export function setMatchFeedbackRating(value) {

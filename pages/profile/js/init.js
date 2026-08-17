@@ -3,6 +3,7 @@ import { initToast, showToast } from './toast.js';
 import { initDOM } from './dom.js';
 import { initApplicationPaymentModal } from './modals/applicationPayment.js';
 import { initWalletTopupModal } from './modals/walletTopup.js';
+import { initWalletWithdrawModal } from './modals/walletWithdraw.js';
 import { initPremiumUpgradeModal } from './modals/premiumUpgrade.js';
 import { initEventListeners } from './events.js';
 import { startAutoSync } from './autoSync.js';
@@ -21,6 +22,7 @@ initDOM();
 // Initialize modals
 initApplicationPaymentModal();
 initWalletTopupModal();
+initWalletWithdrawModal();
 initPremiumUpgradeModal();
 
 // Initialize event listeners
@@ -69,12 +71,12 @@ setTimeout(() => {
   }
   
   if (requestedPayment && application.status === 'paid') {
-    showToast('Bạn đã thanh toán cọc cho kèo này rồi.');
+    showToast('Bạn đã thanh toán cho kèo này rồi.');
     return;
   }
   
   if (requestedPayment && application.status === 'pending' && application.paymentStatus === 'paid') {
-    showToast('Bạn đã đóng cọc, đang chờ chủ kèo duyệt.');
+    showToast('Bạn đã thanh toán, đang chờ chủ kèo duyệt.');
     return;
   }
   

@@ -11,6 +11,7 @@ import {
   bookingTeamSize,
   collectJoinRules,
   equalise,
+  notifyRefund,
   saveSplit,
   scheduleSharedPlayer,
   refreshBookingFromStore
@@ -102,7 +103,7 @@ function handlePlayerAction(event) {
     if (player && player.approvalNote && player.approvalNote.startsWith('Còn thiếu:')) {
       showToast(`Chưa thể duyệt: ${player.approvalNote}.`);
     } else {
-      showToast('Chưa thể duyệt: người chơi cần thanh toán cọc trước.');
+      showToast('Chưa thể duyệt: người chơi cần thanh toán trước.');
     }
   }
 }
@@ -131,6 +132,7 @@ function addPlayer() {
     refreshMatchInvite();
     renderAll();
     showToast(`Đã thêm ${trimmed} vào kèo — hãy gửi link để họ xác nhận.`);
+    notifyRefund();
     return;
   }
   const updated = store.addBookingPlayer(state.booking.id, {

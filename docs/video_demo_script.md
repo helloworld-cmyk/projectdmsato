@@ -25,7 +25,7 @@
 | 2 | 3–9s | **Tìm trận — Kèo hợp gu** (`/match/`) | Cuộn list kèo → bấm 1 kèo → highlight "Điểm phù hợp 96%", lý do "cùng trình độ, đúng giờ rảnh, cách 1,2 km" → bấm lưu kèo | "MatchUp gợi ý đúng kèo hợp gu — đúng trình độ, đúng giờ rảnh, lại gần nhà. Mỗi kèo đều có điểm phù hợp minh bạch." | Zoom nhẹ vào điểm phù hợp và lý do |
 | 3 | 9–15s | **Xin vào kèo** (trong `/match/`) | Bấm **Xin vào** → màn hình sau khi xin vào: danh sách đội, tiến độ đủ người, lời chào, nút sao chép link mời | "Xin vào kèo một chạm. Xem ngay đội hình, tiến độ đủ người và mời thêm bạn bằng link." | Giữ 1s ở màn hình link mời |
 | 4 | 15–21s | **Đặt sân** (`/booking/`) | Chọn sân → chọn ngày, khung giờ còn trống → giữ chỗ → đồng hồ đếm ngược 10 phút hiện lên | "Chưa có sân? Đặt sân nhanh với khung giờ còn trống, giữ chỗ trong 10 phút." | Highlight đồng hồ đếm ngược, thêm hiệu ứng đếm |
-| 5 | 21–27s | **Rủ đội & chia tiền** (`/invite/`) | Sao chép link mời → chia tiền đều cho đội → thanh tiến độ "đã thu / còn thiếu" → modal chọn VietQR / MoMo / VNPay | "Rủ đội, chia tiền tự động. Theo dõi ai đã đóng, ai chưa — thanh toán qua VietQR, MoMo, VNPay." | Chèn mockup logo 3 phương thức thanh toán |
+| 5 | 21–27s | **Rủ đội & chia tiền** (`/invite/`) | Sao chép link mời → chia tiền đều cho đội → thanh tiến độ "đã thu / còn thiếu" → modal thanh toán bằng Ví MatchUp | "Rủ đội, chia tiền tự động. Theo dõi ai đã đóng, ai chưa — thanh toán nhanh từ Ví MatchUp." | Chèn mockup giao diện Ví MatchUp |
 | 6 | 27–32s | **Chat đội — Tab Liên lạc** (`/contact/`) | Mở inbox → chọn phòng chat của kèo đã duyệt → gửi tin nhắn "Tối nay 19h đúng giờ nha cả đội" → tin nhắn xuất hiện | "Được duyệt rồi — có ngay phòng chat riêng của đội để chốt giờ, chốt địa điểm." | Quick reply hoặc typing rất sống động |
 | 7 | 32–36s | **Cá nhân — Thành tích** (`/profile/`) | Mở thống kê: số trận hoàn thành, streak, huy hiệu "Đồng đội tích cực" → nút **Chơi lại khung giờ này** | "Sau trận, đánh giá, nhận huy hiệu, giữ streak — và đặt lại đúng sân, đúng giờ chỉ một chạm." | Slow motion hoặc hiệu ứng nhẹ khi streak tăng |
 | 8 | 36–40s | **End screen** | Logo MatchUp, slogan | "MatchUp — Ghép đội, đặt sân trong một chạm." | Chữ logo lớn, kèm handle/CTA nếu có |
@@ -38,7 +38,7 @@
 - **Cảnh 2:** Quay đầy đủ thao tác lọc (môn / thời gian / trình độ / khoảng cách) và sắp xếp theo "phù hợp nhất" — phần này dễ bị cắt nên cần đủ chất liệu.
 - **Cảnh 3:** Quay cả trạng thái "Chờ duyệt" trước, sau đó dùng "Giả lập duyệt" ở `/profile/` để có cảnh chuyển trạng thái sang "Được nhận".
 - **Cảnh 4:** Quay luôn 2 kịch bản: giữ chỗ thành công và cảnh "hết hạn giữ chỗ → đặt lại" (tính năng nổi bật, nếu dư thời lượng có thể dùng).
-- **Cảnh 5:** Quay cả 3 modal thanh toán (VietQR, MoMo, VNPay) để dựng chọn được.
+- **Cảnh 5:** Quay modal thanh toán Ví MatchUp và luồng nạp/rút tiền qua VNPay/MoMo/chuyển khoản để dựng chọn được.
 - **Cảnh 6:** Quay giao diện chat: quick reply, typing indicator, tin hệ thống — chọn cảnh nào gọn nhất.
 - **Cảnh 7:** Quay đánh giá sau trận (sao + thẻ cảm nhận) làm cảnh bonus; streak/huy hiệu là cảnh chính.
 - **Cảnh 8:** Quay tối thiểu 5s tĩnh ở màn hình logo để dựng end card.

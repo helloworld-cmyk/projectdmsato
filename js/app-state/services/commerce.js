@@ -241,7 +241,7 @@ export const createCommerceService = ({
     });
     return { amount: value, balance: state.wallet.balance };
   };
-  const topUpWallet = (rawAmount, method = "Nạp tiền trong app") => {
+  const topUpWallet = (rawAmount, method = "VNPay") => {
     const value = amount(rawAmount);
     if (value < 10000 || value > 5000000) return null;
     addWalletTransaction({
@@ -250,14 +250,33 @@ export const createCommerceService = ({
       sourceType: "wallet",
       sourceId: null,
       method,
-      description: `Nạp ${money(value)} vào Ví MatchUp`,
+      description: `Nạp ${money(value)} vào Ví MatchUp qua ${method}`,
     });
     addNotification(
       "Nạp tiền vào ví thành công",
-      `Ví MatchUp đã được cộng ${money(value)}.`,
+      `Ví MatchUp đã được cộng ${money(value)} qua ${method}.`,
       "wallet",
     );
     save("wallet-topped-up");
+    return clone(state.wallet);
+  };
+  const withdrawFromWallet = (rawAmount, method = "VNPay") => {
+    const value = amount(rawAmount);
+    if (value < 10000 || value > state.wallet.balance) return null;
+    addWalletTransaction({
+      type: "withdraw",
+      amount: value,
+      sourceType: "wallet",
+      sourceId: null,
+      method,
+      description: `Rút ${money(value)} từ Ví MatchUp qua ${method}`,
+    });
+    addNotification(
+      "Yêu cầu rút tiền thành công",
+      `${money(value)} sẽ được chuyển đến ${method} của bạn.`,
+      "wallet",
+    );
+    save("wallet-withdrawn");
     return clone(state.wallet);
   };
   const settleLoyalty = ({ subtotal, requestedPoints, sourceType, sourceId, label }) => {
@@ -353,6 +372,7 @@ export const createCommerceService = ({
     addWalletTransaction,
     debitWallet,
     topUpWallet,
+    withdrawFromWallet,
     settleLoyalty,
     splitEqual,
     splitProportionally,

@@ -83,8 +83,8 @@ export function decorateMatches(items) {
       }
     };
     match.paymentMethod = index % 2 === 0
-      ? 'Chuyển khoản QR qua MatchUp'
-      : 'Chuyển khoản cho chủ kèo sau khi được duyệt';
+      ? 'Thanh toán qua Ví MatchUp'
+      : 'Thanh toán cho chủ kèo sau khi được duyệt';
     match.participants = Array.from({ length: joined }, (_, playerIndex) => {
       const player = playerPool[(index + playerIndex) % playerPool.length];
       const paid = playerIndex === 0 || (playerIndex + index) % 3 !== 0;

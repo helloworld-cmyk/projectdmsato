@@ -280,6 +280,12 @@ const sportImages = {
   ]
 };
 
+function joinShareFor(item) {
+  return Math.floor(
+    (Number(item.fee) || 0) / Math.max(1, (item.participants || []).length + 1)
+  );
+}
+
 function cardImageFor(item) {
   const images = sportImages[item.sport];
   if (!images || !images.length) return '';
@@ -313,10 +319,10 @@ function renderMatchCard(item) {
     : joinedApplication
       ? 'Mời thêm'
       : paymentReady
-        ? 'Thanh toán cọc'
+        ? 'Thanh toán'
         : application
             ? application.status === 'pending' && application.paymentStatus === 'paid'
-            ? 'Đã đóng cọc · chờ duyệt'
+            ? 'Đã thanh toán · chờ duyệt'
             : application.status === 'pending'
               ? item.joinRules?.autoApprove
                 && application.approvalEligible
@@ -372,7 +378,7 @@ function renderMatchCard(item) {
       </div>
       <div class="card-cost">
         <span class="material-symbols-rounded">payments</span>
-        ${money(item.share)}/người · còn ${item.available} chỗ
+        ${money(joinShareFor(item))}/người · còn ${item.available} chỗ
       </div>
       <div class="card-bottom">
         <div class="members">

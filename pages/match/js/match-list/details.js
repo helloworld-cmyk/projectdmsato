@@ -12,6 +12,9 @@ export function openDetails(item) {
   const paidCount = item.participants.filter(
     player => player.payment === 'Đã thanh toán'
   ).length;
+  const joinShare = Math.floor(
+    (Number(item.fee) || 0) / Math.max(1, item.participants.length + 1)
+  );
   const joinRules = store.getMatchApproval(item).rules;
   const criteriaLabels = [
     joinRules.criteria.levelMatch ? 'Cùng trình độ' : '',
@@ -27,7 +30,7 @@ export function openDetails(item) {
       <h3>Quy tắc tham gia</h3>
       <div class="detail-meta">
         <span>${joinRules.requirePaymentBeforeJoin
-          ? 'Bắt thanh toán cọc trước'
+          ? 'Bắt thanh toán trước'
           : 'Thanh toán sau khi được duyệt'}</span>
         <span>${joinRules.autoApprove
           ? 'Tự động duyệt theo tiêu chí'
@@ -41,9 +44,9 @@ export function openDetails(item) {
     </section>
   `;
   const paymentCopy = joinRules.requirePaymentBeforeJoin
-    ? 'Kèo yêu cầu thanh toán cọc trước khi chốt chỗ trong đội.'
-    : 'Bạn thanh toán cọc sau khi chủ kèo duyệt; phần còn lại '
-      + 'thanh toán trước giờ chơi 30 phút.';
+    ? 'Kèo yêu cầu thanh toán trước khi chốt chỗ trong đội.'
+    : 'Bạn thanh toán đủ phần của mình ngay khi được nhận vào kèo; '
+      + 'tiền sẽ tự động chia đều khi có thêm người vào.';
   const mapsUrl = 'https://www.google.com/maps/search/?api=1&query='
     + encodeURIComponent(`${item.venue}, ${item.address}`);
   const application = applicationFor(item.id);
@@ -51,14 +54,14 @@ export function openDetails(item) {
     ? `<a class="join" href="../invite/?match=${encodeURIComponent(item.id)}">Rủ đội &amp; chia tiền</a>`
     : application && ['accepted', 'payment_pending'].includes(application.status)
       ? `<button class="join" data-detail-payment="${safe(application.id)}">
-          Thanh toán cọc
+          Thanh toán
         </button>`
       : application && application.status === 'paid'
-        ? '<button class="join" disabled>Đã thanh toán cọc</button>'
+        ? '<button class="join" disabled>Đã thanh toán</button>'
         : application && application.status === 'pending'
           && application.paymentStatus === 'paid'
           ? `<button class="join" data-detail-profile="${safe(application.id)}">
-              Đã đóng cọc · chờ duyệt
+              Đã thanh toán · chờ duyệt
             </button>`
           : application
             ? `<button class="join" data-detail-profile="${safe(application.id)}">
@@ -137,8 +140,8 @@ export function openDetails(item) {
           <small>Tổng tiền sân</small><strong>${money(item.fee)}</strong>
         </div>
         <div class="payment-stat">
-          <small>Chia đều dự kiến</small>
-          <strong>${money(item.share)}/người</strong>
+          <small>Chia đều khi bạn vào</small>
+          <strong>${money(joinShare)}/người</strong>
         </div>
         <div class="payment-stat">
           <small>Đã thanh toán</small>
@@ -146,7 +149,7 @@ export function openDetails(item) {
         </div>
       </div>
       <div class="payment-method">
-        <span class="material-symbols-rounded">qr_code_2</span>
+        <span class="material-symbols-rounded">account_balance_wallet</span>
         <span><strong>${item.paymentMethod}.</strong><br />${paymentCopy}</span>
       </div>
     </section>

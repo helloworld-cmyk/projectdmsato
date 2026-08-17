@@ -3,13 +3,11 @@ import { formatMoney } from '../utils.js';
 import { renderMembership } from '../components/membership.js';
 
 let selectedPlanId = 'monthly';
-let selectedMethod = 'Ví MatchUp';
 let modal = null;
 
 export function openPremiumUpgrade() {
   modal = document.querySelector('#premium-upgrade-modal');
   selectedPlanId = 'monthly';
-  selectedMethod = 'Ví MatchUp';
   renderPremiumPlans();
   syncPremiumMethod();
   modal.classList.add('show');
@@ -51,29 +49,19 @@ function currentPlanPrice() {
 function syncPremiumMethod() {
   const wallet = store.getWallet();
   const price = currentPlanPrice();
-  const insufficient = selectedMethod === 'Ví MatchUp' && wallet.balance < price;
+  const insufficient = wallet.balance < price;
 
   document.querySelector('#premium-wallet-balance').textContent = `Số dư ${formatMoney(wallet.balance)}`;
-  document.querySelectorAll('[data-premium-method]').forEach(button => {
-    button.classList.toggle('active', button.dataset.premiumMethod === selectedMethod);
-  });
 
   const confirm = document.querySelector('#confirm-premium-upgrade');
   confirm.disabled = insufficient;
   confirm.textContent = insufficient
     ? 'Ví không đủ số dư — hãy nạp thêm'
-    : `Nâng cấp ${formatMoney(price)} qua ${selectedMethod}`;
+    : `Nâng cấp ${formatMoney(price)} từ Ví MatchUp`;
 }
 
 export function initPremiumUpgradeModal() {
   modal = document.querySelector('#premium-upgrade-modal');
-
-  document.querySelectorAll('[data-premium-method]').forEach(button => {
-    button.addEventListener('click', () => {
-      selectedMethod = button.dataset.premiumMethod;
-      syncPremiumMethod();
-    });
-  });
 
   document.querySelector('#close-premium-upgrade').addEventListener('click', closePremiumUpgrade);
   modal.addEventListener('click', event => {
@@ -81,7 +69,7 @@ export function initPremiumUpgradeModal() {
   });
 
   document.querySelector('#confirm-premium-upgrade').addEventListener('click', () => {
-    const result = store.upgradeToPremium(selectedPlanId, selectedMethod);
+    const result = store.upgradeToPremium(selectedPlanId);
 
     if (!result || !result.ok) {
       window.showToast?.('Ví không đủ số dư hoặc gói không hợp lệ. Hãy thử lại.');
@@ -92,6 +80,6 @@ export function initPremiumUpgradeModal() {
     closePremiumUpgrade();
     renderMembership();
     document.dispatchEvent(new CustomEvent('matchup:state-change'));
-    window.showToast?.(`Đã kích hoạt ${result.plan.label} qua ${result.method}. Chào mừng bạn đến với Premium!`);
+    window.showToast?.(`Đã kích hoạt ${result.plan.label} từ Ví MatchUp. Chào mừng bạn đến với Premium!`);
   });
 }

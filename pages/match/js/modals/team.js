@@ -10,15 +10,15 @@ export function openTeamMoment(item, application) {
   const participants = item.participants || [];
   const joined = participants.length;
   const capacity = item.capacity || joined + 1;
-  const copy = application.status === 'payment_pending'
+const copy = application.status === 'payment_pending'
     ? 'Kèo này yêu cầu thanh toán trước khi được duyệt. '
-      + 'Hãy thanh toán cọc để gửi yêu cầu vào đội.'
+      + 'Hãy thanh toán để gửi yêu cầu vào đội.'
     : application.status === 'pending'
       ? `Yêu cầu vào ${item.name} đã được gửi. `
         + 'Thanh toán sẽ mở lại ngay khi chủ kèo duyệt.'
       : application.status === 'accepted'
         ? 'Bạn đã được chủ kèo nhận vào. '
-          + 'Hãy thanh toán cọc để giữ chỗ trong đội!'
+          + 'Hãy thanh toán để giữ chỗ trong đội!'
         : 'Bạn đã hoàn tất thanh toán phần của mình. '
           + 'Sau trận, hãy đánh giá đội nhé!';
   document.querySelector('#team-moment-copy').textContent = copy;
@@ -39,9 +39,9 @@ export function openTeamMoment(item, application) {
   paymentButton.dataset.applicationId = application.id;
   paymentButton.disabled = !['accepted', 'payment_pending'].includes(application.status);
   paymentButton.textContent = ['accepted', 'payment_pending'].includes(application.status)
-    ? 'Thanh toán cọc'
+    ? 'Thanh toán'
     : application.status === 'paid'
-      ? 'Đã thanh toán cọc'
+      ? 'Đã thanh toán'
       : application.status === 'pending'
         ? 'Chờ chủ kèo duyệt'
         : 'Theo dõi & thanh toán';

@@ -1,7 +1,6 @@
 export const createBookingsApi = (context) => {
     const {
       EVENT_NAME,
-      WALLET_PAYMENT_METHOD,
       now,
       id,
       clone,
@@ -159,7 +158,7 @@ createBooking: (input) => {
         } else if (player.joinStatus !== "approved") {
           player.joinStatus = "pending";
           player.role = requiresPayment && player.paid
-            ? "Đã thanh toán cọc · Chờ chủ kèo duyệt"
+            ? "Đã thanh toán · Chờ chủ kèo duyệt"
             : "Đang chờ chủ kèo duyệt";
         }
       });
@@ -262,7 +261,7 @@ createBooking: (input) => {
           : "Đã tự động duyệt · Không cần thanh toán trước";
       } else {
         player.role = requirePayment && player.paid
-          ? "Đã thanh toán cọc · Chờ chủ kèo duyệt"
+          ? "Đã thanh toán · Chờ chủ kèo duyệt"
           : "Đang chờ chủ kèo duyệt";
       }
       booking.split = {
@@ -306,7 +305,7 @@ createBooking: (input) => {
       save("booking-player-status-updated");
       return clone(booking);
     },
-    payForBooking: (bookingId, method = "VietQR", requestedPoints = 0) => {
+    payForBooking: (bookingId, requestedPoints = 0) => {
       const booking = getBooking(bookingId);
       if (
         !booking
@@ -317,7 +316,6 @@ createBooking: (input) => {
       const subtotal = amount(booking.subtotal);
       const preview = previewPoints(subtotal, requestedPoints);
       if (!preview.isValid) return null;
-      const walletPayment = method === WALLET_PAYMENT_METHOD;
       const players = booking.split && Array.isArray(booking.split.players)
         ? booking.split.players
         : [];
@@ -328,7 +326,7 @@ createBooking: (input) => {
         ? splitProportionally(players, currentSplitTotal, preview.paidAmount)
         : splitEqual(players, preview.paidAmount);
       const ownerAmount = amount(previewSplit[0] && previewSplit[0].amount);
-      if (walletPayment && ownerAmount > state.wallet.balance) return null;
+      if (ownerAmount > state.wallet.balance) return null;
       const loyaltyPayment = settleLoyalty({
         subtotal: ownerAmount,
         requestedPoints: 0,
@@ -350,24 +348,22 @@ createBooking: (input) => {
       }
       const discountedPlayers = applyBookingDiscount(booking, preview);
       if (!discountedPlayers) return null;
-      const walletPaymentDetail = walletPayment
-        ? debitWallet({
-          amount: ownerAmount,
-          sourceType: "booking",
-          sourceId: booking.id,
-          label: `sân ${booking.court}`,
-        })
-        : null;
-      if (walletPayment && !walletPaymentDetail) return null;
+      const walletPaymentDetail = debitWallet({
+        amount: ownerAmount,
+        sourceType: "booking",
+        sourceId: booking.id,
+        label: `sân ${booking.court}`,
+      });
+      if (!walletPaymentDetail) return null;
       booking.ownerPaid = true;
-      booking.ownerPaymentMethod = method;
+      booking.ownerPaymentMethod = "Ví MatchUp";
       booking.payment = {
         subtotal: ownerAmount,
         paidAmount: ownerAmount,
         redeemedPoints: preview.points,
         discount: preview.discount,
         earnedPoints: loyaltyPayment.earnedPoints,
-        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
+        walletAmount: walletPaymentDetail.amount,
       };
       booking.updatedAt = now();
       const self = booking.split && booking.split.players && booking.split.players[0];
@@ -386,7 +382,7 @@ createBooking: (input) => {
       ].join("");
       addNotification(
         "Thanh toán sân thành công",
-        `Bạn đã thanh toán ${money(ownerAmount)} qua ${method} `
+        `Bạn đã thanh toán ${money(ownerAmount)} `
           + `cho ${booking.court}.${loyaltyNote}`,
         "payment",
       );

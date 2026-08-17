@@ -45,18 +45,25 @@ function buildSplitPlayers(match) {
           : 'Bạn · Đang chờ duyệt',
       paid: matchApplication.status === 'paid',
       payment: matchApplication.status === 'paid' ? 'Đã thanh toán' : 'Chờ thanh toán',
+      paidAmount: matchApplication.payment
+        ? Number(matchApplication.payment.paidAmount) || 0
+        : 0,
       joinStatus: 'approved',
       tone: '#d78c68'
     });
   }
   return participants.map(player => {
     const key = subjectKey(player.name);
+    const isSelf = key === subjectKey(profile.name);
     return {
       ...player,
       amount: amountByKey.get(key) || 0,
       paid: paidByKey.has(key)
         ? paidByKey.get(key)
         : Boolean(player.paid) || player.payment === 'Đã thanh toán',
+      paidAmount: isSelf && matchApplication && matchApplication.payment
+        ? Number(matchApplication.payment.paidAmount) || 0
+        : Number(player.paidAmount) || 0,
       joinStatus: player.joinStatus || 'approved'
     };
   });
@@ -121,7 +128,6 @@ export const state = {
   splitMode: initialBooking && initialBooking.split
     ? initialBooking.split.mode
     : 'equal',
-  selectedMethod: 'VietQR',
   requestedBookingPoints: 0,
   splitPlayers: initialBooking && initialBooking.split
     && initialBooking.split.players

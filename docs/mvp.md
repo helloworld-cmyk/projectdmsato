@@ -15,7 +15,7 @@ Phiên bản hiện tại mô phỏng toàn bộ hành trình của một trận
 - Gửi yêu cầu tham gia kèo. Sau khi được duyệt, người chơi có thể xem danh sách đội và tham gia phòng chat riêng của kèo.
 - Tìm sân theo môn, khung giờ, khoảng cách và mức giá; chọn ngày, sân, khung giờ còn chỗ và voucher.
 - Giữ chỗ trong 10 phút, mô phỏng trạng thái khung giờ, hết hạn giữ chỗ và đặt lại sân.
-- Tạo link mời, thêm người chơi, chia tiền đều hoặc tùy chỉnh, theo dõi tiến độ thanh toán và mô phỏng các phương thức VietQR, MoMo, VNPay.
+- Tạo link mời, thêm người chơi, chia tiền đều hoặc tùy chỉnh, theo dõi tiến độ thanh toán và thanh toán qua Ví MatchUp (nạp/rút tiền ví qua VNPay, MoMo, chuyển khoản ngân hàng).
 - Theo dõi hành trình trận đấu, điểm thành viên, streak, huy hiệu, đánh giá sau trận và chức năng chơi lại.
 - Quản lý hồ sơ, kèo đã lưu, yêu cầu tham gia, lịch sân, thông báo, lịch sử trận đấu và các phòng chat trong trang Cá nhân/Liên lạc.
 

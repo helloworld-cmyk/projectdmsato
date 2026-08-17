@@ -520,7 +520,7 @@
             <label class="rule-toggle">
               <input name="requirePaymentBeforeJoin" type="checkbox" />
               <span>
-                Bắt thanh toán cọc trước khi vào kèo
+                Bắt thanh toán trước khi vào kèo
               </span>
               <em>
                 Minh bạch chi phí
@@ -715,7 +715,7 @@
             Xem lịch chuẩn bị
           </button>
           <button class="secondary" id="team-payment">
-            Thanh toán cọc
+            Thanh toán
           </button>
           <button class="secondary" id="team-invite">
             Rủ đội &amp; chia tiền
@@ -750,7 +750,7 @@
         <div class="modal-top">
           <div>
             <h2 id="match-payment-title">
-              Thanh toán cọc để vào kèo
+              Thanh toán để vào kèo
             </h2>
             <p>
               Chọn phương thức thanh toán phần của bạn để giữ chỗ.
@@ -773,7 +773,7 @@
           </div>
           <div>
             <span>
-              Tiền cọc
+              Số tiền
             </span>
             <strong id="match-payment-subtotal">
               0đ
@@ -789,23 +789,7 @@
           </div>
         </div>
         <div class="match-payment-methods">
-          <button class="match-payment-method active" type="button" data-join-method="VietQR">
-            <span class="material-symbols-rounded">
-              qr_code_2
-            </span>
-            <div>
-              <strong>
-                VietQR / Chuyển khoản
-              </strong>
-              <span>
-                Quét mã để thanh toán tức thì
-              </span>
-            </div>
-            <span class="material-symbols-rounded check">
-              check_circle
-            </span>
-          </button>
-          <button class="match-payment-method" type="button" data-join-method="Ví MatchUp">
+          <button class="match-payment-method active" type="button">
             <span class="material-symbols-rounded">
               account_balance_wallet
             </span>
@@ -818,6 +802,7 @@
               </span>
             </div>
             <span class="material-symbols-rounded check">
+              check_circle
             </span>
           </button>
         </div>
@@ -845,7 +830,7 @@
           </div>
         </div>
         <button class="modal-submit" id="confirm-match-payment" type="button">
-          Thanh toán 0đ qua VietQR
+          Thanh toán 0đ từ Ví MatchUp
         </button>
       </div>
     </div>

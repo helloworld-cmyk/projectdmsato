@@ -405,6 +405,26 @@
   font-size: 15px;
 }
 
+.refund-note {
+  margin-top: 9px;
+  padding: 9px 11px;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  border: 1px solid #f0dfa8;
+  border-radius: 9px;
+  color: #6b4f00;
+  background: #fdf6e0;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.refund-note .material-symbols-rounded {
+  font-size: 15px;
+  flex: none;
+}
+
 .side {
   position: sticky;
   top: 100px;

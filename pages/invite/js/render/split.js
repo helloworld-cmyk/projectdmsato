@@ -12,6 +12,7 @@ import {
   equalise,
   isBalanced,
   matchModePayableSubtotal,
+  refundForSelf,
   totalSplit
 } from '../booking/booking.js';
 import { format, safe } from '../core/utils.js';
@@ -95,6 +96,15 @@ export function renderSplit() {
 
   const own = ownSplitPlayer();
   const ownAmount = own ? own.amount : state.splitPlayers[0].amount;
+  const refund = matchInviteMode ? refundForSelf() : 0;
+  const refundNote = $('#refund-note');
+  if (refund > 0) {
+    refundNote.hidden = false;
+    $('#refund-note-text').textContent =
+      `Bạn sẽ được hoàn ${format(refund)} đồng do đã có thêm người vào kèo.`;
+  } else {
+    refundNote.hidden = true;
+  }
   if (matchInviteMode) {
     $('#progress-title').textContent = requirePayment
       ? `${paidCount}/${rosterPlayers.length} người đã thanh toán`
@@ -120,13 +130,30 @@ function renderPlayer(player, index) {
   const joinStatus = player.joinStatus || 'approved';
   const paid = Boolean(player.paid);
   const isSelf = subjectKey(player.name) === subjectKey(profile.name);
-  const joinLabel = playerJoinLabel(isSelf, paid, joinStatus);
+  let joinLabel;
+  let statusNote;
+  if (matchInviteMode && isSelf) {
+    const paidAmount = Number(player.paidAmount) || 0;
+    const ownAmount = Number(player.amount) || 0;
+    if (paidAmount >= ownAmount) {
+      joinLabel = 'Đã thanh toán đủ phần';
+      statusNote = 'Đã khóa chỗ trong đội';
+    } else if (paidAmount > 0) {
+      joinLabel = `Đã thanh toán ${format(paidAmount)}`;
+      statusNote = `còn ${format(ownAmount - paidAmount)}`;
+    } else {
+      joinLabel = 'Chưa thanh toán';
+      statusNote = 'Bạn chưa thanh toán phần của mình';
+    }
+  } else {
+    joinLabel = playerJoinLabel(isSelf, paid, joinStatus);
+    statusNote = playerStatusNote(isSelf, paid, joinStatus);
+  }
   const statusClass = paid
     ? 'done'
     : joinStatus === 'payment_pending'
       ? 'waiting'
       : joinStatus === 'pending' ? 'review' : '';
-  const statusNote = playerStatusNote(isSelf, paid, joinStatus);
   const meetsCriteria = !String(player.approvalNote || '').startsWith('Còn thiếu:');
   const canApprove = joinStatus === 'pending'
     && (!requirePayment || paid)
@@ -154,8 +181,8 @@ function renderPlayer(player, index) {
 
 function playerJoinLabel(isOwner, paid, status) {
   if (isOwner) return paid ? 'Đã thanh toán phần của bạn' : 'Chưa thanh toán';
-  if (status === 'payment_pending') return 'Chờ thanh toán cọc';
-  if (status === 'pending' && paid) return 'Đã cọc · chờ duyệt';
+  if (status === 'payment_pending') return 'Chờ thanh toán';
+  if (status === 'pending' && paid) return 'Đã thanh toán · chờ duyệt';
   if (status === 'pending') return 'Chờ chủ kèo duyệt';
   if (status === 'approved' && paid) return 'Đã vào kèo · đã thanh toán';
   if (status === 'approved') return 'Đã vào kèo';

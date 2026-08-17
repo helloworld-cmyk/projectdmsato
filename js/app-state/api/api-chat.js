@@ -1,8 +1,8 @@
 import { addSelfToRoster } from "../services/roster.js";
+import { matchCurrentShare } from "../core/utils.js";
 
 export const createChatApi = (context) => {
     const {
-      WALLET_PAYMENT_METHOD,
       now,
       id,
       clone,
@@ -147,7 +147,7 @@ getApplications: () => clone(state.applications),
       save("application-updated");
       return clone(application);
     },
-    payForApplication: (applicationId, method = "VietQR", requestedPoints = 0) => {
+    payForApplication: (applicationId, requestedPoints = 0) => {
       const application = state.applications.find((item) => item.id === applicationId);
       if (!application || !["accepted", "payment_pending"].includes(application.status)) {
         return null;
@@ -157,34 +157,38 @@ getApplications: () => clone(state.applications),
         && application.match.joinRules
         && application.match.joinRules.requirePaymentBeforeJoin,
       );
-      const subtotal = amount(application.match.deposit || application.match.share / 2);
+      const participants = Array.isArray(application.match && application.match.participants)
+        ? application.match.participants
+        : [];
+      const currentShare = matchCurrentShare(application.match, participants.length);
+      const alreadyPaid = amount(application.payment && application.payment.paidAmount);
+      const subtotal = Math.max(0, currentShare - alreadyPaid);
+      if (subtotal <= 0) return null;
       const pointsPreview = previewPoints(subtotal, requestedPoints);
-      const walletPayment = method === WALLET_PAYMENT_METHOD;
       if (
         !pointsPreview.isValid
-        || (walletPayment && pointsPreview.paidAmount > state.wallet.balance)
+        || pointsPreview.paidAmount > state.wallet.balance
       ) return null;
       const loyaltyPayment = settleLoyalty({
         subtotal,
         requestedPoints,
         sourceType: "application",
         sourceId: application.id,
-        label: `cọc kèo ${application.match.name}`,
+        label: `phần kèo ${application.match.name}`,
       });
       if (!loyaltyPayment) return null;
-      const walletPaymentDetail = walletPayment
-        ? debitWallet({
-          amount: loyaltyPayment.paidAmount,
-          sourceType: "application",
-          sourceId: application.id,
-          label: `cọc kèo ${application.match.name}`,
-        })
-        : null;
-      if (walletPayment && !walletPaymentDetail) return null;
+      const walletPaymentDetail = debitWallet({
+        amount: loyaltyPayment.paidAmount,
+        sourceType: "application",
+        sourceId: application.id,
+        label: `phần kèo ${application.match.name}`,
+      });
+      if (!walletPaymentDetail) return null;
+      const newPaid = alreadyPaid + loyaltyPayment.paidAmount;
       application.status = paymentFirst && !application.autoApproved ? "pending" : "paid";
       application.paymentStatus = "paid";
-      application.paymentMethod = method;
-      if (application.status === "paid") {
+      application.paymentMethod = "Ví MatchUp";
+      if (application.status === "paid" || newPaid >= currentShare) {
         const live = state.matches.find((match) => match.id === application.matchId);
         const records = [live, application.match].filter(Boolean);
         records.forEach((record) => addSelfToRoster(record, state.profile, {
@@ -194,12 +198,12 @@ getApplications: () => clone(state.applications),
         }));
       }
       application.payment = {
-        subtotal,
-        paidAmount: loyaltyPayment.paidAmount,
+        subtotal: currentShare,
+        paidAmount: newPaid,
         redeemedPoints: loyaltyPayment.points,
         discount: loyaltyPayment.discount,
         earnedPoints: loyaltyPayment.earnedPoints,
-        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
+        walletAmount: walletPaymentDetail.amount,
       };
       upsertJourney(
         "match",
@@ -215,11 +219,11 @@ getApplications: () => clone(state.applications),
           : "",
       ].join("");
       const paymentTitle = application.status === "pending"
-        ? "Đã thanh toán cọc — chờ duyệt"
-        : "Đã thanh toán cọc kèo";
+        ? "Đã thanh toán — chờ duyệt"
+        : "Đã thanh toán phần kèo";
       addNotification(
         paymentTitle,
-        `${money(loyaltyPayment.paidAmount)} qua ${method} `
+        `${money(loyaltyPayment.paidAmount)} `
           + `cho ${application.match.name}.${loyaltyNote}`,
         "payment",
       );

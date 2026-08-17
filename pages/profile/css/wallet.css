@@ -72,6 +72,11 @@
   background:var(--lime);
   border-color:var(--lime)
 }
+.wallet-topup.withdraw {
+  color:#21402f;
+  background:#f4e8c8;
+  border-color:#e6d49a
+}
 .wallet-note {
   margin:11px 0 0;
   color:#718077;
@@ -117,6 +122,17 @@
 .wallet-amount.payment {
   color:#99583d;
   background:#fff0eb
+}
+.wallet-amount.withdraw {
+  color:#8a6d1a;
+  background:#faf3dd
+}
+.wallet-balance-hint {
+  margin:8px 0 0;
+  color:#87938b;
+  font-size:10px;
+  font-weight:600;
+  text-align:right
 }
 .wallet-empty {
   padding:12px 4px;
@@ -172,6 +188,12 @@
   grid-template-columns:1fr 1fr;
   gap:7px;
   margin-top:14px
+}
+.wallet-topup-methods {
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+  margin-top:12px
 }
 .wallet-payment-method {
   padding:10px 9px;

@@ -19,7 +19,15 @@ export const addSelfToRoster = (match, profile, options = {}) => {
   const existing = participants.find((item) => (
     subjectKey(item.name) === subjectKey(profile.name)
   ));
-  if (existing) return { participants, player: existing, added: false };
+  if (existing) {
+    if (options.paid) {
+      existing.paid = true;
+      existing.payment = "Đã thanh toán";
+      existing.role = "Đã vào kèo · Đã thanh toán";
+    }
+    if (options.joinStatus) existing.joinStatus = options.joinStatus;
+    return { participants, player: existing, added: false };
+  }
   const paid = Boolean(options.paid);
   const player = normaliseMatchPlayer({
     name: profile.name,

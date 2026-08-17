@@ -2,12 +2,15 @@ import {
   matchApplication,
   matchInvite,
   matchInviteMode,
+  ownSplitPlayer,
   state,
   store,
   refreshMatchInvite
 } from '../core/state.js';
 import { $ } from '../core/dom.js';
 import { showToast } from '../core/toast.js';
+import { format } from '../core/utils.js';
+import { matchCurrentShare } from '../../../../js/app-state/core/utils.js';
 
 const shareJoinCandidates = [
   { name: 'Minh Khoa', initials: 'MK', level: 'Khá', rating: 4.5, completedMatches: 5 },
@@ -51,8 +54,8 @@ export function renderJoinRules() {
   $('#share-approval-criteria').hidden = !rules.autoApprove;
   $('#share-description').textContent = rules.requirePaymentBeforeJoin
     ? rules.autoApprove
-      ? 'Người đạt tiêu chí sẽ thanh toán cọc và tự vào đội.'
-      : 'Người nhận link sẽ thanh toán cọc trước; chỉ được vào đội sau '
+      ? 'Người đạt tiêu chí sẽ thanh toán và tự vào đội.'
+      : 'Người nhận link sẽ thanh toán trước; chỉ được vào đội sau '
         + 'khi chủ kèo duyệt.'
     : rules.autoApprove
       ? 'Link mời sẽ tự động duyệt người đạt đủ tiêu chí, không cần '
@@ -110,10 +113,29 @@ export function saveSplit() {
 
 export function matchModePayableSubtotal() {
   if (!matchInviteMode || !matchInvite) return 0;
-  if (matchApplication && matchApplication.paymentStatus !== 'paid') {
-    return Number(matchInvite.deposit || matchInvite.share / 2) || 0;
-  }
-  return Number(matchInvite.share || 0) || 0;
+  const participants = Array.isArray(matchInvite.participants)
+    ? matchInvite.participants
+    : [];
+  const share = matchCurrentShare(matchInvite, participants.length);
+  const paid = matchApplication && matchApplication.payment
+    ? Number(matchApplication.payment.paidAmount) || 0
+    : 0;
+  return Math.max(0, share - paid);
+}
+
+export function refundForSelf() {
+  const own = ownSplitPlayer();
+  const paid = Number(own && own.paidAmount) || 0;
+  if (!paid || paid <= Number(own && own.amount) || 0) return 0;
+  return paid - Number(own && own.amount) || 0;
+}
+
+export function notifyRefund() {
+  const refund = refundForSelf();
+  if (!refund) return;
+  showToast(
+    `Bạn sẽ được hoàn ${format(refund)} đồng do đã có thêm người vào kèo.`
+  );
 }
 
 export function scheduleSharedPlayer(onUpdate) {
@@ -163,6 +185,7 @@ export function scheduleSharedPlayer(onUpdate) {
 
     onUpdate();
     showToast(`${candidate.name} vừa vào kèo sau khi nhận link.`);
+    notifyRefund();
   }, 1000);
 }
 

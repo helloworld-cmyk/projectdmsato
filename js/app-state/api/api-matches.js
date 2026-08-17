@@ -1,4 +1,5 @@
 import { addSelfToRoster, normaliseMatchPlayer } from "../services/roster.js";
+import { matchCurrentShare } from "../core/utils.js";
 
 export const createMatchesApi = (context) => {
     const {
@@ -10,7 +11,6 @@ export const createMatchesApi = (context) => {
       amount,
       subjectKey,
       stableSubjectId,
-      WALLET_PAYMENT_METHOD,
       normaliseJoinRules,
       approvalCheck,
       state,
@@ -32,6 +32,14 @@ export const createMatchesApi = (context) => {
       if (live) records.push(live);
       if (application && application.match) records.push(application.match);
       records.forEach((record) => addSelfToRoster(record, state.profile, options));
+    };
+    const resolveMatchRecord = (matchId) => {
+      const custom = state.matches.find((match) => match.id === matchId);
+      if (custom) return custom;
+      const application = state.applications.find((item) => (
+        item.matchId === matchId && item.status !== "cancelled"
+      ));
+      return (application && application.match) || null;
     };
     return {
 createMatch: (input) => {
@@ -61,7 +69,7 @@ createMatch: (input) => {
         fee: Number(input.fee) || 360000,
         share: Math.ceil((Number(input.fee) || 360000) / capacity / 1000) * 1000,
         deposit: Math.ceil((Number(input.fee) || 360000) / capacity / 2000) * 1000,
-        paymentMethod: "Chuyển khoản QR qua MatchUp",
+        paymentMethod: "Thanh toán qua Ví MatchUp",
         creatorName: profile.name,
         joinRules: normaliseJoinRules(input.joinRules),
         status: "open",
@@ -99,14 +107,7 @@ createMatch: (input) => {
       save("match-rules-updated");
       return clone(match);
     },
-    resolveMatchRecord: (matchId) => {
-      const custom = state.matches.find((match) => match.id === matchId);
-      if (custom) return custom;
-      const application = state.applications.find((item) => (
-        item.matchId === matchId && item.status !== "cancelled"
-      ));
-      return (application && application.match) || null;
-    },
+    resolveMatchRecord,
     addMatchPlayer: (matchId, playerInput = {}) => {
       const match = resolveMatchRecord(matchId);
       if (!match || match.status === "cancelled") return null;
@@ -133,19 +134,16 @@ createMatch: (input) => {
       save("match-split-updated");
       return clone(match);
     },
-    payForMatchOwner: (matchId, method = "VietQR", requestedPoints = 0) => {
+    payForMatchOwner: (matchId, requestedPoints = 0) => {
       const match = resolveMatchRecord(matchId);
       if (!match || match.status === "cancelled") return null;
       const participants = Array.isArray(match.participants) ? match.participants : [];
       const owner = participants.find((player) => player.role === "Chủ kèo")
         || participants[0];
       if (!owner || owner.payment === "Đã thanh toán" || owner.paid) return null;
-      const share = amount(match.share || Math.ceil(
-        (Number(match.fee) || 0) / Math.max(1, Number(match.capacity) || 1) / 1000,
-      ) * 1000);
-      const walletPayment = method === WALLET_PAYMENT_METHOD;
+      const share = matchCurrentShare(match, participants.length);
       const preview = previewPoints(share, requestedPoints);
-      if (!preview.isValid || (walletPayment && preview.paidAmount > state.wallet.balance)) {
+      if (!preview.isValid || preview.paidAmount > state.wallet.balance) {
         return null;
       }
       const loyaltyPayment = settleLoyalty({
@@ -156,15 +154,13 @@ createMatch: (input) => {
         label: `phần chủ kèo ${match.name}`,
       });
       if (!loyaltyPayment) return null;
-      const walletPaymentDetail = walletPayment
-        ? debitWallet({
-          amount: loyaltyPayment.paidAmount,
-          sourceType: "match",
-          sourceId: match.id,
-          label: `phần chủ kèo ${match.name}`,
-        })
-        : null;
-      if (walletPayment && !walletPaymentDetail) return null;
+      const walletPaymentDetail = debitWallet({
+        amount: loyaltyPayment.paidAmount,
+        sourceType: "match",
+        sourceId: match.id,
+        label: `phần chủ kèo ${match.name}`,
+      });
+      if (!walletPaymentDetail) return null;
       owner.payment = "Đã thanh toán";
       owner.paid = true;
       match.payment = {
@@ -173,12 +169,12 @@ createMatch: (input) => {
         redeemedPoints: loyaltyPayment.points,
         discount: loyaltyPayment.discount,
         earnedPoints: loyaltyPayment.earnedPoints,
-        walletAmount: walletPaymentDetail ? walletPaymentDetail.amount : 0,
+        walletAmount: walletPaymentDetail.amount,
       };
       match.updatedAt = now();
       addNotification(
         "Thanh toán phần chủ kèo thành công",
-        `Bạn đã thanh toán ${money(loyaltyPayment.paidAmount)} qua ${method} `
+        `Bạn đã thanh toán ${money(loyaltyPayment.paidAmount)} `
           + `cho ${match.name}.`,
         "payment",
       );
@@ -357,7 +353,7 @@ createMatch: (input) => {
           joinStatus: status === "accepted" ? "approved" : "payment_pending",
           role: status === "accepted"
             ? "Đã vào kèo"
-            : "Đã vào kèo · Chờ thanh toán cọc",
+            : "Đã vào kèo · Chờ thanh toán",
         });
       }
       ensureChatRoom(application.matchId, application.match);
@@ -368,7 +364,7 @@ createMatch: (input) => {
         status === "accepted"
           ? `Bạn đã đủ tiêu chí và được thêm vào ${match.name}.`
           : status === "payment_pending"
-            ? `Bạn đã đủ tiêu chí. Hãy thanh toán cọc để chốt chỗ trong ${match.name}.`
+            ? `Bạn đã đủ tiêu chí. Hãy thanh toán để chốt chỗ trong ${match.name}.`
             : decision.eligible
               ? `Yêu cầu vào ${match.name} đang chờ chủ kèo duyệt.`
               : `Chưa đủ tiêu chí vào ${match.name}: ${decision.failed.join(", ")}.`,
@@ -413,7 +409,7 @@ createMatch: (input) => {
             ? "Đã vào kèo · Đã thanh toán"
             : application.status === "accepted"
               ? "Đã vào kèo"
-              : "Đã vào kèo · Chờ thanh toán cọc",
+              : "Đã vào kèo · Chờ thanh toán",
         });
         upsertJourney(
           "match",
@@ -426,7 +422,7 @@ createMatch: (input) => {
         );
         const matchName = application.match && application.match.name || "Kèo MatchUp";
         const statusMessage = paymentFirst && application.status !== "paid"
-          ? " Hãy thanh toán cọc để giữ chỗ."
+          ? " Hãy thanh toán để giữ chỗ."
           : " Bạn đã được thêm vào đội.";
         addNotification(
           "Đã tự động duyệt vào kèo",

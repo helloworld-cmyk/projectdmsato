@@ -8,7 +8,7 @@ import {
   ownSplitPlayer,
   refreshMatchInvite
 } from '../core/state.js';
-import { $, $$ } from '../core/dom.js';
+import { $ } from '../core/dom.js';
 import { isBalanced, matchModePayableSubtotal } from '../booking/booking.js';
 import { format } from '../core/utils.js';
 import { showToast } from '../core/toast.js';
@@ -50,8 +50,7 @@ function bookingPaymentFailure() {
     return 'Lịch sân này đã được thanh toán rồi.';
   }
   const preview = currentPreview();
-  if (state.selectedMethod === 'Ví MatchUp'
-    && store.getWallet().balance < payableOf(preview)) {
+  if (store.getWallet().balance < payableOf(preview)) {
     return 'Số dư ví MatchUp không đủ để thanh toán.';
   }
   if (preview && state.requestedBookingPoints > preview.maxPoints) {
@@ -69,8 +68,7 @@ function matchPaymentFailure() {
     return 'Kèo đã bị hủy, không thể thanh toán.';
   }
   const preview = currentPreview();
-  if (state.selectedMethod === 'Ví MatchUp'
-    && store.getWallet().balance < payableOf(preview)) {
+  if (store.getWallet().balance < payableOf(preview)) {
     return 'Số dư ví MatchUp không đủ để thanh toán.';
   }
   if (preview && state.requestedBookingPoints > preview.maxPoints) {
@@ -99,14 +97,13 @@ export function renderBookingPayment() {
   $('#modal-amount').textContent = format(payable);
   const amountNode = $('#modal-pay-amount');
   if (amountNode) amountNode.textContent = format(payable);
-  const insufficient = state.selectedMethod === 'Ví MatchUp'
-    && store.getWallet().balance < payable;
+  const insufficient = store.getWallet().balance < payable;
   const confirm = $('#confirm-payment');
   confirm.disabled = insufficient;
   confirm.innerHTML = insufficient
     ? 'Ví không đủ số dư — hãy nạp thêm'
     : `Thanh toán <span id="modal-pay-amount">${format(payable)}</span>`
-      + ` qua ${state.selectedMethod}`;
+      + ` từ Ví MatchUp`;
 }
 
 export function openPayment() {
@@ -141,13 +138,11 @@ function confirmMatchPayment() {
   ) {
     result = store.payForApplication(
       matchApplication.id,
-      state.selectedMethod,
       state.requestedBookingPoints
     );
   } else if (matchInvite && matchInvite.custom && isCustomOwner()) {
     result = store.payForMatchOwner(
       matchInvite.id,
-      state.selectedMethod,
       state.requestedBookingPoints
     );
   } else {
@@ -162,7 +157,7 @@ function confirmMatchPayment() {
   refreshMatchInvite();
   closePayment();
   renderAll();
-  showToast(`Thanh toán thành công qua ${state.selectedMethod}, tích `
+  showToast(`Thanh toán thành công từ Ví MatchUp, tích `
     + `${result.payment && result.payment.earnedPoints || 0} điểm.`);
 }
 
@@ -178,7 +173,6 @@ function confirmPayment() {
   const result = state.booking
     ? store.payForBooking(
       state.booking.id,
-      state.selectedMethod,
       state.requestedBookingPoints
     )
     : null;
@@ -192,7 +186,7 @@ function confirmPayment() {
   state.splitPlayers = result.split.players;
   closePayment();
   renderAll();
-  showToast(`Thanh toán thành công qua ${state.selectedMethod}, tích `
+  showToast(`Thanh toán thành công từ Ví MatchUp, tích `
     + `${result.payment.earnedPoints} điểm.`);
 }
 
@@ -218,14 +212,5 @@ export function initPaymentEvents() {
     state.requestedBookingPoints = preview ? preview.maxPoints : 0;
     renderBookingPayment();
   });
-  $$('.modal-method').forEach(method => method.addEventListener('click', () => {
-    state.selectedMethod = method.dataset.method;
-    $$('.modal-method').forEach(item => {
-      const active = item === method;
-      item.classList.toggle('active', active);
-      item.querySelector('.check').textContent = active ? 'check_circle' : '';
-    });
-    renderBookingPayment();
-  }));
   $('#confirm-payment').addEventListener('click', confirmPayment);
 }

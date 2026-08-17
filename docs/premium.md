@@ -11,7 +11,7 @@ Gói hội viên **MatchUp Premium** cho phép người chơi xin vào kèo khô
 | Premium Tháng | 60.000đ | 30 ngày | Thanh toán hằng tháng, hủy bất cứ lúc nào |
 | Premium Năm | 600.000đ | 365 ngày | Tiết kiệm bằng 2 tháng phí (~17%) |
 
-Thanh toán được mô phỏng qua **Ví MatchUp** (trừ trực tiếp số dư ví) hoặc **VietQR** (giả lập). Ví không đủ số dư sẽ chặn nút thanh toán và gợi ý nạp tiền.
+Thanh toán được mô phỏng qua **Ví MatchUp** (trừ trực tiếp số dư ví). Ví không đủ số dư sẽ chặn nút thanh toán và gợi ý nạp tiền (nạp/rút qua VNPay, MoMo, chuyển khoản ngân hàng).
 
 ## Quyền lợi Premium
 

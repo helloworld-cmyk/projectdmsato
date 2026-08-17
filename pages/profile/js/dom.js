@@ -58,8 +58,11 @@ export function injectCards() {
         <button class="wallet-topup custom" type="button" id="open-wallet-topup">
           <span class="material-symbols-rounded" style="font-size:13px">add</span> Số khác
         </button>
+        <button class="wallet-topup withdraw" type="button" id="open-wallet-withdraw">
+          <span class="material-symbols-rounded" style="font-size:13px">arrow_upward</span> Rút tiền
+        </button>
       </div>
-      <p class="wallet-note">Số dư ví dùng được cho đặt sân và tiền cọc kèo. Mọi giao dịch được lưu trên trình duyệt này.</p>
+      <p class="wallet-note">Số dư ví dùng được cho đặt sân và thanh toán phần kèo. Mọi giao dịch được lưu trên trình duyệt này.</p>
       <div class="wallet-history" id="wallet-history"></div>
     </article>
   `);
@@ -89,16 +92,13 @@ export function injectModals() {
       <div class="loyalty-modal">
         <div class="loyalty-modal-top">
           <div>
-            <h2 id="application-payment-title">Thanh toán cọc kèo</h2>
-            <p>Dùng điểm thành viên để giảm tiền cọc trước khi thanh toán.</p>
+            <h2 id="application-payment-title">Thanh toán phần kèo</h2>
+            <p>Dùng điểm thành viên để giảm tiền thanh toán.</p>
           </div>
           <button class="loyalty-close" id="close-application-payment" aria-label="Đóng"><span class="material-symbols-rounded">close</span></button>
         </div>
         <div class="wallet-payment-methods">
-          <button class="wallet-payment-method active" type="button" data-application-method="VietQR">
-            <span class="material-symbols-rounded">qr_code_2</span>VietQR<small>Chuyển khoản ngân hàng</small>
-          </button>
-          <button class="wallet-payment-method" type="button" data-application-method="Ví MatchUp">
+          <button class="wallet-payment-method active" type="button" data-application-method="Ví MatchUp">
             <span class="material-symbols-rounded">account_balance_wallet</span>Ví MatchUp<small id="application-wallet-balance">Số dư 0đ</small>
           </button>
         </div>
@@ -112,12 +112,12 @@ export function injectModals() {
             <button class="point-max" id="application-use-max" type="button">Dùng tối đa</button>
           </div>
           <div class="point-summary">
-            <div><span>Tiền cọc</span><strong id="application-subtotal">0đ</strong></div>
+            <div><span>Phần của bạn</span><strong id="application-subtotal">0đ</strong></div>
             <div class="discount"><span>Giảm từ điểm</span><strong id="application-discount">−0đ</strong></div>
             <div class="due"><span>Thanh toán</span><strong id="application-paid-total">0đ</strong></div>
           </div>
         </div>
-        <button class="app-pay-confirm" id="confirm-application-payment" type="button">Thanh toán 0đ qua VietQR</button>
+        <button class="app-pay-confirm" id="confirm-application-payment" type="button">Thanh toán 0đ từ Ví MatchUp</button>
       </div>
     </div>
   `);
@@ -128,7 +128,7 @@ export function injectModals() {
         <div class="loyalty-modal-top">
           <div>
             <h2 id="wallet-topup-title">Nạp tiền vào Ví MatchUp</h2>
-            <p class="wallet-modal-copy">Chọn số tiền muốn nạp. Đây là luồng mô phỏng để bạn thử nghiệm tính năng trên app.</p>
+            <p class="wallet-modal-copy">Chọn số tiền và cổng thanh toán. Tiền sẽ được cộng vào Ví MatchUp sau khi thanh toán thành công.</p>
           </div>
           <button class="loyalty-close" id="close-wallet-topup" aria-label="Đóng"><span class="material-symbols-rounded">close</span></button>
         </div>
@@ -138,10 +138,49 @@ export function injectModals() {
           <button class="wallet-preset" type="button" data-wallet-preset="200000">200.000đ</button>
           <button class="wallet-preset" type="button" data-wallet-preset="500000">500.000đ</button>
         </div>
-        <button class="wallet-confirm" id="confirm-wallet-topup" type="button">Nạp 100.000đ vào ví</button>
+        <div class="wallet-topup-methods" aria-label="Cổng thanh toán">
+          <button class="wallet-payment-method active" type="button" data-topup-method="VNPay">
+            <span class="material-symbols-rounded">credit_card</span>VNPay<small>Thẻ ngân hàng</small>
+          </button>
+          <button class="wallet-payment-method" type="button" data-topup-method="MoMo">
+            <span class="material-symbols-rounded">account_balance_wallet</span>MoMo<small>Ví điện tử</small>
+          </button>
+          <button class="wallet-payment-method" type="button" data-topup-method="Chuyển khoản ngân hàng">
+            <span class="material-symbols-rounded">account_balance</span>Chuyển khoản<small>Ngân hàng nội địa</small>
+          </button>
+        </div>
+        <button class="wallet-confirm" id="confirm-wallet-topup" type="button">Nạp 100.000đ qua VNPay</button>
       </div>
     </div>
   `);
+  document.body.insertAdjacentHTML('beforeend', `
+    <div class="loyalty-modal-layer" id="wallet-withdraw-modal" role="dialog" aria-modal="true" aria-labelledby="wallet-withdraw-title">
+      <div class="loyalty-modal">
+        <div class="loyalty-modal-top">
+          <div>
+            <h2 id="wallet-withdraw-title">Rút tiền từ Ví MatchUp</h2>
+            <p class="wallet-modal-copy">Chọn số tiền muốn rút và cổng nhận tiền. Tiền sẽ được chuyển sau khi xử lý thành công.</p>
+          </div>
+          <button class="loyalty-close" id="close-wallet-withdraw" aria-label="Đóng"><span class="material-symbols-rounded">close</span></button>
+        </div>
+        <input class="wallet-amount-input" id="wallet-withdraw-amount" type="number" min="10000" step="10000" inputmode="numeric" aria-label="Số tiền rút" />
+        <p class="wallet-balance-hint" id="wallet-withdraw-balance">Số dư khả dụng: 0đ</p>
+        <div class="wallet-topup-methods" aria-label="Cổng nhận tiền">
+          <button class="wallet-payment-method active" type="button" data-withdraw-method="VNPay">
+            <span class="material-symbols-rounded">credit_card</span>VNPay<small>Thẻ ngân hàng</small>
+          </button>
+          <button class="wallet-payment-method" type="button" data-withdraw-method="MoMo">
+            <span class="material-symbols-rounded">account_balance_wallet</span>MoMo<small>Ví điện tử</small>
+          </button>
+          <button class="wallet-payment-method" type="button" data-withdraw-method="Chuyển khoản ngân hàng">
+            <span class="material-symbols-rounded">account_balance</span>Chuyển khoản<small>Ngân hàng nội địa</small>
+          </button>
+        </div>
+        <button class="wallet-confirm" id="confirm-wallet-withdraw" type="button" disabled>Rút 0đ qua VNPay</button>
+      </div>
+    </div>
+  `);
+
 document.body.insertAdjacentHTML('beforeend', `
     <div class="loyalty-modal-layer" id="premium-upgrade-modal" role="dialog" aria-modal="true" aria-labelledby="premium-upgrade-title">
       <div class="loyalty-modal premium-modal">
@@ -154,11 +193,8 @@ document.body.insertAdjacentHTML('beforeend', `
         </div>
         <div class="premium-plans" id="premium-plans"></div>
         <div class="wallet-payment-methods">
-          <button class="wallet-payment-method" type="button" data-premium-method="Ví MatchUp">
+          <button class="wallet-payment-method active" type="button" data-premium-method="Ví MatchUp">
             <span class="material-symbols-rounded">account_balance_wallet</span>Ví MatchUp<small id="premium-wallet-balance">Số dư 0đ</small>
-          </button>
-          <button class="wallet-payment-method" type="button" data-premium-method="VietQR">
-            <span class="material-symbols-rounded">qr_code_2</span>VietQR<small>Chuyển khoản ngân hàng</small>
           </button>
         </div>
         <p class="premium-modal-note">Thanh toán được mô phỏng để bạn thử nghiệm luồng nâng cấp.</p>

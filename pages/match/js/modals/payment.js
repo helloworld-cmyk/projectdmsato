@@ -1,16 +1,15 @@
 import {
   dom,
   requestedJoinPoints,
-  selectedJoinMethod,
   setPayingApplicationId,
   setRequestedJoinPoints,
-  setSelectedJoinMethod,
   store,
   payingApplicationId
 } from '../core/state.js';
 import { findMatch, renderMatches } from '../match-list/filters.js';
 import { openTeamMoment } from './team.js';
 import { money } from '../core/utils.js';
+import { matchCurrentShare } from '../../../../js/app-state/core/utils.js';
 import { showToast } from '../core/toast.js';
 
 export function currentJoinApplication() {
@@ -19,10 +18,19 @@ export function currentJoinApplication() {
   ) || null;
 }
 
+function currentJoinSubtotal() {
+  const application = currentJoinApplication();
+  if (!application || !application.match) return 0;
+  const participants = Array.isArray(application.match.participants)
+    ? application.match.participants
+    : [];
+  return matchCurrentShare(application.match, participants.length);
+}
+
 export function renderJoinPayment() {
   const application = currentJoinApplication();
   if (!application) return;
-  const subtotal = Number(application.match.deposit || application.match.share / 2) || 0;
+  const subtotal = currentJoinSubtotal();
   const preview = store.previewPoints(subtotal, requestedJoinPoints);
   setRequestedJoinPoints(preview.points);
   document.querySelector('#match-payment-name').textContent = application.match.name;
@@ -33,24 +41,17 @@ export function renderJoinPayment() {
     `Bạn có ${preview.availablePoints} điểm · tối đa ${preview.maxPoints}`;
   document.querySelector('#match-payment-wallet').textContent =
     `Số dư ${money(store.getWallet().balance)}`;
-  const insufficient = selectedJoinMethod === 'Ví MatchUp'
-    && store.getWallet().balance < preview.paidAmount;
+  const insufficient = store.getWallet().balance < preview.paidAmount;
   const button = document.querySelector('#confirm-match-payment');
   button.disabled = insufficient;
   button.textContent = insufficient
     ? 'Ví không đủ số dư — hãy nạp thêm'
-    : `Thanh toán ${money(preview.paidAmount)} qua ${selectedJoinMethod}`;
+    : `Thanh toán ${money(preview.paidAmount)} từ Ví MatchUp`;
 }
 
 export function openJoinPayment(applicationId) {
   setPayingApplicationId(applicationId);
   setRequestedJoinPoints(0);
-  setSelectedJoinMethod('VietQR');
-  document.querySelectorAll('[data-join-method]').forEach(button => {
-    const active = button.dataset.joinMethod === selectedJoinMethod;
-    button.classList.toggle('active', active);
-    button.querySelector('.check').textContent = active ? 'check_circle' : '';
-  });
   dom.teamMoment.classList.remove('show');
   renderJoinPayment();
   dom.matchPaymentModal.classList.add('show');
@@ -74,17 +75,6 @@ export function initPaymentEvents() {
   dom.matchPaymentModal.addEventListener('click', event => {
     if (event.target === dom.matchPaymentModal) closeJoinPayment();
   });
-  document.querySelectorAll('[data-join-method]').forEach(button => {
-    button.addEventListener('click', () => {
-      setSelectedJoinMethod(button.dataset.joinMethod);
-      document.querySelectorAll('[data-join-method]').forEach(item => {
-        const active = item === button;
-        item.classList.toggle('active', active);
-        item.querySelector('.check').textContent = active ? 'check_circle' : '';
-      });
-      renderJoinPayment();
-    });
-  });
   document.querySelector('#match-payment-points-input').addEventListener(
     'input',
     event => {
@@ -93,9 +83,8 @@ export function initPaymentEvents() {
     }
   );
   document.querySelector('#match-payment-use-max').addEventListener('click', () => {
-    const application = currentJoinApplication();
-    if (!application) return;
-    const subtotal = Number(application.match.deposit || application.match.share / 2) || 0;
+    if (!currentJoinApplication()) return;
+    const subtotal = currentJoinSubtotal();
     setRequestedJoinPoints(store.previewPoints(subtotal, 0).maxPoints);
     renderJoinPayment();
   });
@@ -104,13 +93,10 @@ export function initPaymentEvents() {
     if (!application) return;
     const result = store.payForApplication(
       application.id,
-      selectedJoinMethod,
       requestedJoinPoints
     );
     if (!result) {
-      showToast(selectedJoinMethod === 'Ví MatchUp'
-        ? 'Số dư ví không đủ hoặc trạng thái kèo đã thay đổi.'
-        : 'Trạng thái kèo hoặc điểm đã thay đổi.');
+      showToast('Số dư ví không đủ hoặc trạng thái kèo đã thay đổi.');
       renderJoinPayment();
       return;
     }
@@ -119,7 +105,7 @@ export function initPaymentEvents() {
     renderMatches();
     openTeamMoment(item, result);
     showToast(
-      `Đã thanh toán cọc ${money(result.payment.paidAmount)} qua ${selectedJoinMethod}.`
+      `Đã thanh toán ${money(result.payment.paidAmount)} từ Ví MatchUp.`
     );
   });
 }

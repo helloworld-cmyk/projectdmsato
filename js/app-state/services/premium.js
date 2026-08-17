@@ -1,4 +1,4 @@
-import { FREE_MATCH_LIMIT, PREMIUM_PLANS, WALLET_PAYMENT_METHOD } from "../core/constants.js";
+import { FREE_MATCH_LIMIT, PREMIUM_PLANS } from "../core/constants.js";
 import { amount as toAmount } from "../core/utils.js";
 
 export const membershipDefaults = () => ({ plan: null, startedAt: null, expiresAt: null });
@@ -66,24 +66,20 @@ export const createPremiumService = ({
       limit: FREE_MATCH_LIMIT,
     };
   };
-  const upgradeToPremium = (planId, method = WALLET_PAYMENT_METHOD) => {
+  const upgradeToPremium = (planId) => {
     const plan = findPlan(planId);
     if (!plan) return null;
     const membership = state.membership || membershipDefaults();
-    const walletPayment = method === WALLET_PAYMENT_METHOD;
-    if (walletPayment && plan.price > state.wallet.balance) {
-      return { ok: false, reason: "insufficient", plan, method };
+    if (plan.price > state.wallet.balance) {
+      return { ok: false, reason: "insufficient", plan };
     }
-    if (walletPayment) {
-      const debit = debitWallet({
-        amount: plan.price,
-        sourceType: "membership",
-        sourceId: plan.id,
-        label: `gói ${plan.label}`,
-        method,
-      });
-      if (!debit) return { ok: false, reason: "insufficient", plan, method };
-    }
+    const debit = debitWallet({
+      amount: plan.price,
+      sourceType: "membership",
+      sourceId: plan.id,
+      label: `gói ${plan.label}`,
+    });
+    if (!debit) return { ok: false, reason: "insufficient", plan };
     const base = membership.plan && membership.expiresAt
       ? Math.max(now(), new Date(membership.expiresAt).getTime())
       : now();
@@ -101,7 +97,7 @@ export const createPremiumService = ({
     return {
       ok: true,
       plan,
-      method,
+      method: "Ví MatchUp",
       membership: clone(state.membership),
       info: premiumInfo(),
     };

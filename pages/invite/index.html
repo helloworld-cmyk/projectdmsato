@@ -400,6 +400,12 @@
               </span>
               Mời thêm người chơi
             </button>
+            <div class="refund-note" id="refund-note" hidden>
+              <span class="material-symbols-rounded">
+                savings
+              </span>
+              <span id="refund-note-text"></span>
+            </div>
           </article>
         </section>
         <aside class="side">
@@ -445,21 +451,9 @@
             <div class="method-row" aria-label="Phương thức hỗ trợ">
               <div class="method active">
                 <span class="material-symbols-rounded">
-                  qr_code_2
-                </span>
-                VietQR
-              </div>
-              <div class="method">
-                <span class="material-symbols-rounded">
                   account_balance_wallet
                 </span>
-                MoMo
-              </div>
-              <div class="method">
-                <span class="material-symbols-rounded">
-                  credit_card
-                </span>
-                VNPay
+                Ví MatchUp
               </div>
             </div>
             <button class="pay-button" id="open-payment">
@@ -554,23 +548,7 @@
           </button>
         </div>
         <div class="modal-methods">
-          <button class="modal-method active" data-method="VietQR">
-            <span class="material-symbols-rounded">
-              qr_code_2
-            </span>
-            <div>
-              <strong>
-                VietQR / Chuyển khoản ngân hàng
-              </strong>
-              <span>
-                Quét mã để thanh toán tức thì
-              </span>
-            </div>
-            <span class="material-symbols-rounded check">
-              check_circle
-            </span>
-          </button>
-          <button class="modal-method" data-method="Ví MatchUp">
+          <button class="modal-method active" data-method="Ví MatchUp">
             <span class="material-symbols-rounded">
               account_balance_wallet
             </span>
@@ -583,36 +561,7 @@
               </span>
             </div>
             <span class="material-symbols-rounded check">
-            </span>
-          </button>
-          <button class="modal-method" data-method="MoMo">
-            <span class="material-symbols-rounded">
-              account_balance_wallet
-            </span>
-            <div>
-              <strong>
-                Ví MoMo
-              </strong>
-              <span>
-                Thanh toán qua ứng dụng MoMo
-              </span>
-            </div>
-            <span class="material-symbols-rounded check">
-            </span>
-          </button>
-          <button class="modal-method" data-method="VNPay">
-            <span class="material-symbols-rounded">
-              credit_card
-            </span>
-            <div>
-              <strong>
-                VNPay / Thẻ ngân hàng
-              </strong>
-              <span>
-                Thẻ ATM nội địa và thẻ quốc tế
-              </span>
-            </div>
-            <span class="material-symbols-rounded check">
+              check_circle
             </span>
           </button>
         </div>
@@ -621,7 +570,7 @@
           <span id="modal-pay-amount">
             42.000đ
           </span>
-          qua VietQR
+          từ Ví MatchUp
         </button>
       </div>
     </div>
